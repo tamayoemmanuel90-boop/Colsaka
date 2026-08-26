@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Cosalka - Nutragen catalog. Every SKU is strictly the clinical 500 ml format.
+model Product {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  tagline     String
+  description String
+  price       Float // EUR
+  currency    String   @default("EUR")
+  volumeMl    Int      @default(500)
+  purity      String // e.g. "99.97%"
+  accent      String // hex accent color
+  image       String // /images/products/xxx.png
+  badge       String?
+  benefits    String // JSON string array
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id        String   @id @default(cuid())
+  total     Float
+  currency  String   @default("EUR")
+  items     String // JSON: [{ slug, name, qty, price }]
+  status    String   @default("confirmed")
+  createdAt DateTime @default(now())
+}
