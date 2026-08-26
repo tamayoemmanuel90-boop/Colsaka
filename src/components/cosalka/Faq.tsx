@@ -10,6 +10,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { FAQ_ITEMS } from "@/lib/cosalka/content";
+import { GlowTitle } from "./GlowTitle";
 
 /**
  * SSR renders a static, crawlable version (questions + answers).
@@ -26,65 +27,41 @@ export function Faq() {
   }, []);
 
   return (
-    <section id="faq" className="relative w-full px-5 py-32 sm:px-10">
-      <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[0.9fr_1.4fr] lg:gap-16">
-        {/* heading rail */}
-        <div>
-          <motion.p
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-90px" }}
-            transition={{ duration: 0.8 }}
-            className="kicker text-gold"
-          >
-            FAQ · Consultorio clínico
-          </motion.p>
-          <motion.h2
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-90px" }}
-            transition={{ duration: 0.85, delay: 0.08 }}
-            className="mt-5 text-balance text-4xl font-light leading-tight tracking-tight text-clinic sm:text-5xl"
-          >
-            Preguntas, <em className="gold-text not-italic">respuestas medidas.</em>
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.9, delay: 0.16 }}
-            className="mt-5 max-w-sm text-sm leading-relaxed text-white/50"
-          >
-            Todo lo que necesitas saber sobre la ciencia nutragenética, el
-            formato clínico de 500 ml y nuestro estándar de pureza.
-          </motion.p>
+    <section id="faq" className="relative w-full px-5 py-36 sm:px-10">
+      <div className="mx-auto max-w-3xl">
+        {/* heading */}
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-90px" }}
+          transition={{ duration: 0.8 }}
+          className="kicker !text-[9px] text-gold/80"
+        >
+          04 · FAQ
+        </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.24, duration: 0.9 }}
-            className="mt-8 hidden rounded-2xl border border-white/[0.07] bg-carbon/70 p-5 backdrop-blur-md lg:block"
-          >
-            <p className="kicker !text-[8.5px] text-white/35">
-              ¿Otras dudas técnicas?
-            </p>
-            <a
-              href="mailto:clinica@cosalka.com"
-              className="pointer-events-auto mt-2 inline-block text-[13px] tracking-wide text-gold underline-offset-4 transition-colors hover:text-gold-soft hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
-            >
-              clinica@cosalka.com
-            </a>
-          </motion.div>
-        </div>
+        <GlowTitle
+          as="h2"
+          delay={0.06}
+          className="mt-5 text-balance text-4xl font-light leading-[1.08] tracking-[-0.02em] text-clinic sm:text-5xl"
+          lines={[
+            [
+              { t: "Preguntas, " },
+              {
+                t: "respuestas medidas.",
+                c: "gold-text glow-gold font-normal",
+              },
+            ],
+          ]}
+        />
 
         {/* accordion / static fallback */}
         <motion.div
-          initial={{ opacity: 0, y: 26 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.85, delay: 0.1 }}
-          className="pointer-events-auto"
+          transition={{ duration: 0.85, delay: 0.12 }}
+          className="pointer-events-auto mt-14"
         >
           {mounted ? (
             <Accordion type="single" collapsible className="w-full">

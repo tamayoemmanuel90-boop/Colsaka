@@ -1,151 +1,115 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { toast } from "sonner";
 import { BrandMark } from "./Navbar";
 import { NAV_LINKS } from "@/lib/cosalka/content";
 import { scrollToSection } from "@/hooks/use-smooth-scroll";
 
-const CERTS = ["ISO CLASE 7", "GMP FARMACÉUTICO", "HPLC VERIFICADO", "VEGANO"];
-
 export function Footer() {
-  const [email, setEmail] = useState("");
-
-  const subscribe = () => {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast.error("Introduce un email clínico válido");
-      return;
-    }
-    toast.success("Suscripción confirmada. Bienvenido al protocolo Cosalka.");
-    setEmail("");
-  };
-
   return (
     <footer
       id="contacto"
       data-stage="contact"
-      className="relative mt-auto w-full border-t border-white/[0.07] bg-gradient-to-b from-transparent via-black/40 to-black px-5 pb-10 pt-24 sm:px-10"
+      className="pointer-events-none relative mt-auto w-full border-t border-white/[0.06] bg-gradient-to-b from-transparent via-black/45 to-black px-5 pb-8 pt-24 sm:px-10"
     >
-      <div className="pointer-events-auto mx-auto max-w-7xl">
-        {/* top grid */}
-        <div className="grid gap-12 md:grid-cols-[1.3fr_0.8fr_1fr] lg:gap-16">
-          {/* brand */}
-          <div>
-            <div className="flex items-center gap-2.5">
-              <BrandMark size={34} />
-              <span className="text-lg font-semibold tracking-[0.42em] text-clinic">
-                COSALKA
-              </span>
-            </div>
-            <p className="mt-4 max-w-sm text-[13px] leading-relaxed text-white/45">
-              Laboratorio nutragenético independiente. Formulamos la próxima
-              generación de nutrición celular en formato clínico sellado de
-              500 ml — con la pureza como único compromiso.
-            </p>
-            <ul className="mt-6 flex flex-wrap gap-2">
-              {CERTS.map((c) => (
-                <li
-                  key={c}
-                  className="rounded-full border border-gold/25 bg-gold/[0.05] px-3 py-1 font-mono text-[8.5px] uppercase tracking-[0.18em] text-gold/80"
+      <div className="pointer-events-auto mx-auto flex max-w-4xl flex-col items-center text-center">
+        {/* brand */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9 }}
+          className="flex items-center gap-3"
+        >
+          <BrandMark size={32} />
+          <span className="glow-white text-xl font-semibold tracking-[0.5em] text-clinic">
+            COSALKA
+          </span>
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, delay: 0.15 }}
+          className="mt-4 text-[12px] font-light tracking-wide text-white/40"
+        >
+          Laboratorio nutragenético · Pureza como único compromiso
+        </motion.p>
+
+        {/* nav */}
+        <motion.nav
+          aria-label="Enlaces del sitio"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, delay: 0.25 }}
+          className="mt-9"
+        >
+          <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
+            {NAV_LINKS.map((l) => (
+              <li key={l.target}>
+                <button
+                  onClick={() => scrollToSection(l.target)}
+                  className="group relative cursor-pointer py-1 text-[10.5px] uppercase tracking-[0.24em] text-white/55 transition-colors hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 rounded-sm"
                 >
-                  {c}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* nav */}
-          <nav aria-label="Enlaces del sitio">
-            <p className="kicker text-white/35">Navegación</p>
-            <ul className="mt-5 space-y-3">
-              {NAV_LINKS.map((l) => (
-                <li key={l.target}>
-                  <button
-                    onClick={() => scrollToSection(l.target)}
-                    className="group inline-flex cursor-pointer items-center gap-2 text-[13px] tracking-wide text-white/55 transition-colors hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 rounded-sm"
-                  >
-                    <span className="h-px w-0 bg-gold transition-all duration-300 group-hover:w-4" />
-                    {l.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* contact + newsletter */}
-          <div>
-            <p className="kicker text-white/35">Contacto</p>
-            <ul className="mt-5 space-y-2.5 text-[13px] tracking-wide text-white/55">
-              <li className="flex items-center gap-2.5">
-                <Mail size={13} className="text-gold/70" />
-                <a
-                  href="mailto:clinica@cosalka.com"
-                  className="transition-colors hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 rounded-sm"
-                >
-                  clinica@cosalka.com
-                </a>
-              </li>
-              <li className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/40">
-                Paseo del Laboratorio 42 · Madrid, ES
-              </li>
-            </ul>
-
-            <p className="kicker mt-8 !text-[9px] text-white/35">
-              Boletín nutragenético
-            </p>
-            <form
-              className="mt-4 flex max-w-sm overflow-hidden rounded-full border border-white/12 bg-white/[0.03] backdrop-blur-md transition-colors focus-within:border-gold/50"
-              onSubmit={(e) => {
-                e.preventDefault();
-                subscribe();
-              }}
-            >
-              <label htmlFor="footer-email" className="sr-only">
-                Tu correo electrónico
-              </label>
-              <input
-                id="footer-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@correo.com"
-                className="h-11 w-full bg-transparent pl-5 pr-2 text-[12.5px] tracking-wide text-clinic placeholder:text-white/25 outline-none"
-              />
-              <button
-                type="submit"
-                aria-label="Suscribirme al boletín"
-                className="grid h-11 w-12 shrink-0 cursor-pointer place-items-center bg-gold/90 text-graphite outline-none transition-all hover:bg-gold focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/50"
-              >
-                <ArrowRight size={15} strokeWidth={2} />
-              </button>
-            </form>
-          </div>
-        </div>
-
-        {/* legal bar */}
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] pt-6 sm:flex-row">
-          <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
-            © 2025 Cosalka Labs S.L. — Nutragen® es una marca registrada.
-          </p>
-          <ul className="flex items-center gap-6 font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
-            {["Aviso legal", "Privacidad", "Cookies"].map((x) => (
-              <li key={x}>
-                <a
-                  href="#contacto"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    toast.info(`${x}: documento disponible bajo solicitud.`);
-                  }}
-                  className="transition-colors hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 rounded-sm"
-                >
-                  {x}
-                </a>
+                  {l.label}
+                  <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-gold transition-all duration-300 group-hover:w-full" />
+                </button>
               </li>
             ))}
           </ul>
-        </div>
+        </motion.nav>
+
+        {/* certs + contact */}
+        <motion.ul
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, delay: 0.35 }}
+          className="mt-8 flex flex-wrap items-center justify-center gap-2"
+          aria-label="Certificaciones"
+        >
+          {["ISO CLASE 7", "GMP FARMACÉUTICO", "HPLC VERIFICADO"].map((c) => (
+            <li
+              key={c}
+              className="rounded-full border border-gold/20 bg-gold/[0.04] px-3 py-1 font-mono text-[8px] uppercase tracking-[0.18em] text-gold/70"
+            >
+              {c}
+            </li>
+          ))}
+        </motion.ul>
+
+        <a
+          href="mailto:clinica@cosalka.com"
+          className="mt-6 inline-flex items-center gap-2 rounded-sm text-[13px] tracking-wide text-silver transition-colors hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+        >
+          <Mail size={13} className="text-gold/70" />
+          clinica@cosalka.com
+        </a>
+      </div>
+
+      {/* legal bar */}
+      <div className="pointer-events-auto mx-auto mt-14 flex max-w-6xl flex-col items-center justify-between gap-3 border-t border-white/[0.05] pt-6 sm:flex-row">
+        <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
+          © 2025 Cosalka Labs S.L. — Nutragen®
+        </p>
+        <ul className="flex items-center gap-6 font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
+          {["Aviso legal", "Privacidad", "Cookies"].map((x) => (
+            <li key={x}>
+              <button
+                onClick={() =>
+                  toast.info(`${x}: documento disponible bajo solicitud.`)
+                }
+                className="cursor-pointer transition-colors hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 rounded-sm"
+              >
+                {x}
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
     </footer>
   );

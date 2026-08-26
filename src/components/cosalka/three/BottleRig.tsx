@@ -86,5 +86,5 @@ export function BottleRig({
 }
 
 function STAGE_POSES_HERO(): StagePose {
-  return { x: 0, y: -2.1, z: -1.5, rx: 0.06, ry: 0.12, explode: 0, scale: 0.78 };
+  return { x: 0, y: -1.68, z: -0.72, rx: 0.06, ry: 0.12, explode: 0, scale: 0.9 };
 }

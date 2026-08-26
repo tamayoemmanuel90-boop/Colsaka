@@ -55,3 +55,24 @@ Stage Summary:
 - Single-route luxury landing complete at /. Fixed R3F canvas + pointer-events layering pattern; scroll choreography: hero (bottom peek) → spotlight (left, hotspots) → science (deep-back exploded) → gallery (right, compact) → contact (exit right).
 - APIs consumed: GET /api/products (with client fallback catalog), POST /api/orders (server-side totals, 400 on bad slugs).
 - All lint clean; zero hydration errors; DB seeded with 4 strictly-500 ml SKUs.
+
+---
+Task ID: 8 (redesign pass)
+Agent: orchestrator (Z.ai Code main)
+Task: User refinement — couple 3D to page layout, strip text, ultra-minimal redesign, letter glow premium animations
+
+Work Log:
+- globals.css: added premium glow typography system (.glow-gold/.glow-white/.glow-soft with breathing text-shadow keyframes), goldShimmer animated sweep on .gold-text (background-size 220% loop), prefers-reduced-motion guards; softened hero-vignette + fixed edge vignette so the 3D reads as part of the page instead of a cut-out layer.
+- New GlowTitle.tsx: reusable letter-by-letter reveal (blur(12px)+0.62em lift → sharp, 0.026s stagger, mount & inview modes, aria-label preserved, unbreakable word wrappers with em spacers).
+- content.ts rewritten minimal: HOTSPOTS bodies cut to one sentence; SCIENCE_CARDS now icon+title+stat only (body removed); FAQ_ITEMS reduced 6→4 with ≤20-word answers.
+- Sections rebuilt: Hero (pill + GlowTitle h1 + silver sub + CTAs only; paragraph & lab readout removed), Spotlight (01 kicker + glow h2 + 3-stat strip + one-line hint; HUD brackets kept as 3D frame; stat label "Absorción" + responsive dd sizing), Science (index header, translucent bg-carbon/55 cards, centered icon/title/stat), Gallery (cards reduced to image/name/glow price/buy; tagline+purity+truck removed), Faq (accordion-only, side card & intro removed), Footer (centered brand glow wordmark, one-line tagline, inline nav, 3 cert pills, email, legal bar; newsletter+address removed; pointer-events-auto on legal bar).
+- scroll-engine STAGE_POSES re-tuned to couple the bottle to each section's layout: hero raised/closer (y -1.68, z -0.72, scale .9), science centered & forward behind translucent cards (x 0, z -2.25), gallery peeks beside heading top-right (x 2.8, y 0.9, z -1.05, scale .56), contact exits wider; BottleRig initial pose synced; mobile spotlight lift 1.52/tiny -0.46 scale.
+- Bottle.tsx: golden liquid warmed (#f2dda6, attenuationDistance 0.72, emissive base 0.1) — reads as premium gold serum through the glass.
+- E2E via agent-browser (1440×900 + 390×844): hotspot JS-click → clinical card ✓ (native click flaky due to idle-bob moving targets — automated artifact), buy→drawer→checkout→REF CMTAPW2EI000 ✓ (test order deleted from DB), FAQ accordion ✓, nav Lenis anchor scroll ✓ (scrollY 2681), footer legal buttons ✓, sticky footer at page end ✓, no 30ml/50ml strings ✓, console clean (only benign THREE.Clock deprecation), lint clean.
+- Fixed during verification: missing inter-piece spaces in GlowTitle lines ("de Vanguardia", "en 500 ml.", "Ciencia verificable.", "La colección Nutragen.", "Preguntas, respuestas medidas.") by embedding explicit trailing spaces in piece text.
+
+Stage Summary:
+- Page is now ultra-minimal: every section = index kicker + glow headline + at most one data row; all long copy removed.
+- 3D bottle participates in each section's composition (hero CTAs frame it, science cards float over its exploded helix, gallery heading leaves room for it) — no longer a detached backdrop.
+- Glow system: breathing gold halo on key words, shimmer sweep on gradients, soft white aura on secondary text; reduced-motion safe.
+- All flows re-verified end-to-end on desktop & mobile after the redesign; DB left clean.

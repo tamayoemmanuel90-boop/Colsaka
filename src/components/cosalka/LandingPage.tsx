@@ -62,7 +62,7 @@ export function LandingPage() {
         className="pointer-events-none fixed inset-0 z-[2]"
         style={{
           background:
-            "radial-gradient(120% 90% at 50% 50%, transparent 62%, rgba(0,0,0,.55) 100%)",
+            "radial-gradient(125% 95% at 50% 50%, transparent 66%, rgba(0,0,0,.45) 100%)",
         }}
       />
 

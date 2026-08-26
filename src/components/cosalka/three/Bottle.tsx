@@ -174,7 +174,7 @@ export function Bottle() {
       ringOuter.current.scale.setScalar(1 + e * 0.1);
     }
     if (liquidMat.current) {
-      liquidMat.current.emissiveIntensity = 0.06 + e * 0.32;
+      liquidMat.current.emissiveIntensity = 0.1 + e * 0.32;
     }
   });
 
@@ -235,15 +235,15 @@ export function Bottle() {
       <mesh geometry={liquidGeo} renderOrder={1}>
         <meshPhysicalMaterial
           ref={liquidMat}
-          color="#f6ecd2"
-          transmission={0.92}
+          color="#f2dda6"
+          transmission={0.9}
           thickness={1.35}
           roughness={0.16}
           ior={1.33}
           attenuationColor="#c9971e"
-          attenuationDistance={1.05}
+          attenuationDistance={0.72}
           emissive="#b8860b"
-          emissiveIntensity={0.06}
+          emissiveIntensity={0.1}
           envMapIntensity={0.7}
         />
       </mesh>

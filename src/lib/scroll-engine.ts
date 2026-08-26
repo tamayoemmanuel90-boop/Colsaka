@@ -46,11 +46,11 @@ export const scrollBus = {
 /** Keyframe poses anchored to each stage element's start. */
 export const STAGE_POSES: Record<StageName, StagePose> = {
   /*           x      y      z      rx     ry     explode scale */
-  hero:      { x: 0,    y: -2.1,  z: -1.5,  rx: 0.06,  ry: 0.12, explode: 0, scale: 0.78 },
+  hero:      { x: 0,    y: -1.68, z: -0.72, rx: 0.06,  ry: 0.12, explode: 0, scale: 0.9 },
   spotlight: { x: -2.38, y: 0.04, z: 0.58,  rx: 0.02,  ry: 1.38, explode: 0, scale: 1.14 },
-  science:   { x: -0.15, y: -0.72, z: -2.85, rx: 0.11,  ry: 2.82, explode: 1, scale: 0.74 },
-  gallery:   { x: 2.5,  y: 0.52, z: 0.34,  rx: -0.05, ry: 4.4,  explode: 0, scale: 0.76 },
-  contact:   { x: 4.5,  y: 1.65, z: -1.3,  rx: 0,     ry: 5.6,  explode: 0, scale: 0.42 },
+  science:   { x: 0,    y: -0.82, z: -2.25, rx: 0.11,  ry: 2.82, explode: 1, scale: 0.8 },
+  gallery:   { x: 2.8,  y: 0.9,  z: -1.05, rx: -0.04, ry: 4.4,  explode: 0, scale: 0.56 },
+  contact:   { x: 5.2,  y: 1.85, z: -1.3,  rx: 0,     ry: 5.6,  explode: 0, scale: 0.36 },
 };
 
 const POSE_KEYS: Array<keyof StagePose> = [
@@ -197,9 +197,9 @@ export function adaptPoseToViewport(pose: StagePose, vw: number): StagePose {
     case "spotlight":
       // recenter + lift above the copy (mobile spotlight reserves top space)
       pose.x *= 1 - 0.88 * stackT;
-      pose.y += (tiny ? 1.28 : 0.98) * stackT;
+      pose.y += (tiny ? 1.52 : 0.98) * stackT;
       pose.z += 0.55 * stackT;
-      pose.scale *= 1 - (tiny ? 0.42 : 0.3) * stackT;
+      pose.scale *= 1 - (tiny ? 0.46 : 0.3) * stackT;
       break;
     case "science":
       pose.z -= 1.1 * stackT;
