@@ -14,7 +14,7 @@ export function BrandMark({ size = 30 }: { size?: number }) {
       <rect x="1.5" y="1.5" width="37" height="37" rx="9" stroke="#D4AF37" strokeWidth="2" />
       <path
         d="M27.5 14.6c-1.8-2.3-4.4-3.6-7.5-3.6-5.4 0-9.4 4-9.4 9s4 9 9.4 9c3.1 0 5.7-1.3 7.5-3.6"
-        stroke="#E8CF8F"
+        stroke="#9d7c26"
         strokeWidth="2.4"
         strokeLinecap="round"
       />
@@ -51,21 +51,21 @@ export function Navbar() {
         className={
           "mx-auto flex max-w-6xl items-center justify-between rounded-full border px-4 py-2.5 transition-all duration-500 sm:px-5 " +
           (scrolled
-            ? "border-white/10 bg-graphite/80 shadow-[0_18px_50px_rgba(0,0,0,.55)] backdrop-blur-xl"
-            : "border-white/[0.06] bg-graphite/45 backdrop-blur-md")
+            ? "border-black/10 bg-white/85 shadow-[0_18px_50px_rgba(13,13,13,0.1)] backdrop-blur-xl"
+            : "border-black/[0.07] bg-white/50 backdrop-blur-md")
         }
       >
         {/* brand */}
         <button
           onClick={() => go("inicio")}
-          className="group flex cursor-pointer items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-gold/60 rounded-full pr-2"
+          className="group flex cursor-pointer items-center gap-2.5 rounded-full pr-2 outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
           aria-label="Cosalka — ir al inicio"
         >
           <BrandMark />
-          <span className="text-[13px] font-semibold tracking-[0.42em] text-clinic transition-colors group-hover:text-gold-soft">
+          <span className="text-[13px] font-semibold tracking-[0.42em] text-ink transition-colors group-hover:text-gold-deep">
             COSALKA
           </span>
-          <span className="hidden text-[9px] font-medium tracking-[0.3em] text-gold/80 sm:block">
+          <span className="hidden text-[9px] font-medium tracking-[0.3em] text-gold-deep/80 sm:block">
             NUTRAGEN
           </span>
         </button>
@@ -76,7 +76,7 @@ export function Navbar() {
             <li key={l.target}>
               <button
                 onClick={() => go(l.target)}
-                className="group relative cursor-pointer py-1 text-[10.5px] font-medium uppercase tracking-[0.24em] text-white/60 transition-colors hover:text-clinic outline-none focus-visible:text-gold"
+                className="group relative cursor-pointer py-1 text-[10.5px] font-medium uppercase tracking-[0.24em] text-black/55 transition-colors hover:text-ink outline-none focus-visible:text-gold-deep"
               >
                 {l.label}
                 <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-gold transition-all duration-300 group-hover:w-full" />
@@ -89,7 +89,7 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setOpen(true)}
-            className="relative grid h-10 w-10 cursor-pointer place-items-center rounded-full border border-white/10 bg-white/[0.04] text-white/80 outline-none transition-all hover:border-gold/50 hover:text-gold focus-visible:ring-2 focus-visible:ring-gold/60"
+            className="relative grid h-10 w-10 cursor-pointer place-items-center rounded-full border border-black/10 bg-white/60 text-black/70 outline-none transition-all hover:border-gold/60 hover:text-gold-deep focus-visible:ring-2 focus-visible:ring-gold/60"
             aria-label={`Abrir cesta (${count} artículos)`}
           >
             <ShoppingBag size={16} strokeWidth={1.75} />
@@ -110,7 +110,7 @@ export function Navbar() {
 
           <button
             onClick={() => setMenuOpen((v) => !v)}
-            className="grid h-10 w-10 cursor-pointer place-items-center rounded-full border border-white/10 bg-white/[0.04] text-white/80 outline-none transition-all hover:border-gold/50 hover:text-gold lg:hidden"
+            className="grid h-10 w-10 cursor-pointer place-items-center rounded-full border border-black/10 bg-white/60 text-black/70 outline-none transition-all hover:border-gold/60 hover:text-gold-deep lg:hidden"
             aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={menuOpen}
           >
@@ -126,13 +126,13 @@ export function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.25 }}
-              className="absolute inset-x-0 top-full mt-2 rounded-2xl border border-white/10 bg-graphite/95 p-2 shadow-2xl backdrop-blur-xl lg:hidden"
+              className="absolute inset-x-0 top-full mt-2 rounded-2xl border border-black/10 bg-white/95 p-2 shadow-2xl backdrop-blur-xl lg:hidden"
             >
               {NAV_LINKS.map((l) => (
                 <li key={l.target}>
                   <button
                     onClick={() => go(l.target)}
-                    className="w-full cursor-pointer rounded-xl px-4 py-3 text-left text-[11px] uppercase tracking-[0.22em] text-white/70 transition-colors hover:bg-white/5 hover:text-gold"
+                    className="w-full cursor-pointer rounded-xl px-4 py-3 text-left text-[11px] uppercase tracking-[0.22em] text-black/65 transition-colors hover:bg-gold/[0.08] hover:text-gold-deep"
                   >
                     {l.label}
                   </button>

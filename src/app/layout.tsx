@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0d0d0d",
+  themeColor: "#ececee",
   width: "device-width",
   initialScale: 1,
 };
@@ -50,14 +50,14 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-graphite text-clinic`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-paper text-ink`}
       >
         {children}
         <Toaster position="bottom-left" toastOptions={{
           style: {
-            background: "#141417",
-            border: "1px solid rgba(212,175,55,0.35)",
-            color: "#f4f4f6",
+            background: "#ffffff",
+            border: "1px solid rgba(13,13,13,0.12)",
+            color: "#141416",
           },
         }} />
       </body>

@@ -10,10 +10,10 @@ import { Environment, Lightformer } from "@react-three/drei";
 export function StudioEnv() {
   return (
     <>
-      <ambientLight intensity={0.28} />
-      <directionalLight position={[4, 7, 5]} intensity={1.05} color="#ffffff" />
-      <directionalLight position={[-6, 3, -4]} intensity={0.4} color="#e8cf8f" />
-      <pointLight position={[2.4, -1.6, 3]} intensity={0.55} color="#d4af37" distance={9} decay={2} />
+      <ambientLight intensity={0.36} />
+      <directionalLight position={[4, 7, 5]} intensity={1.15} color="#ffffff" />
+      <directionalLight position={[-6, 3, -4]} intensity={0.42} color="#e8cf8f" />
+      <pointLight position={[2.4, -1.6, 3]} intensity={0.5} color="#d4af37" distance={9} decay={2} />
 
       <Environment resolution={256} frames={1}>
         {/* ceiling softbox */}

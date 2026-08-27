@@ -59,7 +59,7 @@ export function HotspotNodes({
                 />
               </button>
 
-              {/* clinical info card */}
+              {/* clinical info card — light paper edition */}
               <AnimatePresence>
                 {open && (
                   <motion.div
@@ -68,24 +68,24 @@ export function HotspotNodes({
                     exit={{ opacity: 0, y: below ? -6 : 6, scale: 0.96 }}
                     transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                     className={
-                      "pointer-events-auto absolute left-1/2 z-20 w-60 max-w-[72vw] -translate-x-1/2 rounded-xl border border-gold/35 bg-black/85 p-4 text-left shadow-[0_18px_60px_rgba(0,0,0,.65)] backdrop-blur-md " +
+                      "pointer-events-auto absolute left-1/2 z-20 w-60 max-w-[72vw] -translate-x-1/2 rounded-xl border border-black/10 bg-white/95 p-4 text-left shadow-[0_18px_60px_rgba(13,13,13,0.18)] backdrop-blur-md " +
                       (below ? "top-[calc(100%+12px)]" : "bottom-[calc(100%+12px)]")
                     }
                     role="dialog"
                     aria-label={h.title}
                   >
-                    <p className="kicker !text-[9px] text-gold/90">Dato clínico</p>
-                    <h4 className="mt-1.5 text-[13px] font-medium tracking-wide text-clinic">
+                    <p className="kicker !text-[9px] text-gold-deep">Dato clínico</p>
+                    <h4 className="mt-1.5 text-[13px] font-medium tracking-wide text-ink">
                       {h.title}
                     </h4>
-                    <p className="mt-1.5 text-[11px] leading-relaxed text-white/55">
+                    <p className="mt-1.5 text-[11px] leading-relaxed text-black/55">
                       {h.body}
                     </p>
-                    <div className="mt-3 flex items-baseline gap-2 border-t border-white/10 pt-2.5">
+                    <div className="mt-3 flex items-baseline gap-2 border-t border-black/10 pt-2.5">
                       <span className="gold-text text-lg font-semibold tracking-tight">
                         {h.stat}
                       </span>
-                      <span className="text-[9px] uppercase tracking-[0.18em] text-white/40">
+                      <span className="text-[9px] uppercase tracking-[0.18em] text-black/40">
                         {h.statLabel}
                       </span>
                     </div>

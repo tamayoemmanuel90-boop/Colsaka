@@ -36,10 +36,11 @@ function SceneContents() {
 }
 
 /**
- * Fixed full-viewport R3F canvas living BEHIND the page content (z-0).
- * Content sections above are `pointer-events-none` by default and re-enable
- * interaction selectively, so the canvas stays clickable wherever the DOM
- * is transparent.
+ * Fixed full-viewport R3F canvas living ABOVE the giant typography (z-20)
+ * and BELOW the interactive chrome (nav, cards, drawer). The wrapper is
+ * `pointer-events-none`, so every click passes straight through to the DOM
+ * beneath — while the bottle visually occludes the headlines, making the
+ * 3D product the absolute protagonist of the composition.
  */
 export function SceneRoot() {
   const [mounted, setMounted] = useState(false);
@@ -61,14 +62,14 @@ export function SceneRoot() {
 
   return (
     <div
-      className="pointer-events-none fixed inset-0 z-0"
+      className="pointer-events-none fixed inset-0 z-20"
       style={{ touchAction: "pan-y" }}
     >
       {/* graceful poster while booting or without WebGL */}
       {(!mounted || !glOk) && <StaticPoster />}
 
       {mounted && glOk && (
-        <div className="pointer-events-auto absolute inset-0">
+        <div className="pointer-events-none absolute inset-0">
           <Canvas
             dpr={[1, 1.75]}
             camera={{ position: [0, 0.12, 7], fov: 37, near: 0.1, far: 60 }}
@@ -98,7 +99,7 @@ function StaticPoster() {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(46% 34% at 50% 58%, rgba(212,175,55,0.14), transparent 70%), radial-gradient(70% 55% at 50% 120%, rgba(201,206,214,0.07), transparent 60%)",
+            "radial-gradient(46% 34% at 50% 55%, rgba(212,175,55,0.16), transparent 70%), radial-gradient(70% 55% at 50% 115%, rgba(13,13,13,0.06), transparent 60%)",
         }}
       />
     </div>

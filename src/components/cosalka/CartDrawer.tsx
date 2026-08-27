@@ -102,7 +102,7 @@ export function CartDrawer({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             onClick={() => setOpen(false)}
-            className="fixed inset-0 z-[60] bg-black/65 backdrop-blur-[3px]"
+            className="fixed inset-0 z-[60] bg-graphite/35 backdrop-blur-[3px]"
           />
 
           {/* panel */}
@@ -113,13 +113,13 @@ export function CartDrawer({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 27, stiffness: 260 }}
-            className="fixed right-0 top-0 z-[70] flex h-dvh w-full max-w-md flex-col border-l border-white/10 bg-carbon"
+            className="fixed right-0 top-0 z-[70] flex h-dvh w-full max-w-md flex-col border-l border-black/10 bg-[#f6f6f8]"
           >
             {/* header */}
-            <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-5">
+            <div className="flex items-center justify-between border-b border-black/[0.08] px-6 py-5">
               <div>
-                <p className="kicker text-gold">Cesta clínica</p>
-                <p className="mt-1 text-sm tracking-wide text-white/50">
+                <p className="kicker text-gold-deep">Cesta clínica</p>
+                <p className="mt-1 text-sm tracking-wide text-black/50">
                   {lines.length}{" "}
                   {lines.length === 1
                     ? "formulación seleccionada"
@@ -129,7 +129,7 @@ export function CartDrawer({
               <button
                 onClick={() => setOpen(false)}
                 aria-label="Cerrar cesta"
-                className="grid h-10 w-10 cursor-pointer place-items-center rounded-full border border-white/10 text-white/60 outline-none transition-all hover:border-gold/50 hover:text-gold focus-visible:ring-2 focus-visible:ring-gold/60"
+                className="grid h-10 w-10 cursor-pointer place-items-center rounded-full border border-black/10 text-black/60 outline-none transition-all hover:border-gold/60 hover:text-gold-deep focus-visible:ring-2 focus-visible:ring-gold/60"
               >
                 <X size={15} />
               </button>
@@ -143,39 +143,39 @@ export function CartDrawer({
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: "spring", damping: 14 }}
                 >
-                  <CheckCircle2 size={54} strokeWidth={1.2} className="text-gold" />
+                  <CheckCircle2 size={54} strokeWidth={1.2} className="text-gold-deep" />
                 </motion.div>
-                <h3 className="mt-6 text-xl font-light tracking-wide text-clinic">
+                <h3 className="mt-6 text-xl font-light tracking-wide text-ink">
                   Pedido confirmado
                 </h3>
-                <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.18em] text-white/40">
+                <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.18em] text-black/40">
                   REF · {result.orderId.slice(0, 12).toUpperCase()}
                 </p>
-                <p className="mt-4 max-w-xs text-[13px] leading-relaxed text-white/50">
+                <p className="mt-4 max-w-xs text-[13px] leading-relaxed text-black/50">
                   Tu unidad clínica de 500 ml queda reservada. Recibirás el
                   pasaporte digital del lote y la confirmación con seguimiento
                   en tu correo.
                 </p>
                 <button
                   onClick={() => setOpen(false)}
-                  className="mt-9 h-12 cursor-pointer rounded-full border border-gold/50 bg-transparent px-8 text-[10px] font-semibold uppercase tracking-[0.26em] text-gold outline-none transition-all hover:bg-gold hover:text-graphite focus-visible:ring-2 focus-visible:ring-gold/60"
+                  className="mt-9 h-12 cursor-pointer rounded-full border border-gold/60 bg-transparent px-8 text-[10px] font-semibold uppercase tracking-[0.26em] text-gold-deep outline-none transition-all hover:bg-gold hover:text-graphite focus-visible:ring-2 focus-visible:ring-gold/60"
                 >
                   Seguir explorando
                 </button>
               </div>
             ) : lines.length === 0 ? (
               <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
-                <ShoppingBag size={44} strokeWidth={1} className="text-white/20" />
-                <p className="mt-6 text-[15px] tracking-wide text-white/55">
+                <ShoppingBag size={44} strokeWidth={1} className="text-black/20" />
+                <p className="mt-6 text-[15px] tracking-wide text-black/55">
                   Tu cesta está vacía.
                 </p>
-                <p className="mt-2 max-w-[240px] text-[12px] leading-relaxed text-white/35">
+                <p className="mt-2 max-w-[240px] text-[12px] leading-relaxed text-black/35">
                   La colección Nutragen completa te espera en formato clínico
                   sellado de 500 ml.
                 </p>
                 <button
                   onClick={() => setOpen(false)}
-                  className="pointer-events-auto mt-8 h-11 cursor-pointer rounded-full border border-gold/50 px-7 text-[10px] font-semibold uppercase tracking-[0.24em] text-gold outline-none transition-all hover:bg-gold hover:text-graphite focus-visible:ring-2 focus-visible:ring-gold/60"
+                  className="pointer-events-auto mt-8 h-11 cursor-pointer rounded-full border border-gold/60 px-7 text-[10px] font-semibold uppercase tracking-[0.24em] text-gold-deep outline-none transition-all hover:bg-gold hover:text-graphite focus-visible:ring-2 focus-visible:ring-gold/60"
                 >
                   Ver colección
                 </button>
@@ -192,27 +192,27 @@ export function CartDrawer({
                         initial={{ opacity: 0, y: 14 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, x: 30 }}
-                        className="flex gap-4 rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4"
+                        className="flex gap-4 rounded-2xl border border-black/[0.07] bg-white p-4 shadow-[0_6px_24px_rgba(13,13,13,0.04)]"
                       >
                         <img
                           src={l.product.image}
                           alt=""
-                          className="h-[74px] w-[74px] shrink-0 rounded-xl border border-white/10 object-cover"
+                          className="h-[74px] w-[74px] shrink-0 rounded-xl border border-black/10 object-cover"
                         />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <p className="truncate text-[13.5px] font-medium tracking-tight text-clinic">
+                              <p className="truncate text-[13.5px] font-medium tracking-tight text-ink">
                                 {l.product.name}
                               </p>
-                              <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-white/35">
+                              <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-black/35">
                                 {l.product.volumeMl} ml · {l.product.purity.replace(".", ",")} pureza
                               </p>
                             </div>
                             <button
                               onClick={() => remove(l.product.slug)}
                               aria-label={`Eliminar ${l.product.name}`}
-                              className="cursor-pointer p-1 text-white/30 outline-none transition-colors hover:text-destructive focus-visible:ring-2 focus-visible:ring-destructive/60 rounded-full"
+                              className="cursor-pointer rounded-full p-1 text-black/30 outline-none transition-colors hover:text-destructive focus-visible:ring-2 focus-visible:ring-destructive/60"
                             >
                               <Trash2 size={13} />
                             </button>
@@ -220,26 +220,26 @@ export function CartDrawer({
 
                           <div className="mt-3 flex items-center justify-between">
                             {/* stepper */}
-                            <div className="inline-flex items-center overflow-hidden rounded-full border border-white/12">
+                            <div className="inline-flex items-center overflow-hidden rounded-full border border-black/10">
                               <button
                                 onClick={() => setQty(l.product.slug, l.qty - 1)}
                                 aria-label="Reducir cantidad"
-                                className="grid h-7 w-7 cursor-pointer place-items-center text-white/55 outline-none transition-colors hover:bg-white/[0.06] hover:text-gold focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold/60"
+                                className="grid h-7 w-7 cursor-pointer place-items-center text-black/55 outline-none transition-colors hover:bg-black/[0.05] hover:text-gold-deep focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold/60"
                               >
                                 <Minus size={11} />
                               </button>
-                              <span className="w-7 text-center font-mono text-[11px] text-clinic" data-testid={`qty-${l.product.slug}`}>
+                              <span className="w-7 text-center font-mono text-[11px] text-ink" data-testid={`qty-${l.product.slug}`}>
                                 {l.qty}
                               </span>
                               <button
                                 onClick={() => setQty(l.product.slug, l.qty + 1)}
                                 aria-label="Aumentar cantidad"
-                                className="grid h-7 w-7 cursor-pointer place-items-center text-white/55 outline-none transition-colors hover:bg-white/[0.06] hover:text-gold focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold/60"
+                                className="grid h-7 w-7 cursor-pointer place-items-center text-black/55 outline-none transition-colors hover:bg-black/[0.05] hover:text-gold-deep focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold/60"
                               >
                                 <Plus size={11} />
                               </button>
                             </div>
-                            <p className="text-[13px] font-semibold tracking-tight text-clinic">
+                            <p className="text-[13px] font-semibold tracking-tight text-ink">
                               {formatPrice(l.product.price * l.qty)}
                             </p>
                           </div>
@@ -250,26 +250,26 @@ export function CartDrawer({
                 </ul>
 
                 {/* summary */}
-                <div className="border-t border-white/[0.08] px-6 py-5">
+                <div className="border-t border-black/[0.08] px-6 py-5">
                   <dl className="space-y-2 text-[12.5px] tracking-wide">
-                    <div className="flex justify-between text-white/50">
+                    <div className="flex justify-between text-black/50">
                       <dt>Subtotal</dt>
                       <dd className="font-mono">{formatPrice(subtotal)}</dd>
                     </div>
-                    <div className="flex justify-between text-white/50">
+                    <div className="flex justify-between text-black/50">
                       <dt>Envío térmico asegurado</dt>
-                      <dd className="font-medium uppercase tracking-widest text-gold">
+                      <dd className="font-medium uppercase tracking-widest text-gold-deep">
                         Incluido
                       </dd>
                     </div>
-                    <div className="flex justify-between border-t border-white/[0.07] pt-3 text-[15px] text-clinic">
+                    <div className="flex justify-between border-t border-black/[0.08] pt-3 text-[15px] text-ink">
                       <dt>Total</dt>
                       <dd className="gold-text font-semibold">{formatPrice(subtotal)}</dd>
                     </div>
                   </dl>
 
                   {error && (
-                    <p className="mt-3 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-[11px] text-red-300">
+                    <p className="mt-3 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-[11px] text-red-600">
                       {error}
                     </p>
                   )}
@@ -278,7 +278,7 @@ export function CartDrawer({
                     onClick={checkout}
                     disabled={phase === "processing"}
                     data-testid="checkout"
-                    className="group relative mt-4 flex h-12 w-full cursor-pointer items-center justify-center gap-2.5 overflow-hidden rounded-full bg-gold text-[10.5px] font-semibold uppercase tracking-[0.28em] text-graphite shadow-[0_10px_36px_rgba(212,175,55,.25)] outline-none transition-all duration-300 hover:shadow-[0_14px_46px_rgba(212,175,55,.45)] focus-visible:ring-2 focus-visible:ring-gold-soft disabled:opacity-70 disabled:hover:shadow-none"
+                    className="group relative mt-4 flex h-12 w-full cursor-pointer items-center justify-center gap-2.5 overflow-hidden rounded-full bg-gold text-[10.5px] font-semibold uppercase tracking-[0.28em] text-graphite shadow-[0_10px_36px_rgba(212,175,55,.3)] outline-none transition-all duration-300 hover:shadow-[0_14px_46px_rgba(212,175,55,.5)] focus-visible:ring-2 focus-visible:ring-gold-soft disabled:opacity-70 disabled:hover:shadow-none"
                   >
                     {phase === "processing" ? (
                       <>
@@ -292,7 +292,7 @@ export function CartDrawer({
                       </>
                     )}
                   </button>
-                  <p className="mt-3 text-center font-mono text-[8.5px] uppercase tracking-[0.2em] text-white/25">
+                  <p className="mt-3 text-center font-mono text-[8.5px] uppercase tracking-[0.2em] text-black/30">
                     Pago cifrado · Precinto estéril garantizado
                   </p>
                 </div>

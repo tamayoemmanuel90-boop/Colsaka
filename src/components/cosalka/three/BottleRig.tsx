@@ -12,6 +12,7 @@ import {
 import { frameState } from "./frame-state";
 import { Bottle } from "./Bottle";
 import { MolecularField } from "./MolecularField";
+import { ScribbleShells } from "./ScribbleShells";
 import { HotspotNodes } from "./HotspotNodes";
 import { useStageStore } from "@/store/stage";
 
@@ -78,6 +79,7 @@ export function BottleRig({
 
   return (
     <group ref={root}>
+      <ScribbleShells />
       <Bottle />
       <HotspotNodes activeId={hotspotId} onSelect={onHotspotSelect} />
       <MolecularField />
@@ -86,5 +88,5 @@ export function BottleRig({
 }
 
 function STAGE_POSES_HERO(): StagePose {
-  return { x: 0, y: -1.68, z: -0.72, rx: 0.06, ry: 0.12, explode: 0, scale: 0.9 };
+  return { x: 0, y: -0.42, z: 0.85, rx: 0.05, ry: 0.1, explode: 0, scale: 1 };
 }

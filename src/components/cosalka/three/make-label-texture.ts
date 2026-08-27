@@ -5,6 +5,7 @@ import * as THREE from "three";
 /**
  * Draws the clinical product label onto an offscreen canvas and returns a
  * THREE texture. Fully procedural → zero network requests (sandbox-safe).
+ * Light "paper" edition: ink typography + gold hairlines on clinical white.
  */
 export function makeLabelTexture(): THREE.CanvasTexture {
   const W = 1024;
@@ -15,17 +16,17 @@ export function makeLabelTexture(): THREE.CanvasTexture {
   const ctx = canvas.getContext("2d");
 
   if (ctx) {
-    // graphite base with vertical falloff
+    // clinical paper base with vertical falloff
     const bg = ctx.createLinearGradient(0, 0, 0, H);
-    bg.addColorStop(0, "#111114");
-    bg.addColorStop(0.5, "#16161a");
-    bg.addColorStop(1, "#101013");
+    bg.addColorStop(0, "#fbfbfc");
+    bg.addColorStop(0.5, "#f2f2f5");
+    bg.addColorStop(1, "#ececef");
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    // faint carbon weave
-    ctx.globalAlpha = 0.05;
-    ctx.strokeStyle = "#ffffff";
+    // faint paper weave
+    ctx.globalAlpha = 0.04;
+    ctx.strokeStyle = "#141416";
     ctx.lineWidth = 1;
     for (let y = 8; y < H; y += 16) {
       ctx.beginPath();
@@ -36,15 +37,15 @@ export function makeLabelTexture(): THREE.CanvasTexture {
     ctx.globalAlpha = 1;
 
     // gold hairline frame
-    ctx.strokeStyle = "rgba(212,175,55,0.85)";
+    ctx.strokeStyle = "rgba(157,124,38,0.9)";
     ctx.lineWidth = 3;
     ctx.strokeRect(26, 26, W - 52, H - 52);
-    ctx.strokeStyle = "rgba(212,175,55,0.30)";
+    ctx.strokeStyle = "rgba(212,175,55,0.4)";
     ctx.lineWidth = 1;
     ctx.strokeRect(40, 40, W - 80, H - 80);
 
     // corner ticks
-    ctx.strokeStyle = "rgba(232,207,143,0.9)";
+    ctx.strokeStyle = "rgba(20,20,22,0.85)";
     ctx.lineWidth = 4;
     const tick = 34;
     const corners: Array<[number, number, number, number]> = [
@@ -87,20 +88,20 @@ export function makeLabelTexture(): THREE.CanvasTexture {
       }
     };
 
-    center("COSALKA", 172, "600 128px 'Helvetica Neue', Arial", "#f4f4f6", 26);
+    center("COSALKA", 172, "600 128px 'Helvetica Neue', Arial", "#141416", 26);
     center(
       "N U T R A G E N",
       300,
       "500 72px 'Helvetica Neue', Arial",
-      "#d4af37",
+      "#a8842a",
       8
     );
 
     // divider with diamond
     const grad = ctx.createLinearGradient(240, 0, W - 240, 0);
-    grad.addColorStop(0, "rgba(212,175,55,0)");
-    grad.addColorStop(0.5, "rgba(212,175,55,0.9)");
-    grad.addColorStop(1, "rgba(212,175,55,0)");
+    grad.addColorStop(0, "rgba(157,124,38,0)");
+    grad.addColorStop(0.5, "rgba(157,124,38,0.95)");
+    grad.addColorStop(1, "rgba(157,124,38,0)");
     ctx.strokeStyle = grad;
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -120,19 +121,19 @@ export function makeLabelTexture(): THREE.CanvasTexture {
       "FÓRMULA CLÍNICA · NUTRAGENÉTICA",
       450,
       "500 34px 'Helvetica Neue', Arial",
-      "rgba(244,244,246,0.66)",
+      "rgba(20,20,22,0.66)",
       10
     );
     center(
       "500 ml ℮   ·   PUREZA ≥ 99.9%   ·   ISO CLASE 7",
       532,
       "400 30px monospace",
-      "rgba(201,206,214,0.55)",
+      "rgba(13,13,13,0.5)",
       4
     );
 
     // molecule mark bottom-right
-    ctx.strokeStyle = "rgba(212,175,55,0.65)";
+    ctx.strokeStyle = "rgba(157,124,38,0.75)";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(W - 96, H - 86, 15, 0, Math.PI * 2);

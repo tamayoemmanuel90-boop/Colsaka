@@ -30,31 +30,30 @@ function ProductCard({ product, index }: { product: ProductDTO; index: number })
         ease: [0.22, 1, 0.36, 1],
       }}
       whileHover={{ y: -8 }}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-carbon/85 backdrop-blur-md transition-[border-color,box-shadow] duration-300 hover:border-gold/40 hover:shadow-[0_24px_70px_rgba(0,0,0,.5)]"
+      className="group pointer-events-auto relative z-30 flex flex-col overflow-hidden rounded-2xl border border-black/[0.08] bg-white shadow-[0_10px_40px_rgba(13,13,13,0.05)] backdrop-blur-sm transition-[border-color,box-shadow] duration-300 hover:border-gold/50 hover:shadow-[0_28px_70px_rgba(13,13,13,0.12)]"
     >
-      {/* image */}
-      <div className="relative aspect-square overflow-hidden bg-graphite">
+      {/* image — the dark studio shots read as ink blocks on the paper bg */}
+      <div className="relative aspect-square overflow-hidden bg-carbon">
         <img
           src={product.image}
           alt={`${product.name} — frasco clínico de ${product.volumeMl} ml`}
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-carbon via-transparent to-transparent" />
 
         {product.badge && (
-          <span className="absolute left-4 top-4 rounded-full border border-gold/50 bg-graphite/80 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.22em] text-gold backdrop-blur-sm">
+          <span className="absolute left-4 top-4 rounded-full border border-black/10 bg-white/90 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.22em] text-ink backdrop-blur-sm">
             {product.badge}
           </span>
         )}
-        <span className="absolute right-4 top-4 rounded-full border border-white/15 bg-graphite/70 px-2.5 py-1 font-mono text-[9px] tracking-widest text-silver backdrop-blur-sm">
+        <span className="absolute right-4 top-4 rounded-full border border-black/10 bg-white/80 px-2.5 py-1 font-mono text-[9px] tracking-widest text-black/60 backdrop-blur-sm">
           {product.volumeMl} ML
         </span>
       </div>
 
       {/* body — name, price, buy. nothing else */}
       <div className="flex flex-col p-5 sm:p-6">
-        <h3 className="text-center text-lg font-medium tracking-tight text-clinic transition-all duration-300 group-hover:text-gold-soft group-hover:[text-shadow:0_0_24px_rgba(232,207,143,.35)]">
+        <h3 className="text-center text-lg font-medium tracking-tight text-ink transition-all duration-300 group-hover:text-gold-deep">
           {product.name}
         </h3>
 
@@ -66,7 +65,7 @@ function ProductCard({ product, index }: { product: ProductDTO; index: number })
           onClick={buy}
           data-testid={`buy-${product.slug}`}
           aria-label={`Comprar ${product.name} de ${product.volumeMl} mililitros`}
-          className="pointer-events-auto mt-5 flex h-11 shrink-0 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-gold/45 bg-gold/[0.08] px-4 text-[9.5px] font-semibold uppercase tracking-[0.18em] text-gold outline-none transition-all duration-300 hover:bg-gold hover:text-graphite hover:shadow-[0_8px_30px_rgba(212,175,55,.4)] focus-visible:ring-2 focus-visible:ring-gold"
+          className="mt-5 flex h-11 shrink-0 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-gold/60 bg-transparent px-4 text-[9.5px] font-semibold uppercase tracking-[0.18em] text-gold-deep outline-none transition-all duration-300 hover:bg-gold hover:text-graphite hover:shadow-[0_8px_30px_rgba(212,175,55,.4)] focus-visible:ring-2 focus-visible:ring-gold"
         >
           Comprar ahora
           <ShoppingBag size={12} strokeWidth={2} />
@@ -76,6 +75,10 @@ function ProductCard({ product, index }: { product: ProductDTO; index: number })
   );
 }
 
+/**
+ * Gallery — colossal heading behind the canvas; the 2×2 card grid stays on
+ * the LEFT so the bottle keeps the right side of the stage at checkout pose.
+ */
 export function Gallery() {
   const { products, loading } = useProducts();
 
@@ -83,48 +86,46 @@ export function Gallery() {
     <section
       id="tienda"
       data-stage="gallery"
-      className="relative w-full px-5 py-32 sm:px-10"
+      className="relative w-full px-5 py-[16svh] sm:px-10"
     >
-      <div className="mx-auto max-w-7xl">
-        <div className="max-w-2xl">
+      <div className="mx-auto max-w-[1700px]">
+        <div className="relative z-10 max-w-[900px]">
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-90px" }}
             transition={{ duration: 0.8 }}
-            className="kicker !text-[9px] text-gold/80"
+            className="font-mono text-[9px] uppercase tracking-[0.36em] text-black/45"
           >
-            03 · Tienda · 500 ml
+            03 — Tienda · 500 ml
           </motion.p>
 
           <GlowTitle
             as="h2"
             delay={0.06}
-            className="mt-5 text-balance text-4xl font-light leading-[1.08] tracking-[-0.02em] text-clinic sm:text-5xl lg:text-[3.6rem]"
+            charClassName=""
+            className="mt-7 text-[clamp(2.5rem,5.8vw,5.4rem)] font-medium leading-[1.03] tracking-[-0.04em] text-ink"
             lines={[
               [
-                { t: "La colección " },
-                {
-                  t: "Nutragen.",
-                  c: "gold-text glow-gold font-normal",
-                },
+                { t: "la colección " },
+                { t: "nutragen.", c: "gold-text glow-gold" },
               ],
             ]}
           />
         </div>
 
-        {/* grid */}
+        {/* grid — interactive layer */}
         {loading ? (
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-14 grid max-w-[900px] gap-5 sm:grid-cols-2">
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="aspect-[3/4] animate-pulse rounded-2xl border border-white/[0.06] bg-white/[0.02]"
+                className="aspect-[3/4] animate-pulse rounded-2xl border border-black/[0.06] bg-white/60"
               />
             ))}
           </div>
         ) : (
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-14 grid max-w-[900px] gap-5 sm:grid-cols-2">
             {products.map((p, i) => (
               <ProductCard key={p.slug} product={p} index={i} />
             ))}

@@ -129,6 +129,7 @@ export function Bottle() {
   // thin open cylinder band that carries the label texture (front & back)
   const labelBand = useMemo(() => {
     const L = 1.95;
+    // thetaStart = -L/2 → the band is CENTERED on the front (+z) face
     return new THREE.CylinderGeometry(0.646, 0.646, 0.82, 80, 1, true, -L / 2, L);
   }, []);
 
@@ -146,15 +147,15 @@ export function Bottle() {
     if (shellRef.current)
       shellRef.current.position.y = ease(0 - e * 0.22, shellRef.current.position.y);
 
-    // helix glows brighter when exploded, plus slow self-rotation
+    // helix: compact & quiet at rest, blooms on explode
     if (helixGroup.current) {
       helixGroup.current.rotation.y = t * 0.35;
-      const s = 1 + e * 0.12;
+      const s = 0.62 + e * 0.48;
       helixGroup.current.scale.setScalar(s);
     }
     if (helixMatA.current)
       helixMatA.current.emissiveIntensity = ease(
-        0.35 + e * 2.2 + Math.sin(t * 2.2) * 0.12,
+        0.14 + e * 2.4 + Math.sin(t * 2.2) * 0.1,
         helixMatA.current.emissiveIntensity
       );
 

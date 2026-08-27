@@ -116,10 +116,10 @@ export function MolecularField() {
         <MoleculeTriad key={`triad${i}`} config={cfg} />
       ))}
 
-      {/* surgical white dust — far shell */}
-      <Sparkles count={130} scale={[8.5, 6, 5]} size={2.1} speed={0.26} opacity={0.42} color="#EDEFF4" />
+      {/* graphite dust — far shell (visible on the clinical paper bg) */}
+      <Sparkles count={130} scale={[8.5, 6, 5]} size={2.1} speed={0.26} opacity={0.3} color="#71717a" />
       {/* gold motes — near accent */}
-      <Sparkles count={44} scale={[5.5, 4, 3]} size={3.1} speed={0.34} opacity={0.34} color="#D4AF37" />
+      <Sparkles count={44} scale={[5.5, 4, 3]} size={3.1} speed={0.34} opacity={0.32} color="#c29a2a" />
     </group>
   );
 }

@@ -76,3 +76,27 @@ Stage Summary:
 - 3D bottle participates in each section's composition (hero CTAs frame it, science cards float over its exploded helix, gallery heading leaves room for it) — no longer a detached backdrop.
 - Glow system: breathing gold halo on key words, shimmer sweep on gradients, soft white aura on secondary text; reduced-motion safe.
 - All flows re-verified end-to-end on desktop & mobile after the redesign; DB left clean.
+
+---
+Task ID: 9 (Mantis-light redesign — 3D as protagonist)
+Agent: orchestrator (Z.ai Code main)
+Task: User feedback — the 3D element must be THE PROTAGONIST (never behind the letters) and the page should look like the mantis.works reference (light clinical paper, colossal typography, editorial frame, film grain)
+
+Work Log:
+- THEME FLIP dark→light: globals.css rewritten (bg #ececee paper, ink #141416, gold system intact, light shadcn tokens, light scrollbar, .paper-vignette, .text-outline, grain opacity .07); layout.tsx body bg-paper/text-ink + light Toaster + themeColor #ececee.
+- LAYER INVERSION (core requirement): SceneRoot moved z-0→z-20 ABOVE the typography; inner canvas container set pointer-events-none (drei Html hotspots re-enable pointer-events-auto themselves). Stacking map: z-1 vignette · z-15 gold shard · z-10 giant headlines (behind 3D) · z-20 canvas PROTAGONIST · z-30 interactive (CTAs, stats, cards, columns, FAQ, footer) · z-40 FrameRails · z-50 nav · z-70 drawer · z-75 grain. main no longer creates a stacking context so children pick their own layer.
+- ScribbleShells.tsx (NEW): Mantis-homage — 12 jittered coarse wireframe lathe shells (deterministic PRNG, black 4.5–10.7% opacity) + 2 chaotic orbit rings that sketch the bottle; spreads with explode factor; mounted inside BottleRig so it follows every pose.
+- STAGE_POSES retuned for protagonist framing: hero (x0, y-0.42, z+0.85, scale 1 — bottle covers the middle of the giant word), spotlight (x-2.42 left, y-0.14), science (center, explode 1, z-0.15), gallery (x+2.55 right), contact (ascends y+5 off-screen). adaptPoseToViewport: hero drops bottle below the word on stacked layouts (y-0.95, scale×0.7), spotlight tiny lift 1.95/scale×0.42, science z-0.9, gallery recenter.
+- Label fix: labelBand thetaStart = -L/2 → label centered on the front face (was split into two side halves).
+- Helix: quiet at rest (scale 0.62, emissive 0.14) → blooms on explode (1.10 / 2.54).
+- make-label-texture: light paper edition (ink COSALKA + gold NUTRAGEN + gold hairline frame).
+- FrameRails.tsx (NEW): Mantis chrome — top-center mono "weather" line (LAB. CENTRAL — PUREZA 99.9%), vertical side rails (NUTRAGENÉTICA—CLÍNICA—500 ML / coordinates MADRID), bottom corners, tilted gold shard behind canvas.
+- Sections rewritten minimal + colossal type: Hero ("nutragenética." 11vw lowercase + mono kicker/sub moved above the word + dual CTA), Spotlight (giant "el estándar clínico en 500 ml." right column, stats strip z-30), Science (135svh stage, heading top, 3 hairline editorial columns bottom — no cards), Gallery (2×2 grid max-w-900 left, light cards, ink-block product shots), FAQ/Footer/Navbar/CartDrawer/HotspotNodes restyled to light paper.
+- Nocturne product image regenerated (blue liquid violated palette → smoky charcoal + gold rim, 864×1152 via z-ai CLI).
+- E2E via agent-browser 1440×900 + 390×844: hero bottle occludes headline ✓, spotlight hotspots → clinical light card ✓ (JS-click), add-to-cart → drawer → checkout → server REF CMTBJ6Z05000 ✓ (test order deleted), FAQ accordion ✓, nav Lenis anchor to #tienda (scrollY 3250) ✓, footer sticky ✓, mobile hero readable (bottle below word, CTAs float over cap) ✓, mobile spotlight bottle-peek ✓, console clean (only benign THREE.Clock deprecation), lint clean.
+- Fixes driven by screenshots: science stage 781px→135svh (text had scrolled out of view), spotlight cap behind nav (y-0.14), top rail 78→96px, hero sub readability (moved above headline), mobile hero bottle covering the word.
+
+Stage Summary:
+- The page now reads as mantis.works-style clinical paper: colossal black typography, mono frame rails, film grain, gold shard — and the WebGL bottle floats IN FRONT of every headline, occluding the letters exactly as requested ("el 3D nunca detrás de las letras").
+- Full layer contract documented in LandingPage.tsx header comment for future agents: headlines z-10, canvas z-20, interactive z-30.
+- Backend untouched; APIs/DB intact; DB left clean after test-order wipe.
