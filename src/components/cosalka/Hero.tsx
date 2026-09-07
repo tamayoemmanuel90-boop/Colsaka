@@ -2,15 +2,15 @@
 
 import { motion } from "framer-motion";
 import { scrollToSection } from "@/hooks/use-smooth-scroll";
-import { FLAGSHIP_SLUG } from "@/lib/cosalka/content";
+import { FLAGSHIP_SLUG, HERO } from "@/lib/cosalka/content";
 import { GlowTitle } from "./GlowTitle";
 import { useCart } from "@/store/cart";
 import { toast } from "sonner";
 
 /**
- * Hero — Mantis-style: one colossal lowercase word, clinical mono micro-copy,
- * dual CTA. The 3D bottle floats IN FRONT of the headline (canvas z-20),
- * so the product literally owns the word.
+ * Hero — mirror of nutragen.mx's opening hook, Cosalka luxury voice:
+ * colossal question "¿te engañan con tu propia piel?" with the 3D bottle
+ * floating IN FRONT of the letters (canvas z-20 > text z-10).
  */
 export function Hero() {
   const add = useCart((s) => s.add);
@@ -26,24 +26,15 @@ export function Hero() {
       data-stage="hero"
       className="relative flex min-h-[102svh] flex-col items-center justify-center overflow-hidden px-5"
     >
-      {/* colossal headline — sits BEHIND the bottle (z-10 < canvas z-20) */}
+      {/* colossal hook — sits BEHIND the bottle (z-10 < canvas z-20) */}
       <div className="relative z-10 w-full max-w-[1700px] text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.25 }}
-          className="mb-6 font-mono text-[9px] uppercase tracking-[0.42em] text-black/45"
+          className="mb-6 font-mono text-[9px] uppercase tracking-[0.42em] text-black/45 sm:text-[10px]"
         >
-          Cosalka® — Lab clínico
-        </motion.p>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.1, delay: 0.55 }}
-          className="mb-7 font-mono text-[10px] uppercase tracking-[0.4em] text-black/50 sm:text-[11px]"
-        >
-          de vanguardia — clínicamente formulada
+          {HERO.kicker}
         </motion.p>
 
         <GlowTitle
@@ -52,9 +43,25 @@ export function Hero() {
           delay={0.4}
           stagger={0.024}
           charClassName=""
-          className="text-[clamp(2.7rem,11vw,10.5rem)] font-medium leading-[0.96] tracking-[-0.045em] text-ink"
-          lines={[[{ t: "nutragenética" }, { t: ".", c: "gold-text glow-gold" }]]}
+          className="text-[clamp(2.5rem,9.4vw,9rem)] font-medium leading-[0.98] tracking-[-0.045em] text-ink"
+          lines={[
+            [
+              { t: "¿te " },
+              { t: "engañan", c: "gold-text glow-gold" },
+              { t: " con" },
+            ],
+            [{ t: "tu propia piel?" }],
+          ]}
         />
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.1, delay: 0.85 }}
+          className="mt-7 font-mono text-[9px] uppercase leading-relaxed tracking-[0.32em] text-black/50 sm:text-[10.5px]"
+        >
+          {HERO.sub}
+        </motion.p>
       </div>
 
       {/* CTAs — float ABOVE the bottle like a badge (z-30 > canvas) */}
@@ -62,7 +69,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 1.7 }}
-        className="relative z-30 mt-12 flex flex-col items-center justify-center gap-3.5 pointer-events-auto sm:flex-row"
+        className="pointer-events-auto relative z-30 mt-12 flex flex-col items-center justify-center gap-3.5 sm:flex-row"
       >
         <button
           onClick={buyNow}
@@ -86,9 +93,9 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2.2, duration: 1 }}
-        onClick={() => scrollToSection("spotlight")}
-        className="cue-float absolute bottom-8 left-1/2 z-30 -translate-x-1/2 cursor-pointer p-2 outline-none focus-visible:ring-2 focus-visible:ring-gold/60 pointer-events-auto"
-        aria-label="Desliza para explorar el producto en 3D"
+        onClick={() => scrollToSection("verdad")}
+        className="cue-float pointer-events-auto absolute bottom-8 left-1/2 z-30 -translate-x-1/2 cursor-pointer p-2 outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+        aria-label="Desliza para descubrir la verdad"
       >
         <svg width="14" height="26" viewBox="0 0 14 26" fill="none" aria-hidden>
           <path

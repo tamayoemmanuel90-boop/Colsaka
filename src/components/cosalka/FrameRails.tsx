@@ -18,9 +18,9 @@ export function FrameRails() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1.4, delay: 0.9 }}
     >
-      {/* top-center "weather" line — Mantis homage */}
+      {/* top-center "weather" line — shipping & guarantee announce */}
       <div className={`${RAIL} left-1/2 top-[96px] hidden -translate-x-1/2 sm:block`}>
-        Lab. central — pureza 99.9%
+        Envíos 24/72 h — garantía 30 días — rutina dos pasos
       </div>
 
       {/* vertical side rails */}
@@ -28,13 +28,13 @@ export function FrameRails() {
         className={`${RAIL} left-5 top-1/2 hidden -translate-y-1/2 md:block`}
         style={{ writingMode: "vertical-rl" }}
       >
-        Nutragenética — Clínica — 500 ml
+        Nutragen — Cosalka — rutina dos pasos — 500 ml
       </div>
       <div
         className={`${RAIL} right-5 top-1/2 hidden -translate-y-1/2 md:block`}
         style={{ writingMode: "vertical-rl" }}
       >
-        40.4168° N — 3.7038° W · Madrid
+        Sin corticoides — Sin esteroides — Vegano
       </div>
 
       {/* bottom corners */}

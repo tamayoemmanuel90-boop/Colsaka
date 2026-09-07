@@ -16,7 +16,7 @@ export interface TitlePiece {
 
 interface GlowTitleProps {
   lines: Array<Array<TitlePiece>>;
-  as?: "h1" | "h2";
+  as?: "h1" | "h2" | "p";
   className?: string;
   charClassName?: string;
   delay?: number;

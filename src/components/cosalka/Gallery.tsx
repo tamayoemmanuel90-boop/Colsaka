@@ -76,8 +76,9 @@ function ProductCard({ product, index }: { product: ProductDTO; index: number })
 }
 
 /**
- * Gallery — colossal heading behind the canvas; the 2×2 card grid stays on
- * the LEFT so the bottle keeps the right side of the stage at checkout pose.
+ * 08 · Tienda — nutragen.mx's "Paquete Nutragen / de un vistazo" offer.
+ * Colossal heading behind the canvas; the 2×2 card grid stays on the LEFT
+ * so the bottle keeps the right side of the stage at checkout pose.
  */
 export function Gallery() {
   const { products, loading } = useProducts();
@@ -97,7 +98,7 @@ export function Gallery() {
             transition={{ duration: 0.8 }}
             className="font-mono text-[9px] uppercase tracking-[0.36em] text-black/45"
           >
-            03 — Tienda · 500 ml
+            08 — Tienda · 500 ml
           </motion.p>
 
           <GlowTitle
@@ -107,8 +108,8 @@ export function Gallery() {
             className="mt-7 text-[clamp(2.5rem,5.8vw,5.4rem)] font-medium leading-[1.03] tracking-[-0.04em] text-ink"
             lines={[
               [
-                { t: "la colección " },
-                { t: "nutragen.", c: "gold-text glow-gold" },
+                { t: "tu paquete, " },
+                { t: "de un vistazo.", c: "gold-text glow-gold" },
               ],
             ]}
           />

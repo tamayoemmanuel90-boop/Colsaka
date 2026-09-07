@@ -8,19 +8,36 @@
  * The canvas renders ABOVE the giant typography (z-20), so the bottle is
  * the absolute protagonist — it occludes the headlines at every stage.
  *
- * Stages (DOM order):
- *   hero → spotlight (bottle left, giant outline copy right)
- *        → science  (exploded clinical layers, centered)
- *        → gallery  (right-side checkout position)
- *        → contact  (ascends off-screen, discreet exit)
+ * Stage narrative mirrors nutragen.mx (same sections, Cosalka voice):
+ *   hero     — hook "¿te engañan con tu propia piel?" (center)
+ *   verdad   — sin corticoides / sin rebote (left)
+ *   rutina   — doble acción paso 1 + paso 2 (center between columns)
+ *   actua    — cómo actúa · exploded clinical layers (center, hotspots)
+ *   origen   — la historia padre e hijo (left)
+ *   esno     — qué es / qué no es (right)
+ *   habitos  — cuatro hábitos (small, deep back)
+ *   voces    — personas reales, resultados reales (left)
+ *   gallery  — tienda · la colección (right checkout position)
+ *   envios   — envíos a toda Europa y LATAM (small, back)
+ *   garantia — te acompañamos 30 días (center, behind the seal)
+ *   faq      — dudas medidas (right, compact)
+ *   contacto — closing statement (ascends off-screen)
  */
 
 export type StageName =
   | "hero"
-  | "spotlight"
-  | "science"
+  | "verdad"
+  | "rutina"
+  | "actua"
+  | "origen"
+  | "esno"
+  | "habitos"
+  | "voces"
   | "gallery"
-  | "contact";
+  | "envios"
+  | "garantia"
+  | "faq"
+  | "contacto";
 
 export interface StagePose {
   /** position */
@@ -48,12 +65,20 @@ export const scrollBus = {
 
 /** Keyframe poses anchored to each stage element's start. */
 export const STAGE_POSES: Record<StageName, StagePose> = {
-  /*           x      y      z      rx     ry     explode scale */
-  hero:      { x: 0,     y: -0.42, z: 0.85,  rx: 0.05,  ry: 0.1,  explode: 0, scale: 1 },
-  spotlight: { x: -2.42, y: -0.14, z: 0.42,  rx: 0.03,  ry: 1.18, explode: 0, scale: 1.12 },
-  science:   { x: 0,     y: -0.08, z: -0.15, rx: 0.07,  ry: 2.6,  explode: 1, scale: 1.04 },
-  gallery:   { x: 2.55,  y: 0.1,   z: 0.3,   rx: -0.03, ry: 4.3,  explode: 0, scale: 0.86 },
-  contact:   { x: 1.35,  y: 5,     z: -0.5,  rx: 0.14,  ry: 5.6,  explode: 0, scale: 0.6 },
+  /*           x      y      z      rx      ry     explode scale */
+  hero:     { x: 0,     y: -0.42, z: 0.85,  rx: 0.05,  ry: 0.1,  explode: 0, scale: 1 },
+  verdad:   { x: -2.35, y: -0.12, z: 0.5,   rx: 0.04,  ry: 1.05, explode: 0, scale: 1.06 },
+  rutina:   { x: 0,     y: -0.34, z: 0.18,  rx: 0.05,  ry: 1.85, explode: 0, scale: 0.98 },
+  actua:    { x: 0,     y: -0.08, z: -0.15, rx: 0.07,  ry: 2.6,  explode: 1, scale: 1.04 },
+  origen:   { x: -2.5,  y: 0.02,  z: 0.3,   rx: -0.02, ry: 3.55, explode: 0, scale: 0.92 },
+  esno:     { x: 2.5,   y: -0.05, z: 0.35,  rx: -0.03, ry: 4.3,  explode: 0, scale: 0.9 },
+  habitos:  { x: 0,     y: -0.55, z: -1.5,  rx: 0.08,  ry: 5.05, explode: 0, scale: 0.78 },
+  voces:    { x: -2.45, y: -0.05, z: 0.45,  rx: 0.03,  ry: 5.8,  explode: 0, scale: 0.94 },
+  gallery:  { x: 2.55,  y: 0.1,   z: 0.3,   rx: -0.03, ry: 6.6,  explode: 0, scale: 0.86 },
+  envios:   { x: 0,     y: -0.6,  z: -1.3,  rx: 0.06,  ry: 7.35, explode: 0, scale: 0.7 },
+  garantia: { x: 0,     y: -0.38, z: 0.05,  rx: 0.05,  ry: 8.15, explode: 0, scale: 0.95 },
+  faq:      { x: 2.6,   y: 0.05,  z: 0.2,   rx: -0.04, ry: 8.9,  explode: 0, scale: 0.72 },
+  contacto: { x: 0.9,   y: 4.6,   z: -0.5,  rx: 0.12,  ry: 9.6,  explode: 0, scale: 0.55 },
 };
 
 const POSE_KEYS: Array<keyof StagePose> = [
@@ -184,43 +209,62 @@ export function currentStage(p: number): StageName {
   return cur;
 }
 
+/* ── Viewport adapter ──────────────────────────────────────────────── */
+
+/** Stacked-layout (mobile/tablet) recentering table per stage.
+ *  dx/dy/dz added · ds multiplies scale · applied × stackT (0→1). */
+const STACK_ADAPT: Record<
+  StageName,
+  { dx: number; dy: number; dz: number; ds: number }
+> = {
+  hero:     { dx: 0, dy: -0.95, dz: 0,    ds: -0.3 },
+  verdad:   { dx: 0, dy: -0.78, dz: 0.3,  ds: -0.44 },
+  rutina:   { dx: 0, dy: -0.55, dz: 0.1,  ds: -0.22 },
+  actua:    { dx: 0, dy: 0.34,  dz: -0.9, ds: -0.1 },
+  origen:   { dx: 0, dy: -0.78, dz: 0.3,  ds: -0.46 },
+  esno:     { dx: 0, dy: -0.88, dz: 0.3,  ds: -0.48 },
+  habitos:  { dx: 0, dy: -0.58, dz: -0.5, ds: -0.38 },
+  voces:    { dx: 0, dy: 0.68,  dz: 0.35, ds: -0.4 },
+  gallery:  { dx: 0, dy: 0.72,  dz: 0.3,  ds: -0.26 },
+  envios:   { dx: 0, dy: 0.6,   dz: -0.3, ds: -0.2 },
+  garantia: { dx: 0, dy: -0.95, dz: -0.2, ds: -0.36 },
+  faq:      { dx: 0, dy: 0.7,   dz: 0.3,  ds: -0.24 },
+  contacto: { dx: 0, dy: 0,     dz: 0,    ds: 0 },
+};
+
 /** Viewport-adaptive mutation: keeps the bottle composed on any width. */
 export function adaptPoseToViewport(pose: StagePose, vw: number): StagePose {
   const xf = Math.min(1, Math.max(0.28, Math.pow(vw / 1260, 0.92)));
   pose.x *= xf;
 
-  // On tablet/mobile, stacked stages shift the bottle vertically instead
-  // of sideways.
+  // On tablet/mobile, stacked stages recenter the bottle and shift it
+  // vertically so it never covers the section's readable column.
   const stackT = Math.min(1, Math.max(0, (1080 - vw) / 420)); // 1 → fully stacked
   if (stackT <= 0) return pose;
 
+  const a = STACK_ADAPT[currentStage(scrollBus.p)];
   const tiny = vw < 500;
+  const k = tiny ? 1.08 : 1;
 
-  switch (currentStage(scrollBus.p)) {
-    case "hero":
-      // drop the bottle below the giant word so the headline stays readable
-      pose.y -= 0.95 * stackT;
-      pose.scale *= 1 - 0.3 * stackT;
-      break;
-    case "spotlight":
-      // recenter + lift above the copy (mobile spotlight reserves top space)
-      pose.x *= 1 - 0.88 * stackT;
-      pose.y += (tiny ? 1.95 : 0.98) * stackT;
-      pose.z += 0.55 * stackT;
-      pose.scale *= 1 - (tiny ? 0.58 : 0.3) * stackT;
-      break;
-    case "science":
-      pose.z -= 0.9 * stackT;
-      pose.y += 0.34 * stackT;
-      pose.scale *= 1 - 0.1 * stackT;
-      break;
-    case "gallery":
-      pose.x *= 1 - 0.85 * stackT;
-      pose.y += 0.72 * stackT;
-      pose.scale *= 1 - 0.26 * stackT;
-      break;
-    default:
-      break;
+  pose.x *= 1 - 0.92 * stackT;
+  pose.y += a.dy * stackT * k;
+  pose.z += a.dz * stackT;
+  pose.scale *= 1 + a.ds * stackT;
+
+  // side stages on tiny phones float a bit higher for legibility
+  if (tiny) {
+    const st = currentStage(scrollBus.p);
+    if (
+      (st === "verdad" ||
+        st === "origen" ||
+        st === "voces" ||
+        st === "esno" ||
+        st === "gallery" ||
+        st === "faq") &&
+      a.dy > 0
+    ) {
+      pose.y += 0.35 * stackT;
+    }
   }
   return pose;
 }

@@ -72,7 +72,6 @@ export function makeLabelTexture(): THREE.CanvasTexture {
       ctx.font = font;
       ctx.fillStyle = fill;
       try {
-        /*@ts-expect-error experimental API*/
         ctx.letterSpacing = `${spacing}px`;
       } catch {
         /* older engines: draw unspaced */
@@ -81,7 +80,6 @@ export function makeLabelTexture(): THREE.CanvasTexture {
       ctx.textBaseline = "middle";
       ctx.fillText(text, W / 2 + spacing / 2, y);
       try {
-        /*@ts-expect-error experimental API*/
         ctx.letterSpacing = "0px";
       } catch {
         /* noop */

@@ -243,6 +243,16 @@ html.lenis body {
   animation: cueFloat 2.1s ease-in-out infinite;
 }
 
+/* ── Clinical guarantee seal — slow premium rotation ────────────────── */
+.seal-spin {
+  animation: sealSpin 26s linear infinite;
+}
+@keyframes sealSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ── Film grain overlay ─────────────────────────────────────────────── */
 .grain::before {
   content: "";
@@ -259,7 +269,8 @@ html.lenis body {
   .glow-gold,
   .glow-soft,
   .cue-float,
-  .ring-pulse {
+  .ring-pulse,
+  .seal-spin {
     animation: none;
   }
 }

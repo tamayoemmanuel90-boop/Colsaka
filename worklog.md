@@ -100,3 +100,24 @@ Stage Summary:
 - The page now reads as mantis.works-style clinical paper: colossal black typography, mono frame rails, film grain, gold shard — and the WebGL bottle floats IN FRONT of every headline, occluding the letters exactly as requested ("el 3D nunca detrás de las letras").
 - Full layer contract documented in LandingPage.tsx header comment for future agents: headlines z-10, canvas z-20, interactive z-30.
 - Backend untouched; APIs/DB intact; DB left clean after test-order wipe.
+
+---
+Task ID: 10 (nutragen.mx section parity rebuild)
+Agent: orchestrator (Z.ai Code main)
+Task: User request — "revisa la pagina completa: https://www.nutragen.mx/ — SACA LAS MISMAS SECCIONES Y MAS, PERO HASLO COMO PARA ESTA WEB" (extract the same sections and more from nutragen.mx, rebuild them in the Cosalka luxury 3D style)
+
+Work Log:
+- Analyzed nutragen.mx via agent-browser (page_reader returned empty: JS-heavy site): extracted full heading map + ~120 text nodes. Key discovery: Nutragen IS a Cosalka brand ("Fundadores de Nutragen · Cosalka, México", "Una marca de Cosalka"), psoriasis/descamación care, 2-step routine, direct-response long-form.
+- Mapped nutragen.mx narrative beats → 13 scroll stages: hero (hook "¿Te engañan con tu propia piel?") → verdad (sin corticoides/apagafuegos) → rutina (Doble Acción Paso 1+2) → actua (Cómo actúa + estrato córneo = exploded bottle + hotspots) → origen (diagnóstico "un par de meses", padre e hijo) → esno (Qué es y qué no es) → habitos (Cuatro hábitos) → voces (Personas reales. Fechas reales.) → gallery/tienda (Tu paquete, de un vistazo) → envios (24/72h, gratis desde 150€) → garantia (No vendemos un frasco · 30 días + rotating seal) → faq (Las dudas que más nos escriben, 6 items) → cierre (No necesitas una piel perfecta + newsletter) → footer.
+- scroll-engine.ts: StageName union 5→13, new STAGE_POSES choreography (bottle: center→left→center-between-steps→exploded→left→right→deep-back→left→right-checkout→back→center-seal→right-small→exit), STACK_ADAPT table-driven mobile recentering replacing per-case switch, tiny-phone extra-lift guard.
+- content.ts rewritten: NAV (Sobre nosotros→origen), HERO/VERDAD/RUTINA/ORIGEN/ESNO/HABITOS/VOCES/ENVIOS/GARANTIA/CIERRE exports, HOTSPOTS re-aimed at skin science (estrato córneo/nanopartículas/agua clínica), FAQ 4→6 real nutragen questions, SCIENCE_STATS kept.
+- New components: SectionHead.tsx (shared kicker+GlowTitle header + fade preset), Verdad, Rutina (symmetric Paso 1/Paso 2 cards around center bottle), Origen (mono timeline), EsNoEs (+/− hairline lists), Habitos (4 editorial columns), Voces (3 real quote cards: Guadalupe R./María E./José Manuel + legal line), Envios (stats strip), Garantia (rotating SVG clinical seal, textPath arc, static 30 center), Cierre (statement + protocol CTA + "¿Sigues pensando en tu piel?" email capture with validation toast).
+- Edited: Hero (hook headline "¿te engañan / con tu propia piel?" gold-glow on "engañan", nutragen kicker/sub), Science→"la ciencia que se ve" + stats strip + hotspot hint (id=actua), Gallery→"tu paquete, de un vistazo" (kicker 08), Faq (data-stage=faq, kicker 11), Footer (tagline "Escucha tu piel · Respétala · Transfórmala", "Una marca de Cosalka" legal, no data-stage), FrameRails (announce rail "Envíos 24/72 h — garantía 30 días — rutina dos pasos", claim rails), HotspotNodes (visible at stage actua), LandingPage (13-section composition + layer contract docs). Deleted Spotlight.tsx.
+- globals.css: .seal-spin rotation (26s, ring-only group, static center numerals) + reduced-motion guard. GlowTitle as type extended to "p".
+- Fixed during build/verify: STACK_ADAPT object-literal syntax error (tsc), GlowTitle as="p" TS error, unused @ts-expect-error in make-label-texture.ts, guarantee seal center "30"/"DÍAS" missing x="98" (rendered at x=0), Garantia seal restructured so only the ring rotates.
+- E2E agent-browser 1440×900 + 390×844: hero hook + bottle protagonist occluding headline ✓, 11 sections screenshotted ✓, 3 hotspots mount at actua ✓, hotspot click → clinical card ✓, FAQ accordion (6 items, gold open state) ✓, buy→drawer→checkout→server REF CMTRRTQAO000 ✓ (test order deleted, Order table clean), nav Lenis anchor scroll (scrollY 4105 ≈ origen 4113) ✓ (drawer open = scroll lock, not a bug), mobile: bottle-below-content table fixes for verdad/origen/esno/habitos/garantia after screenshot review ✓, footer sticky + legal bar ✓, console clean, lint clean, dev.log clean.
+
+Stage Summary:
+- Landing now mirrors nutragen.mx section-for-section (13 narrative beats + footer) while keeping the Cosalka mantis-style paper aesthetic and the 3D bottle as absolute protagonist (canvas z-20 over type z-10, interactive z-30).
+- Scroll choreography extended to 13 poses with table-driven mobile adaptation (bottle drops below content columns on stacked layouts).
+- Backend untouched (APIs/DB intact, DB left clean); only frontend + scroll-engine + content files changed.

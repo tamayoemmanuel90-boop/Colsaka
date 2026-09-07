@@ -10,14 +10,13 @@ import { GlowTitle } from "./GlowTitle";
 
 /**
  * Footer — clinical paper, colossal gold wordmark, hairline legal bar.
- * Sits on the interactive layer (z-30) above the canvas; by the time it
- * fills the viewport the bottle has already ascended off-screen.
+ * Sits on the interactive layer (z-30) above the canvas; the Cierre stage
+ * owns the final choreography, so the footer carries no data-stage.
  */
 export function Footer() {
   return (
     <footer
-      id="contacto"
-      data-stage="contact"
+      id="pie"
       className="pointer-events-none relative z-30 mt-auto w-full border-t border-black/[0.08] bg-[#eaeaec]/90 px-5 pb-8 pt-24 backdrop-blur-sm sm:px-10"
     >
       <div className="pointer-events-auto mx-auto flex max-w-4xl flex-col items-center text-center">
@@ -48,7 +47,7 @@ export function Footer() {
           transition={{ duration: 0.9, delay: 0.35 }}
           className="mt-5 font-mono text-[9px] uppercase tracking-[0.3em] text-black/40"
         >
-          Laboratorio nutragenético — pureza como único compromiso
+          Escucha tu piel · Respétala · Transfórmala
         </motion.p>
 
         {/* nav */}
@@ -106,7 +105,7 @@ export function Footer() {
       {/* legal bar */}
       <div className="pointer-events-auto mx-auto mt-14 flex max-w-6xl flex-col items-center justify-between gap-3 border-t border-black/[0.07] pt-6 sm:flex-row">
         <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-black/35">
-          © 2025 Cosalka Labs S.L. — Nutragen®
+          © 2025 Cosalka Labs S.L. — Nutragen® · Una marca de Cosalka
         </p>
         <ul className="flex items-center gap-6 font-mono text-[9px] uppercase tracking-[0.18em] text-black/35">
           {["Aviso legal", "Privacidad", "Cookies"].map((x) => (

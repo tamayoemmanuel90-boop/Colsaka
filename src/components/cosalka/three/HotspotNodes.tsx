@@ -19,7 +19,7 @@ export function HotspotNodes({
   onSelect: (id: string | null) => void;
 }) {
   const stage = useStageStore((s) => s.active);
-  const visible = stage === "spotlight";
+  const visible = stage === "actua";
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

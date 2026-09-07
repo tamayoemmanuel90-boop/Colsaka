@@ -13,6 +13,7 @@ import { FAQ_ITEMS } from "@/lib/cosalka/content";
 import { GlowTitle } from "./GlowTitle";
 
 /**
+ * 11 · FAQ — nutragen.mx's "Las dudas que más nos escriben".
  * SSR renders a static, crawlable version (questions + answers).
  * The interactive Radix accordion mounts right after hydration — this
  * sidesteps useId SSR/hydration divergence inside Radix internals while
@@ -27,9 +28,13 @@ export function Faq() {
   }, []);
 
   return (
-    <section id="faq" className="relative w-full px-5 py-[16svh] sm:px-10">
+    <section
+      id="faq"
+      data-stage="faq"
+      className="relative w-full px-5 py-[16svh] sm:px-10"
+    >
       <div className="mx-auto max-w-3xl">
-        {/* heading — behind the exiting bottle like every headline */}
+        {/* heading — behind the drifting bottle like every headline */}
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -37,7 +42,7 @@ export function Faq() {
           transition={{ duration: 0.8 }}
           className="relative z-10 font-mono text-[9px] uppercase tracking-[0.36em] text-black/45"
         >
-          04 — FAQ
+          11 — FAQ
         </motion.p>
 
         <GlowTitle
@@ -47,8 +52,8 @@ export function Faq() {
           className="relative z-10 mt-7 text-[clamp(2.2rem,4.6vw,4.2rem)] font-medium leading-[1.05] tracking-[-0.04em] text-ink"
           lines={[
             [
-              { t: "preguntas, " },
-              { t: "respuestas medidas.", c: "gold-text glow-gold" },
+              { t: "las dudas que más " },
+              { t: "nos escriben.", c: "gold-text glow-gold" },
             ],
           ]}
         />
