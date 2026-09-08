@@ -146,3 +146,21 @@ Stage Summary:
 - Every string is traceable to a client source: etiquetas.pdf (products/claims/ingredients/legal), ebook (science/habits/protocol), nutragen.mx (narrative/structure/offer), Drive photos+videos (social proof).
 - 500 ml-only rule enforced across catalog, 3D label, gallery badges and copy (480 mL render deliberately excluded).
 - Pending from client: real prices (currently 899/899/1590 MXN placeholders), real contact email (clinica@cosalka.com placeholder), full antes/después pairs for piernas/espalda not yet mounted (photos saved in public/images/client/).
+
+---
+Task ID: 12
+Agent: orchestrator (Z.ai Code main)
+Task: User request — "activar pm2" (run the dev server under PM2 process manager)
+
+Work Log:
+- Verified port 3000 was free (no running dev server, no duplicate instances).
+- Installed pm2 globally via `bun install -g pm2` (binary at /usr/local/bin/pm2, node v24 available).
+- Started the Next.js dev server under PM2: `pm2 start bun --name cosalka --interpreter none -- run dev` (fork mode, cwd /home/z/my-project).
+- Confirmed server readiness: HTTP 200 on /, real page content renders (Nutragen / nutragenética strings present), GET /api/products returns the 3 real MXN SKUs (500 ml catalog intact).
+- Saved process list with `pm2 save` → /home/z/.pm2/dump.pm2 (resurrectable).
+- Confirmed the package.json dev script's `tee dev.log` still works under PM2 — /home/z/my-project/dev.log continues receiving logs (GET / and prisma:query entries visible).
+
+Stage Summary:
+- Dev server now runs as PM2 process "cosalka" (id 0, online, auto-restarts on crash).
+- Useful commands: `pm2 ls` / `pm2 logs cosalka` / `pm2 restart cosalka` / `pm2 stop cosalka` / `pm2 resurrect`.
+- No code changes; landing page, APIs and DB untouched.
