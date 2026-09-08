@@ -1,5 +1,19 @@
 import type { StageName } from "@/lib/scroll-engine";
 
+/* ────────────────────────────────────────────────────────────────────────
+   Cosalka · Nutragen — REAL client content.
+   Sources (client Drive folder "Nutragen logo y productos"):
+   · COLSALKA NUTRAGEN etiquetas pdf  → claims, 500 ml, anti-picor,
+     ingredientes (Neem, Cola de Caballo, Ortiga, Verbena, Hialurónico),
+     "Hecho en México", "No probado en animales", Cosalka International.
+   · ebook_psoriasis_nutragen_final.pdf → ciencia real (IL-17, TNF-α,
+     NF-kB, intestino permeable, Candida, sal marina 84 minerales,
+     protocolo maestro 30 días, 4 pilares de hábitos).
+   · nutragen.mx (sitio del cliente) → estructura narrativa y promesas
+     ("Paquete Doble Acción", "Personas reales. Fechas reales.",
+     "Te acompañamos 30 días", "México, Estados Unidos y toda LATAM").
+   ──────────────────────────────────────────────────────────────────────── */
+
 /* ── Navigation ─────────────────────────────────────────────────────── */
 export const NAV_LINKS: Array<{ label: string; target: string }> = [
   { label: "Inicio", target: "inicio" },
@@ -11,7 +25,7 @@ export const NAV_LINKS: Array<{ label: string; target: string }> = [
 
 /* ── Hero hook (mirror of nutragen.mx's opening question) ───────────── */
 export const HERO = {
-  kicker: "Ciencia · Innovación · Resultados",
+  kicker: "Tecnología Nutragenética · Hecho en México",
   sub: "parches temporales, no — barrera y fortaleza. nutragenética de vanguardia.",
 };
 
@@ -22,22 +36,22 @@ export const VERDAD = {
   chips: ["Sin esteroides", "Sin cortisona", "Sin efecto rebote"],
 };
 
-/* ── 02 · Doble acción — paso 1 + paso 2 ────────────────────────────── */
+/* ── 02 · Doble acción — paso 1 + paso 2 (etiquetas reales) ─────────── */
 export const RUTINA = {
   kicker: "02 — Doble acción",
   steps: [
     {
       n: "Paso 1",
-      title: "Suaviza y renueva",
-      body: "Reduce la apariencia de escamas y rojeces con humectación profunda.",
+      title: "Treatment · anti-picor",
+      body: "Crema orgánica que ayuda a eliminar escamas y reducir rojeces.",
     },
     {
       n: "Paso 2",
-      title: "Calma y protege",
-      body: "Alivia la comezón y la tirantez. Confort inmediato, absorción en un minuto.",
+      title: "Moisturizer · calma",
+      body: "Hidratación profunda que alivia la comezón y la tirantez.",
     },
   ],
-  meta: "Paso 1 + Paso 2 · 500 ml · garantía de 30 días",
+  meta: "Paso 1 + Paso 2 · 500 ml cada uno · garantía de 30 días",
 };
 
 /* ── 3D Hotspots (anchored to the bottle in the actúa stage) ────────── */
@@ -56,28 +70,28 @@ export interface HotspotDef {
 export const HOTSPOTS: HotspotDef[] = [
   {
     id: "sellado",
-    title: "Barrera del estrato córneo",
-    body: "La capa más externa de la epidermis: allí actúa la fórmula.",
-    stat: "Capa 1",
-    statLabel: "Diana clínica",
+    title: "Complejo botánico Neem + Ortiga",
+    body: "El Neem purifica y la Ortiga calma la picazón desde la primera aplicación.",
+    stat: "Anti-Picor",
+    statLabel: "Acción clínica",
     position: [0.0, 1.32, 0],
     side: "right",
   },
   {
     id: "nanoparticulas",
-    title: "Nanopartículas activas",
-    body: "Matriz liposomal de ~120 nm que cruza los espacios intercelulares.",
-    stat: "3.4×",
-    statLabel: "Absorción medida",
+    title: "Cola de Caballo + Ácido hialurónico",
+    body: "Silicio orgánico que repara la matriz de colágeno e hidrata en profundidad.",
+    stat: "500 ml",
+    statLabel: "Formato clínico",
     position: [-0.68, -0.1, 0.3],
     side: "right",
   },
   {
     id: "pureza",
-    title: "Agua clínica estructurada",
-    body: "Hidratación sin fragancia ni corticoides. Vegana y sin retoques.",
-    stat: "99.97%",
-    statLabel: "Pureza HPLC",
+    title: "Fórmula orgánica certificada",
+    body: "Sin corticoides ni esteroides. Vegana y no testeada en animales.",
+    stat: "100%",
+    statLabel: "Origen botánico",
     position: [0.52, -0.95, 0.26],
     side: "left",
   },
@@ -94,15 +108,15 @@ export const ORIGEN = {
   ],
 };
 
-/* ── 05 · Qué es / qué no es ────────────────────────────────────────── */
+/* ── 05 · Qué es / qué no es (claims reales de etiqueta) ────────────── */
 export const ESNO = {
   kicker: "05 — Honestidad clínica",
   es: [
     "Cosmético tópico de uso diario",
-    "Ingredientes de origen natural, vegano",
-    "Textura ligera de absorción rápida",
-    "Sin fragancia añadida ni colorantes",
-    "Para toda la familia",
+    "Con Neem, Cola de Caballo, Ortiga y Verbena",
+    "Ácido hialurónico + manteca de karité",
+    "No probado en animales",
+    "Hecho en México por Cosalka International",
   ],
   noEs: [
     "No es un medicamento",
@@ -113,31 +127,32 @@ export const ESNO = {
   ],
 };
 
-/* ── 06 · Cuatro hábitos ────────────────────────────────────────────── */
+/* ── 06 · Cuatro hábitos (protocolo real del ebook "Domina la
+        Psoriasis" — capítulos 2, 3 y 4 + protocolo maestro) ─────────── */
 export const HABITOS = [
   {
     id: "agua",
-    title: "Agua constante",
-    body: "La hidratación desde dentro reduce tirantez y descamación.",
+    title: "Agua viva con sal marina",
+    body: "Una pizca de sal marina virgen: 84 minerales que reactivan la hidratación celular.",
   },
   {
     id: "sol",
-    title: "Sol con protector",
-    body: "Incluso nublado: la quemadura dispara el brote.",
+    title: "Jugos verdes al extractor",
+    body: "Pepino, apio, espinaca y limón: magnesio líquido que apaga el sistema nervioso.",
   },
   {
     id: "roce",
-    title: "Sin frotar",
-    body: "El roce reactiva la placa. Palmaditas al secar, siempre.",
+    title: "Sudar y mover la linfa",
+    body: "30 minutos de caminata o ejercicio: abrir poros, expulsar ácidos y frenar el cortisol.",
   },
   {
     id: "constancia",
-    title: "Dos veces al día",
-    body: "Si te lavas los dientes, puedes con esto. Constancia lo es todo.",
+    title: "Eje emocional en calma",
+    body: "Lo que la boca calla, la piel lo grita. Respira 4 segundos, exhala 8. Todos los días.",
   },
 ];
 
-/* ── 07 · Voces — testimonios reales ────────────────────────────────── */
+/* ── 07 · Voces — testimonios reales + media real del cliente ───────── */
 export const VOCES = {
   kicker: "07 — Personas reales",
   quote: "No pidas milagros. Queremos que lo compruebes tú mismo.",
@@ -162,58 +177,78 @@ export const VOCES = {
     },
   ],
   legal: "Experiencias individuales. Los resultados varían según cada piel.",
+  /** Real before/after case photos from the client archive. */
+  casos: [
+    {
+      before: "/images/client/antes-cuero.jpg",
+      after: "/images/client/despues-cuero.jpg",
+      ctx: "Cuero cabelludo",
+      when: "Día 21",
+    },
+    {
+      before: "/images/client/antes-brazo.jpg",
+      after: "/images/client/despues-brazo.jpg",
+      ctx: "Antebrazo",
+      when: "Día 30",
+    },
+  ],
+  /** Real unscripted video testimonials from the client archive. */
+  videos: [
+    { src: "/video/testimonio-1.mp4", ctx: "Testimonio real · sin guion" },
+    { src: "/video/testimonio-2.mp4", ctx: "Testimonio real · sin guion" },
+  ],
 };
 
-/* ── 09 · Envíos ────────────────────────────────────────────────────── */
+/* ── 09 · Envíos (mercados reales: México · USA · LATAM) ────────────── */
 export const ENVIOS = {
   kicker: "09 — Envíos",
   stats: [
-    { value: "24/72 h", label: "Entrega península" },
-    { value: "150 €", label: "Envío gratis desde" },
+    { value: "24/72 h", label: "Entrega nacional" },
+    { value: "$1,500", label: "Envío gratis desde" },
     { value: "GPS", label: "Seguimiento en tiempo real" },
   ],
-  regiones: "España · Europa · México · Latinoamérica",
+  regiones: "México · Estados Unidos · toda Latinoamérica",
 };
 
-/* ── 10 · Garantía ──────────────────────────────────────────────────── */
+/* ── 10 · Garantía (nutragen.mx: "Te acompañamos 30 días") ──────────── */
 export const GARANTIA = {
   kicker: "10 — Garantía",
-  line: "Si sigues el protocolo y no ves resultados, te devolvemos el 100%. Sin letras chiquitas.",
+  line: "No te vendemos un frasco: te acompañamos 30 días. Si no ves resultados, te devolvemos el 100%.",
   email: "clinica@cosalka.com",
 };
 
-/* ── Science section cards (cómo actúa · exploded view) ─────────────── */
+/* ── Science section stats (ciencia real del ebook) ─────────────────── */
 export const SCIENCE_STATS = [
-  { value: "99.97%", label: "Pureza HPLC" },
-  { value: "3.4×", label: "Absorción" },
-  { value: "ISO 7", label: "Sala limpia" },
+  { value: "IL-17 · TNF-α", label: "Vía inflamatoria" },
+  { value: "84", label: "Minerales de sal marina" },
+  { value: "500 ml", label: "Formato clínico" },
 ];
 
-/* ── FAQ — las dudas que más nos escriben ───────────────────────────── */
+/* ── FAQ — las dudas que más nos escriben (respuestas reales) ───────── */
 export const FAQ_ITEMS = [
   {
     q: "¿Qué aporta usar Nutragen en casa?",
-    a: "Integra humectación y cuidado en tu horario con una rutina de dos pasos. Complementa tu día a día entre consultas; el dermatólogo sigue siendo quien evalúa tu piel.",
+    a: "Integra humectación y cuidado en tu horario con la rutina de dos pasos. Complementa tu día a día entre consultas; el dermatólogo sigue siendo quien evalúa tu piel.",
   },
   {
     q: "¿Contiene corticoides o esteroides?",
-    a: "No. Cero corticoides, cero esteroides, cero cortisona. Es una fórmula cosmética vegana, no un fármaco.",
+    a: "No. Cero corticoides, cero esteroides. Es una crema corporal orgánica con tecnología nutragenética: Neem, Cola de Caballo, Ortiga, Verbena y ácido hialurónico.",
   },
   {
     q: "¿Lo puedo usar en niños?",
-    a: "Sí. Al ser una fórmula vegana y sin fragancia es apta para toda la familia; en menores y pieles lesionadas consulta antes con un profesional.",
+    a: "Sí. Al ser una fórmula orgánica sin esteroides es apta para toda la familia; en menores y pieles lesionadas consulta antes con un profesional.",
   },
   {
     q: "¿Por qué el formato de 500 ml?",
-    a: "Es nuestra unidad clínica integral: un ciclo completo sellado en atmósfera inerte para estabilidad total.",
+    a: "Es nuestra unidad clínica: un ciclo completo del protocolo Doble Acción sellado para estabilidad total. Ningún frasco pequeño alcanza para los 30 días.",
   },
   {
-    q: "¿Cuánto tarda en llegar?",
-    a: "24–72 h en península con seguimiento incluido. Europa y LATAM en 3–7 días laborables.",
+    q: "¿Hacia dónde envían?",
+    a: "A todo México en 24–72 h con seguimiento, y también a Estados Unidos y toda Latinoamérica en 3–7 días laborables.",
   },
   {
     q: "¿Y si no veo resultados?",
-    a: "Tienes 30 días de garantía de devolución del 100% siguiendo el protocolo. Sin discutir y sin letras chiquitas.",
+    a: "No te vendemos un frasco: te acompañamos 30 días. Si sigues el protocolo y no ves resultados, te devolvemos el 100%. Sin letras chiquitas.",
   },
 ];
 
@@ -223,7 +258,7 @@ export const CIERRE = {
   cta: "Empezar mi protocolo",
 };
 
-/* ── Flagship reference for hero CTA ────────────────────────────────── */
-export const FLAGSHIP_SLUG = "nutragen-purity";
+/* ── Flagship reference for hero CTA (el offer real de nutragen.mx) ─── */
+export const FLAGSHIP_SLUG = "paquete-doble-accion";
 
 export type { StageName };

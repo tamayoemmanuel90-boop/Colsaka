@@ -18,7 +18,7 @@
  *   habitos  — cuatro hábitos (small, deep back)
  *   voces    — personas reales, resultados reales (left)
  *   gallery  — tienda · la colección (right checkout position)
- *   envios   — envíos a toda Europa y LATAM (small, back)
+ *   envios   — envíos a México, USA y LATAM (small, back)
  *   garantia — te acompañamos 30 días (center, behind the seal)
  *   faq      — dudas medidas (right, compact)
  *   contacto — closing statement (ascends off-screen)

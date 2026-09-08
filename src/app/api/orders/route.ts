@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import { ensureSeeded } from '@/lib/catalog-seed'
+import { ensureSeeded, STORE_CURRENCY } from '@/lib/catalog-seed'
 import { db } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
@@ -115,7 +115,7 @@ export async function POST(request: Request): Promise<NextResponse<CreateOrderSu
     const order = await db.order.create({
       data: {
         total,
-        currency: 'EUR',
+        currency: STORE_CURRENCY,
         items: JSON.stringify(lines),
         status: 'confirmed',
       },

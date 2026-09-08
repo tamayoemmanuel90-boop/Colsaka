@@ -121,3 +121,28 @@ Stage Summary:
 - Landing now mirrors nutragen.mx section-for-section (13 narrative beats + footer) while keeping the Cosalka mantis-style paper aesthetic and the 3D bottle as absolute protagonist (canvas z-20 over type z-10, interactive z-30).
 - Scroll choreography extended to 13 poses with table-driven mobile adaptation (bottle drops below content columns on stacked layouts).
 - Backend untouched (APIs/DB intact, DB left clean); only frontend + scroll-engine + content files changed.
+
+---
+Task ID: 11 (real client data integration — Drive folder scan)
+Agent: orchestrator (Z.ai Code main)
+Task: User shared Google Drive folder "Nutragen logo y productos" (17a7BjLSy_6mxxb_Tx1W_twyuO04uyPwE) — "escanea toda la carpeta y saca toda la info que quiere el cliente". Extract ALL client info and integrate it into the landing.
+
+Work Log:
+- Scanned Drive via agent-browser: inventoried 47 files (2 videos, 2 PDFs, 2 renders, 41 case photos "Foto de Mauricio Garcia"). Downloaded everything via drive.usercontent.google.com direct links → /home/z/my-project/client-assets/{pdf,images,video}.
+- Read etiquetas.pdf (2 pages): REAL product line discovered — PASO 1 "Nutragen Psoriasis Treatment" + PASO 2 "Nutragen Psoriasis Moisturizer", both "Crema Corporal Orgánica con Tecnología Nutragenética", CONT. NETO 500 ML, "Ayuda a eliminar escamas y reducir rojeces", ANTI PICOR, ingredients (agua desmineralizada, coco, oliva, karité, neem, cola de caballo, ortiga, verbena, dragó, ácido hialurónico, magnesio/zinc), "No probado en animales", "Hecho en México: Cosalka International S. de R.L. de C.V", cosalkainternational.com.
+- Read ebook_psoriasis_nutragen_final.pdf ("Domina la Psoriasis — Protocolo Integral de Remisión"): real science (IL-17, TNF-alfa, NF-kB, leaky gut, Candida albicans, 84 minerales de sal marina, estrato córneo) + protocolo maestro 30 días + 4 pilares (agua con sal marina, jugos verdes, ejercicio/linfa, eje emocional).
+- Visited nutragen.mx heading map again for narrative parity (Paquete Doble Acción, Personas reales, Te acompañamos 30 días, México/USA/LATAM).
+- Viewed client images: logo renders (bottles white + rose-gold COSALKA sphere emblem, silver caps), production photo (both bottles, real 500 ML labels), 43 case photos = antes/después patient documentation (Antes/Después/Día 1 overlays).
+- Assets → public/images/client/ (producto-paso1.jpg & paquete-doble-accion.jpg cropped from REAL production photo with sharp; producto-paso2.jpg from official render; antes/despues cuero+brazo+piernas+espalda; produccion-real.jpg) + public/video/testimonio-{1,2}.mp4. NOTE: logo_design_1.png (duo render) shows "480 mL" on Paso 1 → EXCLUDED from store per strict 500ml-only rule; only 500 ML assets used.
+- catalog-seed.ts rewritten: 3 REAL SKUs (paso-1-treatment 899, paso-2-moisturizer 899, paquete-doble-accion 1590 — MXN, placeholder prices pending client), real benefits from labels; STORE_CURRENCY=MXN; runSeed now deleteMany's retired SKUs. orders/route.ts currency → STORE_CURRENCY. products-client.ts fallback + formatPrice → es-MX/MXN.
+- content.ts rewritten with real data: RUTINA (Treatment anti-picor / Moisturizer calma), HABITOS = ebook's real 4 pillars, HOTSPOTS = real formula (Neem+Ortiga / Cola de Caballo+Hialurónico / orgánica 100%), ESNO = label claims (no probado en animales, Cosalka International), ENVIOS (México/USA/LATAM, $1,500 envío gratis), GARANTIA ("No te vendemos un frasco: te acompañamos 30 días"), SCIENCE_STATS (IL-17·TNF-α / 84 minerales / 500 ml), FAQ 6 real answers, FLAGSHIP_SLUG → paquete-doble-accion.
+- Voces.tsx extended: quote cards + "Casos reales · ninguno posado" (2 real antes/después cards with ANTES/DESPUÉS pills: cuero cabelludo día 21, antebrazo día 30) + "Video-testimonios sin guion" (2 real client videos, native controls) + legal line.
+- Footer: certs → HECHO EN MÉXICO / NO TESTEADO EN ANIMALES / TECNOLOGÍA NUTRAGENÉTICA; +cosalkainternational.com link; legal → "© 2025 Cosalka International S. de R.L. de C.V. — Nutragen® · Hecho en México". layout.tsx metadata rewritten (psoriasis/descamación keywords). make-label-texture.ts: 3D label now "TECNOLOGÍA NUTRAGENÉTICA · ORGÁNICA" + "PSORIASIS TREATMENT · ANTI-PICOR · 500 ml ℮".
+- Dev server restart required (seed memoized on globalThis persisted old catalog across HMR). API verified: 3 SKUs MXN/500ml, old SKUs purged; POST /api/orders 201 total 1590 MXN; test order wiped.
+- E2E agent-browser 1440×900 + 390×844: hero kicker "TECNOLOGÍA NUTRAGENÉTICA · HECHO EN MÉXICO" + bottle protagonist ✓, rutina Paso 1/Paso 2 real names ✓, voces real photos + videos ✓, tienda real product images + $1,590 MXN ✓, buy→drawer→checkout→REF CMTRXZ7ZW000 ✓ (wiped), FAQ 6 items accordion ✓, footer legal/sticky ✓, mobile stacked layout ✓, console clean (benign THREE.Clock only), lint clean, tsc clean.
+
+Stage Summary:
+- The landing now runs on the client's REAL catalog, REAL claims, REAL media: no fictional SKUs or invented certs remain anywhere.
+- Every string is traceable to a client source: etiquetas.pdf (products/claims/ingredients/legal), ebook (science/habits/protocol), nutragen.mx (narrative/structure/offer), Drive photos+videos (social proof).
+- 500 ml-only rule enforced across catalog, 3D label, gallery badges and copy (480 mL render deliberately excluded).
+- Pending from client: real prices (currently 899/899/1590 MXN placeholders), real contact email (clinica@cosalka.com placeholder), full antes/después pairs for piernas/espalda not yet mounted (photos saved in public/images/client/).

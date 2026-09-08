@@ -14,23 +14,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cosalka — Nutragen | Nutragenética de Vanguardia",
+  title: "Cosalka — Nutragen | Cuidado nutragenético para pieles con descamación",
   description:
-    "Nutragenética de vanguardia clínicamente formulada. La colección Nutragen en formato clínico de 500 ml: pureza verificada HPLC hasta el 99,98%, nanopartículas activas y sellado estéril de laboratorio.",
+    "Crema corporal orgánica con tecnología nutragenética. Protocolo Doble Acción: Paso 1 Psoriasis Treatment (anti-picor) + Paso 2 Moisturizer, en formato clínico de 500 ml. Ayuda a eliminar escamas y reducir rojeces. Hecho en México.",
   keywords: [
     "Cosalka",
     "Nutragen",
     "nutragenética",
-    "suplemento clínico",
+    "psoriasis",
+    "anti-picor",
+    "crema corporal orgánica",
     "500 ml",
-    "laboratorio",
-    "pureza",
+    "Hecho en México",
   ],
-  authors: [{ name: "Cosalka Labs" }],
+  authors: [{ name: "Cosalka International S. de R.L. de C.V." }],
   openGraph: {
-    title: "Cosalka — Nutragen | Nutragenética de Vanguardia",
+    title: "Cosalka — Nutragen | Doble Acción: Paso 1 + Paso 2",
     description:
-      "Formulaciones nutrogenéticas clínicas en formato sellado de 500 ml. Ciencia, pureza y diseño.",
+      "Protocolo Doble Acción con tecnología nutragenética en formato clínico de 500 ml. Personas reales. Resultados reales. Hecho en México.",
     siteName: "Cosalka",
     type: "website",
   },

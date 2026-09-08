@@ -4,7 +4,9 @@ import { db } from '@/lib/db'
 /**
  * Cosalka · Nutragen — canonical clinical catalog seed.
  *
- * Single source of truth for the four SKUs presented on the landing page.
+ * Single source of truth for the SKUs presented on the landing page.
+ * Product line mirrors the client's REAL catalog (etiquetas PDF + nutragen.mx):
+ * Paso 1 Treatment, Paso 2 Moisturizer and the Doble Acción bundle.
  * Every product ships exclusively in the clinical 500 ml format; the catalog
  * intentionally exposes no other presentation.
  */
@@ -12,15 +14,18 @@ import { db } from '@/lib/db'
 /** The one and only clinical presentation sold by Cosalka Nutragen. */
 export const CLINICAL_VOLUME_ML = 500 as const
 
+/** Storefront currency — Cosalka International is a Mexican brand. */
+export const STORE_CURRENCY = 'MXN' as const
+
 export interface CatalogSeedProduct {
-  /** URL-safe unique identifier, e.g. "nutragen-purity". */
+  /** URL-safe unique identifier, e.g. "paso-1-treatment". */
   readonly slug: string
   readonly name: string
   readonly tagline: string
   readonly description: string
-  /** Unit price in EUR. */
+  /** Unit price in MXN. */
   readonly price: number
-  /** Laboratory purity, e.g. "99.97%". */
+  /** Key claim shown in the storefront UI (e.g. "Anti-Picor"). */
   readonly purity: string
   /** Hex accent color consumed by the storefront UI. */
   readonly accent: string
@@ -51,80 +56,61 @@ export interface ProductDTO {
 
 export const CATALOG_SEED: readonly CatalogSeedProduct[] = [
   {
-    slug: 'nutragen-purity',
-    name: 'Nutragen Purity',
-    tagline: 'Hidratación celular de grado clínico',
+    slug: 'paso-1-treatment',
+    name: 'Paso 1 · Psoriasis Treatment',
+    tagline: 'Crema corporal orgánica · anti-picor',
     description:
-      'La base nutragenética esencial de Cosalka. Una formulación mineral de ultrapureza que restablece el equilibrio hídrico celular y optimiza la señalización metabólica en el interior de la célula.',
-    price: 129,
-    purity: '99.97%',
+      'Primer paso del protocolo Doble Acción: crema corporal orgánica con tecnología nutragenética que ayuda a eliminar escamas y reducir rojeces, con efecto anti-picor inmediato.',
+    price: 899,
+    purity: 'Anti-Picor',
     accent: '#D4AF37',
-    image: '/images/products/purity.png',
-    badge: 'Bestseller',
+    image: '/images/client/producto-paso1.jpg',
+    badge: null,
     benefits: [
-      'Hidratación intracelular profunda',
-      '99.97% pureza verificada por HPLC',
-      'Equilibrio electrolítico clínico',
-      'Sin conservantes ni aptógenos',
+      'Ayuda a eliminar escamas y reducir rojeces',
+      'Efecto anti-picor inmediato',
+      'Con Neem, Cola de Caballo, Ortiga y Verbena',
+      'Ácido hialurónico + manteca de karité',
     ],
     sortOrder: 1,
   },
   {
-    slug: 'nutragen-vital',
-    name: 'Nutragen Vital',
-    tagline: 'Energía mitocondrial nutragenética',
+    slug: 'paso-2-moisturizer',
+    name: 'Paso 2 · Psoriasis Moisturizer',
+    tagline: 'Crema corporal orgánica · hidratación profunda',
     description:
-      'Complejo de cofactores bioactivos diseñado para potenciar la producción de ATP mitocondrial y la resistencia al estrés oxidativo, con nanopartículas liposomales de biodisponibilidad validada.',
-    price: 139,
-    purity: '99.94%',
+      'Segundo paso del protocolo Doble Acción: hidratación profunda que calma la tirantez, sella la humedad y devuelve elasticidad y confort a la piel descamada.',
+    price: 899,
+    purity: 'Hidratación',
     accent: '#C9CED6',
-    image: '/images/products/vital.png',
+    image: '/images/client/producto-paso2.jpg',
     badge: null,
     benefits: [
-      'Soporte ATP mitocondrial',
-      'Biodisponibilidad 3.4x mejorada',
-      'Protección antioxidante clínica',
-      'Vegano y sin gluten',
+      'Hidratación profunda de larga duración',
+      'Alivia tirantez, comezón e irritación',
+      'Con aceite de coco, oliva y karité',
+      'Textura ligera de absorción rápida',
     ],
     sortOrder: 2,
   },
   {
-    slug: 'nutragen-derma',
-    name: 'Nutragen Derma',
-    tagline: 'Regeneración dérmica avanzada',
+    slug: 'paquete-doble-accion',
+    name: 'Paquete Doble Acción',
+    tagline: 'Paso 1 + Paso 2 · protocolo completo',
     description:
-      'Biofactor dérmico de nueva generación que actúa sobre la matriz extracelular: estimula la síntesis de colágeno tipo I y III y acelera los ciclos naturales de renovación epidérmica.',
-    price: 149,
-    purity: '99.95%',
+      'El protocolo completo de nutragenética: Paso 1 Treatment (anti-picor) + Paso 2 Moisturizer (hidratación profunda). Dos pasos, una rutina fácil de seguir, 30 días de acompañamiento.',
+    price: 1590,
+    purity: 'Protocolo',
     accent: '#E5CEA6',
-    image: '/images/products/derma.png',
-    badge: 'Nuevo',
+    image: '/images/client/paquete-doble-accion.jpg',
+    badge: 'Protocolo completo',
     benefits: [
-      'Síntesis de colágeno I y III',
-      'Renovación epidérmica acelerada',
-      'Firmeza y densidad dérmica',
-      'Testado dermatológicamente',
+      'Rutina de dos pasos, fácil de seguir',
+      'Paso 1 Treatment + Paso 2 Moisturizer',
+      'Acompañamiento personalizado 30 días',
+      'Hecho en México · no testeado en animales',
     ],
     sortOrder: 3,
-  },
-  {
-    slug: 'nutragen-nocturne',
-    name: 'Nutragen Nocturne',
-    tagline: 'Reparación nocturna de precisión',
-    description:
-      'Protocolo nocturno sincronizado con el cronobioma celular. Libera secuencialmente péptidos de reparación durante las fases profundas del sueño para una recuperación sistémica completa.',
-    price: 159,
-    purity: '99.98%',
-    accent: '#8FA0B5',
-    image: '/images/products/nocturne.png',
-    badge: null,
-    benefits: [
-      'Sincronización cronobiológica',
-      'Reparación celular nocturna',
-      'Liberación secuencial de péptidos',
-      'Descanso de calidad clínica',
-    ],
-    sortOrder: 4,
   },
 ]
 
@@ -164,13 +150,18 @@ export function toProductDTO(product: Product): ProductDTO {
 }
 
 async function runSeed(): Promise<void> {
+  // Purge retired SKUs (e.g. the pre-launch fictional line) so the storefront
+  // only ever offers the real Cosalka · Nutragen products.
+  const activeSlugs = CATALOG_SEED.map((seed) => seed.slug)
+  await db.product.deleteMany({ where: { slug: { notIn: activeSlugs } } })
+
   for (const seed of CATALOG_SEED) {
     const data = {
       name: seed.name,
       tagline: seed.tagline,
       description: seed.description,
       price: seed.price,
-      currency: 'EUR',
+      currency: STORE_CURRENCY,
       volumeMl: CLINICAL_VOLUME_ML,
       purity: seed.purity,
       accent: seed.accent,

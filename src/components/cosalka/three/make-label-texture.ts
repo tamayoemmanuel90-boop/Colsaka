@@ -116,14 +116,14 @@ export function makeLabelTexture(): THREE.CanvasTexture {
     ctx.restore();
 
     center(
-      "FÓRMULA CLÍNICA · NUTRAGENÉTICA",
+      "TECNOLOGÍA NUTRAGENÉTICA · ORGÁNICA",
       450,
       "500 34px 'Helvetica Neue', Arial",
       "rgba(20,20,22,0.66)",
       10
     );
     center(
-      "500 ml ℮   ·   PUREZA ≥ 99.9%   ·   ISO CLASE 7",
+      "PSORIASIS TREATMENT   ·   ANTI-PICOR   ·   500 ml ℮",
       532,
       "400 30px monospace",
       "rgba(13,13,13,0.5)",

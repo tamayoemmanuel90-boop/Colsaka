@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail } from "lucide-react";
+import { Globe, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { BrandMark } from "./Navbar";
 import { NAV_LINKS } from "@/lib/cosalka/content";
@@ -83,7 +83,7 @@ export function Footer() {
           className="mt-9 flex flex-wrap items-center justify-center gap-2"
           aria-label="Certificaciones"
         >
-          {["ISO CLASE 7", "GMP FARMACÉUTICO", "HPLC VERIFICADO"].map((c) => (
+          {["HECHO EN MÉXICO", "NO TESTEADO EN ANIMALES", "TECNOLOGÍA NUTRAGENÉTICA"].map((c) => (
             <li
               key={c}
               className="rounded-full border border-gold/30 bg-white/60 px-3 py-1 font-mono text-[8px] uppercase tracking-[0.18em] text-gold-deep"
@@ -93,19 +93,31 @@ export function Footer() {
           ))}
         </motion.ul>
 
-        <a
-          href="mailto:clinica@cosalka.com"
-          className="mt-7 inline-flex items-center gap-2 rounded-sm text-[13px] tracking-wide text-black/70 transition-colors hover:text-gold-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
-        >
-          <Mail size={13} className="text-gold-deep" />
-          clinica@cosalka.com
-        </a>
+        <div className="mt-7 flex flex-col items-center gap-2 sm:flex-row">
+          <a
+            href="mailto:clinica@cosalka.com"
+            className="inline-flex items-center gap-2 rounded-sm text-[13px] tracking-wide text-black/70 transition-colors hover:text-gold-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+          >
+            <Mail size={13} className="text-gold-deep" />
+            clinica@cosalka.com
+          </a>
+          <span aria-hidden className="hidden h-3 w-px bg-black/15 sm:block" />
+          <a
+            href="https://www.cosalkainternational.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-sm font-mono text-[9.5px] uppercase tracking-[0.22em] text-black/50 transition-colors hover:text-gold-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+          >
+            <Globe size={12} className="text-gold-deep" />
+            cosalkainternational.com
+          </a>
+        </div>
       </div>
 
       {/* legal bar */}
       <div className="pointer-events-auto mx-auto mt-14 flex max-w-6xl flex-col items-center justify-between gap-3 border-t border-black/[0.07] pt-6 sm:flex-row">
         <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-black/35">
-          © 2025 Cosalka Labs S.L. — Nutragen® · Una marca de Cosalka
+          © 2025 Cosalka International S. de R.L. de C.V. — Nutragen® · Hecho en México
         </p>
         <ul className="flex items-center gap-6 font-mono text-[9px] uppercase tracking-[0.18em] text-black/35">
           {["Aviso legal", "Privacidad", "Cookies"].map((x) => (
