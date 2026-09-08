@@ -19,13 +19,24 @@ export function Rutina() {
       <SectionHead
         kicker={RUTINA.kicker}
         align="center"
+        titleClassName="mt-6 text-[clamp(2rem,4.4vw,4rem)] font-medium leading-[1.02] tracking-[-0.04em] text-ink"
         lines={[
           [{ t: "dos pasos." }, { t: " una rutina.", c: "gold-text glow-gold" }],
         ]}
       />
 
+      {/* meta sits under the heading — the center lane below stays free
+          for the 3D bottle (staging law: words never covered) */}
+      <motion.p
+        {...fade}
+        transition={{ duration: 0.85, delay: 0.45 }}
+        className="relative z-10 mt-5 text-center font-mono text-[9.5px] uppercase tracking-[0.3em] text-black/40"
+      >
+        {RUTINA.meta}
+      </motion.p>
+
       {/* steps — interactive layer, bottle stands between them */}
-      <div className="relative z-30 mx-auto mt-16 grid w-full max-w-[1240px] gap-6 md:grid-cols-2 md:gap-[26vw]">
+      <div className="relative z-30 mx-auto mt-14 grid w-full max-w-[1240px] gap-6 md:grid-cols-2 md:gap-[26vw]">
         {RUTINA.steps.map((s, i) => (
           <motion.article
             key={s.n}
@@ -56,14 +67,6 @@ export function Rutina() {
           </motion.article>
         ))}
       </div>
-
-      <motion.p
-        {...fade}
-        transition={{ duration: 0.85, delay: 0.45 }}
-        className="relative z-10 mt-12 text-center font-mono text-[9.5px] uppercase tracking-[0.3em] text-black/40"
-      >
-        {RUTINA.meta}
-      </motion.p>
     </section>
   );
 }

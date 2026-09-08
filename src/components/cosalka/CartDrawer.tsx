@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  CheckCircle2,
-  Loader2,
+  ArrowRight,
   Lock,
   Minus,
   Plus,
@@ -16,29 +16,21 @@ import { useCart } from "@/store/cart";
 import { formatPrice, type ProductDTO } from "@/lib/products-client";
 import { lockScroll } from "@/hooks/use-smooth-scroll";
 
-type Phase = "cart" | "processing" | "done";
-
-interface OrderResult {
-  ok: boolean;
-  orderId: string;
-  total: number;
-}
-
+/**
+ * CartDrawer — quick review panel. The full checkout (datos → envío →
+ * pago) lives at /checkout as its own route; this drawer just routes
+ * there with the shared cart state.
+ */
 export function CartDrawer({
   products,
 }: {
   products: ProductDTO[];
 }) {
-  const { items, open, setOpen, setQty, remove, clear } = useCart();
-  const [phase, setPhase] = useState<Phase>("cart");
-  const [result, setResult] = useState<OrderResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { items, open, setOpen, setQty, remove } = useCart();
+  const router = useRouter();
 
-  const bySlug = useMemo(() => {
-    const map = new Map<string, ProductDTO>();
-    products.forEach((p) => map.set(p.slug, p));
-    return map;
-  }, [products]);
+  const bySlug = new Map<string, ProductDTO>();
+  products.forEach((p) => bySlug.set(p.slug, p));
 
   const lines = items
     .map((i) => ({ ...i, product: bySlug.get(i.slug) }))
@@ -52,43 +44,14 @@ export function CartDrawer({
   }, [open]);
 
   useEffect(() => {
-    if (!open) {
-      // reset transient state after close animation
-      const t = setTimeout(() => {
-        setPhase("cart");
-        setResult(null);
-        setError(null);
-      }, 400);
-      return () => clearTimeout(t);
-    }
-  }, [open]);
-
-  useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [setOpen]);
 
-  const checkout = async () => {
-    setPhase("processing");
-    setError(null);
-    try {
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: lines.map((l) => ({ slug: l.product.slug, qty: l.qty })),
-        }),
-      });
-      if (!res.ok) throw new Error(String(res.status));
-      const json = (await res.json()) as OrderResult;
-      setResult(json);
-      setPhase("done");
-      clear();
-    } catch {
-      setError("No se pudo tramitar el pedido. Reintenta en unos segundos.");
-      setPhase("cart");
-    }
+  const goCheckout = () => {
+    setOpen(false);
+    router.push("/checkout");
   };
 
   return (
@@ -135,35 +98,7 @@ export function CartDrawer({
               </button>
             </div>
 
-            {/* body */}
-            {phase === "done" && result ? (
-              <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
-                <motion.div
-                  initial={{ scale: 0.6, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", damping: 14 }}
-                >
-                  <CheckCircle2 size={54} strokeWidth={1.2} className="text-gold-deep" />
-                </motion.div>
-                <h3 className="mt-6 text-xl font-light tracking-wide text-ink">
-                  Pedido confirmado
-                </h3>
-                <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.18em] text-black/40">
-                  REF · {result.orderId.slice(0, 12).toUpperCase()}
-                </p>
-                <p className="mt-4 max-w-xs text-[13px] leading-relaxed text-black/50">
-                  Tu unidad clínica de 500 ml queda reservada. Recibirás el
-                  pasaporte digital del lote y la confirmación con seguimiento
-                  en tu correo.
-                </p>
-                <button
-                  onClick={() => setOpen(false)}
-                  className="mt-9 h-12 cursor-pointer rounded-full border border-gold/60 bg-transparent px-8 text-[10px] font-semibold uppercase tracking-[0.26em] text-gold-deep outline-none transition-all hover:bg-gold hover:text-graphite focus-visible:ring-2 focus-visible:ring-gold/60"
-                >
-                  Seguir explorando
-                </button>
-              </div>
-            ) : lines.length === 0 ? (
+            {lines.length === 0 ? (
               <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
                 <ShoppingBag size={44} strokeWidth={1} className="text-black/20" />
                 <p className="mt-6 text-[15px] tracking-wide text-black/55">
@@ -206,7 +141,7 @@ export function CartDrawer({
                                 {l.product.name}
                               </p>
                               <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-black/35">
-                                {l.product.volumeMl} ml · {l.product.purity.replace(".", ",")} pureza
+                                {l.product.volumeMl} ml · formato clínico
                               </p>
                             </div>
                             <button
@@ -257,43 +192,26 @@ export function CartDrawer({
                       <dd className="font-mono">{formatPrice(subtotal)}</dd>
                     </div>
                     <div className="flex justify-between text-black/50">
-                      <dt>Envío térmico asegurado</dt>
-                      <dd className="font-medium uppercase tracking-widest text-gold-deep">
-                        Incluido
+                      <dt>Envío</dt>
+                      <dd className="font-mono text-[11px] uppercase tracking-widest text-gold-deep">
+                        Se calcula en el checkout
                       </dd>
-                    </div>
-                    <div className="flex justify-between border-t border-black/[0.08] pt-3 text-[15px] text-ink">
-                      <dt>Total</dt>
-                      <dd className="gold-text font-semibold">{formatPrice(subtotal)}</dd>
                     </div>
                   </dl>
 
-                  {error && (
-                    <p className="mt-3 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-[11px] text-red-600">
-                      {error}
-                    </p>
-                  )}
-
                   <button
-                    onClick={checkout}
-                    disabled={phase === "processing"}
-                    data-testid="checkout"
-                    className="group relative mt-4 flex h-12 w-full cursor-pointer items-center justify-center gap-2.5 overflow-hidden rounded-full bg-gold text-[10.5px] font-semibold uppercase tracking-[0.28em] text-graphite shadow-[0_10px_36px_rgba(212,175,55,.3)] outline-none transition-all duration-300 hover:shadow-[0_14px_46px_rgba(212,175,55,.5)] focus-visible:ring-2 focus-visible:ring-gold-soft disabled:opacity-70 disabled:hover:shadow-none"
+                    onClick={goCheckout}
+                    data-testid="drawer-checkout"
+                    className="group relative mt-4 flex h-12 w-full cursor-pointer items-center justify-center gap-2.5 overflow-hidden rounded-full bg-gold text-[10.5px] font-semibold uppercase tracking-[0.28em] text-graphite shadow-[0_10px_36px_rgba(212,175,55,.3)] outline-none transition-all duration-300 hover:shadow-[0_14px_46px_rgba(212,175,55,.5)] focus-visible:ring-2 focus-visible:ring-gold-soft"
                   >
-                    {phase === "processing" ? (
-                      <>
-                        <Loader2 size={14} className="animate-spin" />
-                        Procesando…
-                      </>
-                    ) : (
-                      <>
-                        Tramitar pedido seguro
-                        <Lock size={11} strokeWidth={2.2} />
-                      </>
-                    )}
+                    Finalizar compra
+                    <ArrowRight
+                      size={12}
+                      className="transition-transform duration-300 group-hover:translate-x-1"
+                    />
                   </button>
-                  <p className="mt-3 text-center font-mono text-[8.5px] uppercase tracking-[0.2em] text-black/30">
-                    Pago cifrado · Precinto estéril garantizado
+                  <p className="mt-3 flex items-center justify-center gap-1.5 text-center font-mono text-[8.5px] uppercase tracking-[0.2em] text-black/30">
+                    <Lock size={9} /> Pago cifrado · Precinto estéril garantizado
                   </p>
                 </div>
               </>

@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShoppingBag } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import { useProducts } from "@/hooks/use-products";
 import {
   formatPrice,
@@ -132,6 +133,27 @@ export function Gallery() {
             ))}
           </div>
         )}
+
+        {/* full store — real route with many sections */}
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.8, delay: 0.15 }}
+          className="pointer-events-auto relative z-30 mt-12"
+        >
+          <Link
+            href="/tienda"
+            data-testid="gallery-store-cta"
+            className="group inline-flex h-12 items-center gap-2.5 rounded-full border border-gold/60 bg-white/60 px-8 text-[10px] font-semibold uppercase tracking-[0.26em] text-gold-deep outline-none backdrop-blur-sm transition-all duration-300 hover:bg-gold hover:text-graphite hover:shadow-[0_10px_36px_rgba(212,175,55,.4)] focus-visible:ring-2 focus-visible:ring-gold"
+          >
+            Ver tienda completa
+            <ArrowRight size={13} className="transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
+          <p className="mt-4 font-mono text-[8.5px] uppercase tracking-[0.24em] text-black/35">
+            Detalles clínicos · carrito · checkout seguro · garantía
+          </p>
+        </motion.div>
       </div>
     </section>
   );

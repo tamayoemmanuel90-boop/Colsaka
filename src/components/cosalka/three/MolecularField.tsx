@@ -22,15 +22,15 @@ interface BandConfig {
 }
 
 const BANDS: BandConfig[] = [
-  { tilt: [0.42, 0.12, -0.2], radius: 1.72, count: 16, speed: 0.24, color: "#d4af37", size: 0.036 },
-  { tilt: [-0.3, 0.5, 0.25], radius: 2.15, count: 14, speed: -0.17, color: "#c9ced6", size: 0.042 },
-  { tilt: [0.16, -0.65, 0.1], radius: 1.55, count: 12, speed: 0.32, color: "#e8cf8f", size: 0.028 },
+  { tilt: [0.42, 0.12, -0.2], radius: 1.3, count: 16, speed: 0.24, color: "#d4af37", size: 0.036 },
+  { tilt: [-0.3, 0.5, 0.25], radius: 1.62, count: 14, speed: -0.17, color: "#c9ced6", size: 0.042 },
+  { tilt: [0.16, -0.65, 0.1], radius: 1.18, count: 12, speed: 0.32, color: "#e8cf8f", size: 0.028 },
 ];
 
 const TRIADS = [
-  { radius: 1.95, y: 0.55, phase: 0.4, speed: 0.21 },
-  { radius: 2.35, y: -0.7, phase: 2.6, speed: -0.13 },
-  { radius: 1.62, y: 1.15, phase: 4.4, speed: 0.27 },
+  { radius: 1.45, y: 0.55, phase: 0.4, speed: 0.21 },
+  { radius: 1.75, y: -0.7, phase: 2.6, speed: -0.13 },
+  { radius: 1.25, y: 1.15, phase: 4.4, speed: 0.27 },
 ];
 
 function OrbitalBand({ config }: { config: BandConfig }) {
@@ -116,10 +116,11 @@ export function MolecularField() {
         <MoleculeTriad key={`triad${i}`} config={cfg} />
       ))}
 
-      {/* graphite dust — far shell (visible on the clinical paper bg) */}
-      <Sparkles count={130} scale={[8.5, 6, 5]} size={2.1} speed={0.26} opacity={0.3} color="#71717a" />
+      {/* graphite dust — far shell, kept close to the bottle aura so it
+          never drifts over the typography */}
+      <Sparkles count={110} scale={[5.2, 5, 4]} size={2.1} speed={0.26} opacity={0.3} color="#71717a" />
       {/* gold motes — near accent */}
-      <Sparkles count={44} scale={[5.5, 4, 3]} size={3.1} speed={0.34} opacity={0.32} color="#c29a2a" />
+      <Sparkles count={40} scale={[4.2, 3.6, 2.6]} size={3.1} speed={0.34} opacity={0.32} color="#c29a2a" />
     </group>
   );
 }

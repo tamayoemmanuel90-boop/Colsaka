@@ -88,5 +88,6 @@ export function BottleRig({
 }
 
 function STAGE_POSES_HERO(): StagePose {
-  return { x: 0, y: -0.42, z: 0.85, rx: 0.05, ry: 0.1, explode: 0, scale: 1 };
+  // keep in sync with STAGE_POSES.hero — bottle parked RIGHT of the title
+  return { x: 2.55, y: -0.12, z: 0.55, rx: 0.04, ry: 0.35, explode: 0, scale: 0.98 };
 }

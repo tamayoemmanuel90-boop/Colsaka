@@ -17,8 +17,7 @@ export function Habitos() {
     >
       <SectionHead
         kicker="06 — Complementos gratis"
-        align="center"
-        className="mx-auto"
+        className="max-w-xl"
         lines={[
           [
             { t: "cuatro " },

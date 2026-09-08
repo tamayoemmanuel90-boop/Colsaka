@@ -274,3 +274,153 @@ html.lenis body {
     animation: none;
   }
 }
+
+/* ── Lux cursor (MacBook-style) ───────────────────────────────────────
+   Native pointer is replaced by a gold dot + lagging ring (see
+   LuxCursor). Only on precise pointers with hover and no reduced
+   motion; touch devices keep the native cursor. */
+@media (pointer: fine) and (hover: hover) {
+  html.lux-cursor,
+  html.lux-cursor * {
+    cursor: none !important;
+  }
+}
+
+.lux-cursor-dot,
+.lux-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 100;
+  border-radius: 999px;
+  will-change: transform;
+}
+.lux-cursor-dot {
+  width: 7px;
+  height: 7px;
+  background: #d4af37;
+  box-shadow:
+    0 0 10px rgba(212, 175, 55, 0.8),
+    0 0 26px rgba(212, 175, 55, 0.4);
+}
+.lux-cursor-ring {
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid rgba(212, 175, 55, 0.65);
+  background: rgba(212, 175, 55, 0.06);
+  backdrop-filter: blur(1px);
+  transition:
+    width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.28s,
+    background-color 0.28s,
+    opacity 0.3s;
+}
+.lux-cursor-ring[data-hover="true"] {
+  width: 56px;
+  height: 56px;
+  border-color: rgba(212, 175, 55, 0.9);
+  background: rgba(212, 175, 55, 0.12);
+}
+.lux-cursor-ring[data-pressed="true"] {
+  width: 26px;
+  height: 26px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lux-cursor-dot,
+  .lux-cursor-ring {
+    display: none;
+  }
+}
+
+/* ── Aurora — living background for the store pages (no 3D there) ───── */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora span {
+  position: absolute;
+  display: block;
+  border-radius: 9999px;
+  filter: blur(90px);
+  will-change: transform;
+}
+.aurora .a1 {
+  width: 46vw;
+  height: 46vw;
+  left: -12vw;
+  top: -14vh;
+  background: radial-gradient(closest-side, rgba(212, 175, 55, 0.16), transparent 72%);
+  animation: auroraDrift1 34s ease-in-out infinite alternate;
+}
+.aurora .a2 {
+  width: 52vw;
+  height: 52vw;
+  right: -16vw;
+  top: 18vh;
+  background: radial-gradient(closest-side, rgba(124, 132, 142, 0.18), transparent 70%);
+  animation: auroraDrift2 42s ease-in-out infinite alternate;
+}
+.aurora .a3 {
+  width: 60vw;
+  height: 60vw;
+  left: 16vw;
+  bottom: -28vh;
+  background: radial-gradient(closest-side, rgba(232, 207, 143, 0.2), transparent 74%);
+  animation: auroraDrift3 38s ease-in-out infinite alternate;
+}
+/* golden motes — slow premium particles */
+.aurora i {
+  position: absolute;
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.55);
+  animation: moteFloat 12s ease-in-out infinite alternate;
+}
+@keyframes auroraDrift1 {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(14vw, 12vh, 0) scale(1.22); }
+}
+@keyframes auroraDrift2 {
+  0%   { transform: translate3d(0, 0, 0) scale(1.1); }
+  100% { transform: translate3d(-12vw, -9vh, 0) scale(0.92); }
+}
+@keyframes auroraDrift3 {
+  0%   { transform: translate3d(0, 0, 0) scale(0.95); }
+  100% { transform: translate3d(9vw, -11vh, 0) scale(1.18); }
+}
+@keyframes moteFloat {
+  0%   { transform: translate3d(0, 0, 0); opacity: 0.35; }
+  50%  { opacity: 0.85; }
+  100% { transform: translate3d(4vw, -16vh, 0); opacity: 0.3; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora span,
+  .aurora i {
+    animation: none;
+  }
+}
+
+/* ── Marquee strip (fluid store motion) ─────────────────────────────── */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 26s linear infinite;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}

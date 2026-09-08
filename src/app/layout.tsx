@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { LuxCursor } from "@/components/store/LuxCursor";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,6 +55,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-paper text-ink`}
       >
         {children}
+
+        {/* MacBook-style custom pointer — global, every route */}
+        <LuxCursor />
+
         <Toaster position="bottom-left" toastOptions={{
           style: {
             background: "#ffffff",

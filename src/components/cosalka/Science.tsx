@@ -6,9 +6,9 @@ import { SectionHead, fade } from "./SectionHead";
 
 /**
  * 03 · Cómo actúa — nutragen.mx's "Cómo actúa nuestra crema en tu piel"
- * + the 3D skin-model beat. Here the EXPLODED bottle IS the educational
- * model: clinical layers separated, hotspots on the estrato córneo,
- * nanoparticles and purity. Heading top, stats strip + hint bottom.
+ * + the 3D skin-model beat. The EXPLODED bottle is the educational
+ * model and performs CENTER-RIGHT; every word (heading, stats, hint)
+ * lives on the LEFT column — zero overlap, staging law honored.
  */
 export function Science() {
   return (
@@ -17,11 +17,10 @@ export function Science() {
       data-stage="actua"
       className="relative flex min-h-[135svh] w-full flex-col justify-between px-5 py-[16svh] sm:px-10"
     >
-      {/* heading behind the exploded bottle */}
+      {/* heading — LEFT column, clear of the exploded bottle */}
       <SectionHead
         kicker="03 — Cómo actúa · estrato córneo"
-        align="center"
-        className="mx-auto"
+        className="max-w-xl"
         lines={[
           [
             { t: "la ciencia " },
@@ -30,12 +29,12 @@ export function Science() {
         ]}
       />
 
-      {/* bottom cluster — interactive layer */}
-      <div className="flex flex-col items-center">
+      {/* bottom cluster — LEFT column, interactive layer */}
+      <div className="flex max-w-xl flex-col items-start">
         <motion.dl
           {...fade}
           transition={{ duration: 0.85, delay: 0.2 }}
-          className="pointer-events-auto relative z-30 grid max-w-lg grid-cols-3 divide-x divide-black/10 rounded-2xl border border-black/10 bg-white/70 backdrop-blur-md"
+          className="pointer-events-auto relative z-30 grid w-full max-w-lg grid-cols-3 divide-x divide-black/10 rounded-2xl border border-black/10 bg-white/70 backdrop-blur-md"
         >
           {SCIENCE_STATS.map((s) => (
             <div

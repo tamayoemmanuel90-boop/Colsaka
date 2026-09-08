@@ -25,20 +25,23 @@ import { useStageStore } from "@/store/stage";
 import { useProducts } from "@/hooks/use-products";
 
 /**
- * Layer architecture (Mantis-style clinical paper) — THE 3D IS THE
- * PROTAGONIST and never sits behind the letters:
+ * Layer architecture ("/" — the ONLY 3D page; every other route lives in
+ * app/(store) with its own layout, aurora background and no WebGL):
  *
  *   z-[1]  light paper vignette
  *   z-[15] gold shard accent
- *   z-10   giant typography (BEHIND the 3D — never the protagonist)
- *   z-20   fixed WebGL canvas — THE PROTAGONIST, occludes headlines
- *   z-30   interactive content (chips, steps, cards, lists, seal, footer)
+ *   z-10   typography (never overlapped — STAGING LAW: the 3D object
+ *          parks on the clear side of every stage, so it can never
+ *          cover the title or any word)
+ *   z-20   fixed WebGL canvas — the protagonist, always side-staged
+ *   z-30   interactive content (CTAs, chips, steps, cards, seal, footer)
  *   z-40   frame rails
  *   z-50   navbar · z-[70+] cart drawer · z-[75] film grain
  *
  * Section narrative mirrors nutragen.mx (same beats, Cosalka voice):
  *   hero → verdad → rutina → actua → origen → esno → habitos → voces
- *        → gallery(tienda) → envios → garantia → faq → cierre → footer
+ *        → gallery(tienda teaser → /tienda) → envios → garantia
+ *        → faq → cierre → footer
  */
 export function LandingPage() {
   const [ready, setReady] = useState(false);

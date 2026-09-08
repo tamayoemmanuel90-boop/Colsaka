@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { Globe, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { BrandMark } from "./Navbar";
@@ -14,6 +15,16 @@ import { GlowTitle } from "./GlowTitle";
  * owns the final choreography, so the footer carries no data-stage.
  */
 export function Footer() {
+  const router = useRouter();
+
+  const go = (target: string) => {
+    if (target === "tienda") {
+      router.push("/tienda");
+      return;
+    }
+    scrollToSection(target);
+  };
+
   return (
     <footer
       id="pie"
@@ -63,7 +74,7 @@ export function Footer() {
             {NAV_LINKS.map((l) => (
               <li key={l.target}>
                 <button
-                  onClick={() => scrollToSection(l.target)}
+                  onClick={() => go(l.target)}
                   className="group relative cursor-pointer rounded-sm py-1 text-[10.5px] uppercase tracking-[0.24em] text-black/55 transition-colors hover:text-gold-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
                 >
                   {l.label}

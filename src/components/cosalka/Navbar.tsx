@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, ShoppingBag, X } from "lucide-react";
 import { NAV_LINKS } from "@/lib/cosalka/content";
@@ -28,6 +29,7 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const items = useCart((s) => s.items);
   const setOpen = useCart((s) => s.setOpen);
+  const router = useRouter();
   const count = cartCount(items);
 
   useEffect(() => {
@@ -39,6 +41,11 @@ export function Navbar() {
 
   const go = (target: string) => {
     setMenuOpen(false);
+    // "tienda" is a real route — the full store lives at /tienda
+    if (target === "tienda") {
+      router.push("/tienda");
+      return;
+    }
     scrollToSection(target);
   };
 

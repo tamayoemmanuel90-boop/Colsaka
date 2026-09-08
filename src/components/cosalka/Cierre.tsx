@@ -1,10 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { toast } from "sonner";
-import { scrollToSection } from "@/hooks/use-smooth-scroll";
 import { CIERRE } from "@/lib/cosalka/content";
 import { GlowTitle } from "./GlowTitle";
 import { fade } from "./SectionHead";
@@ -16,19 +13,6 @@ import { fade } from "./SectionHead";
  * ascended by the time this fills the viewport.
  */
 export function Cierre() {
-  const [email, setEmail] = useState("");
-
-  const subscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    const ok = /.+@.+\..+/.test(email.trim());
-    if (!ok) {
-      toast.error("Introduce un correo válido para recibir la guía.");
-      return;
-    }
-    toast.success("Guía en camino — revisa tu bandeja. Sin spam.");
-    setEmail("");
-  };
-
   return (
     <section
       id="contacto"
@@ -61,49 +45,27 @@ export function Cierre() {
 
       {/* final CTA + mini capture — interactive layer */}
       <div className="pointer-events-auto relative z-30 mt-12 flex w-full max-w-2xl flex-col items-center gap-6">
-        <motion.button
+        <motion.a
           {...fade}
           transition={{ duration: 0.85, delay: 0.35 }}
-          onClick={() => scrollToSection("tienda")}
+          href="/tienda"
           data-testid="cierre-buy"
-          className="group relative h-12 w-full cursor-pointer overflow-hidden rounded-full bg-gold px-12 text-[11px] font-semibold uppercase tracking-[0.28em] text-graphite shadow-[0_14px_44px_rgba(212,175,55,.35)] outline-none transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_56px_rgba(212,175,55,.5)] focus-visible:ring-2 focus-visible:ring-gold-soft sm:w-auto"
+          className="group relative inline-flex h-12 w-full items-center justify-center overflow-hidden rounded-full bg-gold px-12 text-[11px] font-semibold uppercase tracking-[0.28em] text-graphite shadow-[0_14px_44px_rgba(212,175,55,.35)] outline-none transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_56px_rgba(212,175,55,.5)] focus-visible:ring-2 focus-visible:ring-gold-soft sm:w-auto"
         >
           <span className="relative z-10">{CIERRE.cta}</span>
-          <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/50 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-        </motion.button>
-
-        <motion.form
-          {...fade}
-          transition={{ duration: 0.85, delay: 0.45 }}
-          onSubmit={subscribe}
-          className="flex w-full max-w-md items-center gap-2 rounded-full border border-black/15 bg-white/70 p-1.5 backdrop-blur-md focus-within:border-gold/60"
-        >
-          <label htmlFor="cierre-email" className="sr-only">
-            Correo electrónico
-          </label>
-          <input
-            id="cierre-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="¿Sigues pensando en tu piel? — tu correo"
-            className="h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-[12.5px] tracking-wide text-ink placeholder:text-black/35 focus:outline-none"
+          <ArrowRight
+            size={13}
+            className="relative z-10 ml-2 transition-transform duration-300 group-hover:translate-x-1"
           />
-          <button
-            type="submit"
-            aria-label="Recibir la guía de cuidado"
-            className="grid h-10 w-10 shrink-0 cursor-pointer place-items-center rounded-full bg-graphite text-gold transition-colors duration-300 hover:bg-gold hover:text-graphite focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
-          >
-            <ArrowRight size={15} />
-          </button>
-        </motion.form>
+          <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/50 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+        </motion.a>
 
         <motion.p
           {...fade}
-          transition={{ duration: 0.85, delay: 0.55 }}
+          transition={{ duration: 0.85, delay: 0.45 }}
           className="font-mono text-[8.5px] uppercase tracking-[0.24em] text-black/35"
         >
-          Sin spam. Solo la guía y consejos de cuidado de piel.
+          Rutina de dos pasos · garantía de 30 días · hecho en México
         </motion.p>
       </div>
     </section>
