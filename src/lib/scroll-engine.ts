@@ -6,27 +6,16 @@
  * bottle rig. Consumed once per frame by the R3F scene.
  *
  * STAGING LAW (hard requirement): the 3D object NEVER covers words —
- * not the giant headlines, not the title, nothing. Every pose parks the
- * bottle on a clear side of the stage, opposite the section's text
- * column. The canvas still renders above the base typography (z-20),
- * but geometry and text never share screen space at rest.
+ * not the giant headlines, not the title, nothing. The landing is a
+ * PREVIEW: the bottle performs only for the hero moment and EXITS the
+ * stage as the visitor scrolls into the value strip — it stays gone
+ * for the rest of the page (gallery/cierre included).
  *
- * Stage narrative mirrors nutragen.mx (same sections, Cosalka voice):
- *   hero     — hook, text LEFT · bottle RIGHT
- *   verdad   — sin corticoides, text RIGHT · bottle LEFT
- *   rutina   — doble acción, cards at the edges · bottle centered below
- *              the heading in the clear band between them
- *   actua    — cómo actúa · exploded clinical layers, text LEFT ·
- *              bottle center-right (hotspots stay reachable)
- *   origen   — la historia padre e hijo, text RIGHT · bottle LEFT
- *   esno     — qué es / qué no es, text LEFT · bottle RIGHT
- *   habitos  — cuatro hábitos, heading LEFT · bottle top-right, small
- *   voces    — personas reales, text RIGHT · bottle LEFT
- *   gallery  — tienda teaser, cards LEFT · bottle RIGHT (checkout pose)
- *   envios   — centered band · bottle RIGHT, small & deep
- *   garantia — centered seal · bottle LEFT
- *   faq      — centered accordion · bottle RIGHT, small
- *   contacto — closing statement · bottle ascends off-screen
+ * Preview stages:
+ *   hero     — hook, text LEFT · bottle RIGHT (the only 3D moment)
+ *   verdad   — value strip · bottle EXITS top-right (gone)
+ *   gallery  — real-photo archive at the bottom · bottle stays off
+ *   contacto — closing CTA · bottle stays off
  */
 
 export type StageName =
@@ -69,22 +58,22 @@ export const scrollBus = {
 };
 
 /** Keyframe poses anchored to each stage element's start.
- *  LAW: x sign = opposite side of the section's text column. */
+ *  LAW: hero is the only 3D moment — every later pose is OFF-STAGE. */
 export const STAGE_POSES: Record<StageName, StagePose> = {
   /*           x      y      z      rx      ry     explode scale */
   hero:     { x: 2.55,  y: -0.12, z: 0.55,  rx: 0.04,  ry: 0.35, explode: 0, scale: 0.98 },
-  verdad:   { x: -2.5,  y: -0.12, z: 0.5,   rx: 0.04,  ry: 1.15, explode: 0, scale: 1.02 },
-  rutina:   { x: 0,     y: -1.0,  z: 0.1,   rx: 0.05,  ry: 1.9,  explode: 0, scale: 0.74 },
-  actua:    { x: 1.35,  y: -0.3,  z: -0.1,  rx: 0.07,  ry: 2.65, explode: 1, scale: 0.9 },
-  origen:   { x: -2.55, y: 0.02,  z: 0.3,   rx: -0.02, ry: 3.6,  explode: 0, scale: 0.9 },
-  esno:     { x: 2.55,  y: -0.05, z: 0.35,  rx: -0.03, ry: 4.35, explode: 0, scale: 0.88 },
-  habitos:  { x: 2.85,  y: 0.5,   z: -0.9,  rx: 0.08,  ry: 5.1,  explode: 0, scale: 0.62 },
-  voces:    { x: -2.5,  y: -0.05, z: 0.45,  rx: 0.03,  ry: 5.85, explode: 0, scale: 0.9 },
-  gallery:  { x: 2.6,   y: 0.1,   z: 0.3,   rx: -0.03, ry: 6.65, explode: 0, scale: 0.82 },
-  envios:   { x: 3.0,   y: -0.15, z: -0.7,  rx: 0.06,  ry: 7.4,  explode: 0, scale: 0.6 },
-  garantia: { x: 2.85,  y: -0.1,  z: 0.2,   rx: 0.05,  ry: 8.2,  explode: 0, scale: 0.78 },
-  faq:      { x: 2.9,   y: 0.05,  z: -0.1,  rx: -0.04, ry: 8.95, explode: 0, scale: 0.6 },
-  contacto: { x: 0.9,   y: 4.6,   z: -0.5,  rx: 0.12,  ry: 9.7,  explode: 0, scale: 0.55 },
+  verdad:   { x: 3.6,   y: 4.4,   z: 0.2,   rx: 0.1,   ry: 1.15, explode: 0, scale: 0.72 },
+  rutina:   { x: 3.6,   y: 4.4,   z: 0.2,   rx: 0.1,   ry: 1.9,  explode: 0, scale: 0.72 },
+  actua:    { x: 3.6,   y: 4.4,   z: 0.2,   rx: 0.1,   ry: 2.65, explode: 0, scale: 0.72 },
+  origen:   { x: 3.6,   y: 4.4,   z: 0.2,   rx: 0.1,   ry: 3.6,  explode: 0, scale: 0.72 },
+  esno:     { x: 3.6,   y: 4.4,   z: 0.2,   rx: 0.1,   ry: 4.35, explode: 0, scale: 0.72 },
+  habitos:  { x: 3.6,   y: 4.4,   z: 0.2,   rx: 0.1,   ry: 5.1,  explode: 0, scale: 0.72 },
+  voces:    { x: 3.6,   y: 4.4,   z: 0.2,   rx: 0.1,   ry: 5.85, explode: 0, scale: 0.72 },
+  gallery:  { x: 3.6,   y: 4.4,   z: 0.2,   rx: 0.1,   ry: 6.65, explode: 0, scale: 0.72 },
+  envios:   { x: 3.6,   y: 4.4,   z: 0.2,   rx: 0.1,   ry: 7.4,  explode: 0, scale: 0.72 },
+  garantia: { x: 3.6,   y: 4.4,   z: 0.2,   rx: 0.1,   ry: 8.2,  explode: 0, scale: 0.72 },
+  faq:      { x: 3.6,   y: 4.4,   z: 0.2,   rx: 0.1,   ry: 8.95, explode: 0, scale: 0.72 },
+  contacto: { x: 3.6,   y: 4.4,   z: 0.2,   rx: 0.1,   ry: 9.7,  explode: 0, scale: 0.72 },
 };
 
 const POSE_KEYS: Array<keyof StagePose> = [
@@ -225,19 +214,19 @@ const STACK_ADAPT: Record<
   StageName,
   { dx: number; dy: number; dz: number; ds: number }
 > = {
-  hero:     { dx: 0, dy: -0.95, dz: 0.1,  ds: -0.3 },
-  verdad:   { dx: 0, dy: -0.85, dz: 0.25, ds: -0.45 },
-  rutina:   { dx: 0, dy: -0.8,  dz: 0.1,  ds: -0.3 },
-  actua:    { dx: 0, dy: -0.32, dz: -0.8, ds: -0.3 },
-  origen:   { dx: 0, dy: -0.85, dz: 0.25, ds: -0.46 },
-  esno:     { dx: 0, dy: -0.85, dz: 0.25, ds: -0.48 },
-  habitos:  { dx: 0, dy: -0.62, dz: -0.35, ds: -0.4 },
-  voces:    { dx: 0, dy: -0.85, dz: 0.3,  ds: -0.42 },
-  gallery:  { dx: 0, dy: -0.8,  dz: 0.3,  ds: -0.3 },
-  envios:   { dx: 0, dy: -0.7,  dz: -0.3, ds: -0.24 },
-  garantia: { dx: 0, dy: -0.95, dz: -0.15, ds: -0.38 },
-  faq:      { dx: 0, dy: -0.8,  dz: 0.3,  ds: -0.28 },
-  contacto: { dx: 0, dy: 0,     dz: 0,    ds: 0 },
+  hero:     { dx: 0, dy: -1.14, dz: 0.1,  ds: -0.3 },
+  verdad:   { dx: 0, dy: 0.6,   dz: 0,    ds: -0.1 },
+  rutina:   { dx: 0, dy: 0.6,   dz: 0,    ds: -0.1 },
+  actua:    { dx: 0, dy: 0.6,   dz: 0,    ds: -0.1 },
+  origen:   { dx: 0, dy: 0.6,   dz: 0,    ds: -0.1 },
+  esno:     { dx: 0, dy: 0.6,   dz: 0,    ds: -0.1 },
+  habitos:  { dx: 0, dy: 0.6,   dz: 0,    ds: -0.1 },
+  voces:    { dx: 0, dy: 0.6,   dz: 0,    ds: -0.1 },
+  gallery:  { dx: 0, dy: 0.6,   dz: 0,    ds: -0.1 },
+  envios:   { dx: 0, dy: 0.6,   dz: 0,    ds: -0.1 },
+  garantia: { dx: 0, dy: 0.6,   dz: 0,    ds: -0.1 },
+  faq:      { dx: 0, dy: 0.6,   dz: 0,    ds: -0.1 },
+  contacto: { dx: 0, dy: 0.6,   dz: 0,    ds: -0.1 },
 };
 
 /** Viewport-adaptive mutation: keeps the bottle composed on any width. */

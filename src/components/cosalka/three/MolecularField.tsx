@@ -22,9 +22,9 @@ interface BandConfig {
 }
 
 const BANDS: BandConfig[] = [
-  { tilt: [0.42, 0.12, -0.2], radius: 1.3, count: 16, speed: 0.24, color: "#d4af37", size: 0.036 },
+  { tilt: [0.42, 0.12, -0.2], radius: 1.3, count: 16, speed: 0.24, color: "#c98a6b", size: 0.036 },
   { tilt: [-0.3, 0.5, 0.25], radius: 1.62, count: 14, speed: -0.17, color: "#c9ced6", size: 0.042 },
-  { tilt: [0.16, -0.65, 0.1], radius: 1.18, count: 12, speed: 0.32, color: "#e8cf8f", size: 0.028 },
+  { tilt: [0.16, -0.65, 0.1], radius: 1.18, count: 12, speed: 0.32, color: "#d4af37", size: 0.028 },
 ];
 
 const TRIADS = [
@@ -88,7 +88,7 @@ function MoleculeTriad({ config }: { config: (typeof TRIADS)[number] }) {
       {/* nucleus */}
       <mesh>
         <sphereGeometry args={[0.055, 24, 24]} />
-        <meshStandardMaterial color="#e8cf8f" metalness={0.9} roughness={0.18} emissive="#d4af37" emissiveIntensity={0.16} />
+        <meshStandardMaterial color="#d9a274" metalness={0.9} roughness={0.18} emissive="#b97a4b" emissiveIntensity={0.16} />
       </mesh>
       {[[-0.11, 0.07, 0.04], [0.09, -0.06, 0.08], [0.03, 0.05, -0.11]].map((p, i) => (
         <mesh key={`el${i}`} position={p as unknown as THREE.Vector3Tuple}>

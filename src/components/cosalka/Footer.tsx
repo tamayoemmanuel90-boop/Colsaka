@@ -6,7 +6,6 @@ import { Globe, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { BrandMark } from "./Navbar";
 import { NAV_LINKS } from "@/lib/cosalka/content";
-import { scrollToSection } from "@/hooks/use-smooth-scroll";
 import { GlowTitle } from "./GlowTitle";
 
 /**
@@ -16,14 +15,6 @@ import { GlowTitle } from "./GlowTitle";
  */
 export function Footer() {
   const router = useRouter();
-
-  const go = (target: string) => {
-    if (target === "tienda") {
-      router.push("/tienda");
-      return;
-    }
-    scrollToSection(target);
-  };
 
   return (
     <footer
@@ -72,9 +63,9 @@ export function Footer() {
         >
           <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
             {NAV_LINKS.map((l) => (
-              <li key={l.target}>
+              <li key={l.href}>
                 <button
-                  onClick={() => go(l.target)}
+                  onClick={() => router.push(l.href)}
                   className="group relative cursor-pointer rounded-sm py-1 text-[10.5px] uppercase tracking-[0.24em] text-black/55 transition-colors hover:text-gold-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
                 >
                   {l.label}

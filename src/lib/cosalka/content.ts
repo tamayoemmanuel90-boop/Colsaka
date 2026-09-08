@@ -14,13 +14,13 @@ import type { StageName } from "@/lib/scroll-engine";
      "Te acompañamos 30 días", "México, Estados Unidos y toda LATAM").
    ──────────────────────────────────────────────────────────────────────── */
 
-/* ── Navigation ─────────────────────────────────────────────────────── */
-export const NAV_LINKS: Array<{ label: string; target: string }> = [
-  { label: "Inicio", target: "inicio" },
-  { label: "Sobre nosotros", target: "origen" },
-  { label: "Tienda", target: "tienda" },
-  { label: "FAQ", target: "faq" },
-  { label: "Contacto", target: "contacto" },
+/* ── Navigation — every section is a REAL route (Amazon-style) ─────── */
+export const NAV_LINKS: Array<{ label: string; href: string }> = [
+  { label: "Inicio", href: "/" },
+  { label: "Nosotros", href: "/nosotros" },
+  { label: "Tienda", href: "/tienda" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Contacto", href: "/contacto" },
 ];
 
 /* ── Hero hook (mirror of nutragen.mx's opening question) ───────────── */
@@ -29,9 +29,9 @@ export const HERO = {
   sub: "parches temporales, no — barrera y fortaleza. nutragenética de vanguardia.",
 };
 
-/* ── 01 · La verdad — no es un apagafuegos químico ──────────────────── */
+/* ── Preview value strip — the essence, zero prices ─────────────────── */
 export const VERDAD = {
-  kicker: "01 — La verdad incómoda",
+  kicker: "01 — Lo esencial",
   line: "Nutrición pura para tu estrato córneo — no un apagafuegos químico.",
   chips: ["Sin esteroides", "Sin cortisona", "Sin efecto rebote"],
 };

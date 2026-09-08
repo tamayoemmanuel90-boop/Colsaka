@@ -17,6 +17,9 @@ export function useSmoothScroll(enabled = true) {
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
+    // avoid stale browser scroll restoration fighting the stage engine
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+
     const lenis = new Lenis({
       lerp: 0.085,
       wheelMultiplier: 1,

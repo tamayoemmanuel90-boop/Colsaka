@@ -7,10 +7,12 @@ import { makeLabelTexture } from "./make-label-texture";
 import { frameState } from "./frame-state";
 
 /**
- * Procedural Cosalka Nutragen 500 ml presentation bottle.
- * Parts are grouped so a scroll-driven "explode" factor can separate the
- * clinical layers: gold cap ↑ · silver seal ring ↑ · glass shell ↓ ·
- * golden liquid + nutragenetic helix core revealed at center.
+ * Procedural Cosalka · NUTRAGEN 500 ml bottle — faithful to the REAL
+ * client product: opaque satin-white body, brushed chrome cap, silver
+ * seal collar and the printed COSALKA/NUTRAGEN label. Parts are grouped
+ * so a scroll-driven "explode" factor can separate the clinical layers:
+ * chrome cap ↑ · silver collar ↑ · the white shell turns translucent to
+ * reveal the nutragenetic helix core at the center.
  */
 
 /* ── profiles ───────────────────────────────────────────────────────── */
@@ -38,25 +40,6 @@ function buildGlassProfile(): THREE.Vector2[] {
     [0.19, 1.218],
     [0.186, 1.02],
     [0.001, 1.01],
-  ];
-  return p.map(([x, y]) => new THREE.Vector2(x, y));
-}
-
-function buildLiquidProfile(): THREE.Vector2[] {
-  const p: Array<[number, number]> = [
-    [0.001, -1.14],
-    [0.28, -1.135],
-    [0.48, -1.095],
-    [0.56, -1.01],
-    [0.578, -0.9],
-    [0.578, -0.4],
-    [0.57, 0.05],
-    [0.545, 0.28],
-    [0.5, 0.42],
-    [0.42, 0.5],
-    [0.3, 0.555],
-    [0.16, 0.585],
-    [0.001, 0.592],
   ];
   return p.map(([x, y]) => new THREE.Vector2(x, y));
 }
@@ -115,22 +98,31 @@ export function Bottle() {
   const capRef = useRef<THREE.Group>(null);
   const collarRef = useRef<THREE.Group>(null);
   const shellRef = useRef<THREE.Group>(null);
+  const shellMat = useRef<THREE.MeshPhysicalMaterial>(null);
+  const ridgeMat = useRef<THREE.MeshPhysicalMaterial>(null);
   const helixGroup = useRef<THREE.Group>(null);
   const helixMatA = useRef<THREE.MeshStandardMaterial>(null);
   const ringInner = useRef<THREE.Mesh>(null);
   const ringOuter = useRef<THREE.Mesh>(null);
-  const liquidMat = useRef<THREE.MeshPhysicalMaterial>(null);
 
   const labelTex = useMemo(() => makeLabelTexture(), []);
   const glassGeo = useMemo(() => new THREE.LatheGeometry(buildGlassProfile(), 96), []);
-  const liquidGeo = useMemo(() => new THREE.LatheGeometry(buildLiquidProfile(), 72), []);
   const helix = useMemo(() => buildHelix(), []);
 
   // thin open cylinder band that carries the label texture (front & back)
   const labelBand = useMemo(() => {
-    const L = 1.95;
-    // thetaStart = -L/2 → the band is CENTERED on the front (+z) face
-    return new THREE.CylinderGeometry(0.646, 0.646, 0.82, 80, 1, true, -L / 2, L);
+    const theta = 1.95; // radians — arc ≈ 1.26 world units wide
+    // thetaStart = -theta/2 → the band is CENTERED on the front (+z) face
+    return new THREE.CylinderGeometry(
+      0.647,
+      0.647,
+      0.9,
+      80,
+      1,
+      true,
+      -theta / 2,
+      theta
+    );
   }, []);
 
   useFrame((state, delta) => {
@@ -174,8 +166,13 @@ export function Bottle() {
       ringOuter.current.rotation.z = -t * 0.16;
       ringOuter.current.scale.setScalar(1 + e * 0.1);
     }
-    if (liquidMat.current) {
-      liquidMat.current.emissiveIntensity = 0.1 + e * 0.32;
+
+    // the white shell turns translucent while exploded → helix reveals
+    if (shellMat.current) {
+      shellMat.current.opacity = ease(1 - e * 0.88, shellMat.current.opacity);
+    }
+    if (ridgeMat.current) {
+      ridgeMat.current.opacity = ease(1 - e * 0.88, ridgeMat.current.opacity);
     }
   });
 
@@ -191,73 +188,63 @@ export function Bottle() {
         <meshBasicMaterial color="#c9ced6" transparent opacity={0} depthWrite={false} />
       </mesh>
 
-      {/* ═══ glass shell + labels ═══ */}
+      {/* ═══ satin-white body (the REAL product) + printed label ═══ */}
       <group ref={shellRef}>
-        <mesh geometry={glassGeo}>
+        <mesh geometry={glassGeo} renderOrder={1}>
           <meshPhysicalMaterial
-            color="#ffffff"
-            transmission={1}
-            thickness={0.65}
-            roughness={0.055}
-            ior={1.44}
-            clearcoat={1}
-            clearcoatRoughness={0.08}
-            attenuationColor="#f7fbff"
-            attenuationDistance={2.2}
-            envMapIntensity={1.25}
+            ref={shellMat}
+            color="#f6f4ef"
+            roughness={0.34}
+            metalness={0}
+            clearcoat={0.55}
+            clearcoatRoughness={0.3}
+            sheen={0.35}
+            sheenColor="#ffffff"
+            envMapIntensity={0.9}
+            transparent
+            opacity={1}
             side={THREE.DoubleSide}
           />
         </mesh>
 
         {/* engraved side ridges — sleek 500ml presentation flanks */}
         {[1, -1].map((s) => (
-          <mesh key={`ridge${s}`} position={[s * 0.505, 0.02, 0]} rotation={[0, 0, s > 0 ? Math.PI : 0]}>
+          <mesh
+            key={`ridge${s}`}
+            position={[s * 0.505, 0.02, 0]}
+            rotation={[0, 0, s > 0 ? Math.PI : 0]}
+            renderOrder={1}
+          >
             <boxGeometry args={[0.02, 0.66, 0.34]} />
             <meshPhysicalMaterial
-              color="#ffffff"
-              transmission={0.9}
-              thickness={0.3}
-              roughness={0.14}
-              ior={1.44}
+              ref={s === 1 ? ridgeMat : undefined}
+              color="#f6f4ef"
+              roughness={0.4}
+              metalness={0}
+              transparent
+              opacity={1}
             />
           </mesh>
         ))}
 
-        {/* front & back label bands */}
+        {/* front & back printed label bands */}
         <mesh geometry={labelBand} renderOrder={2}>
-          <meshStandardMaterial map={labelTex} roughness={0.38} metalness={0.08} envMapIntensity={0.5} />
+          <meshStandardMaterial map={labelTex} roughness={0.52} metalness={0.02} envMapIntensity={0.42} />
         </mesh>
         <mesh geometry={labelBand} rotation-y={Math.PI} renderOrder={2}>
-          <meshStandardMaterial map={labelTex} roughness={0.38} metalness={0.08} envMapIntensity={0.5} />
+          <meshStandardMaterial map={labelTex} roughness={0.52} metalness={0.02} envMapIntensity={0.42} />
         </mesh>
       </group>
-
-      {/* ═══ golden liquid fill ═══ */}
-      <mesh geometry={liquidGeo} renderOrder={1}>
-        <meshPhysicalMaterial
-          ref={liquidMat}
-          color="#f2dda6"
-          transmission={0.9}
-          thickness={1.35}
-          roughness={0.16}
-          ior={1.33}
-          attenuationColor="#c9971e"
-          attenuationDistance={0.72}
-          emissive="#b8860b"
-          emissiveIntensity={0.1}
-          envMapIntensity={0.7}
-        />
-      </mesh>
 
       {/* ═══ nutragenetic helix core (revealed on explode) ═══ */}
       <group ref={helixGroup} scale={0.001}>
         <mesh geometry={helix.strandA}>
           <meshStandardMaterial
             ref={helixMatA}
-            color="#caa14a"
+            color="#b97a4b"
             metalness={0.55}
             roughness={0.3}
-            emissive="#d4af37"
+            emissive="#c98a5a"
             emissiveIntensity={0.35}
           />
         </mesh>
@@ -273,7 +260,7 @@ export function Bottle() {
         {helix.rungs.map((r, i) => (
           <mesh key={`rung${i}`} position={r.pos} quaternion={r.quat}>
             <cylinderGeometry args={[0.012, 0.012, r.len, 6]} />
-            <meshStandardMaterial color="#e8cf8f" metalness={0.6} roughness={0.35} emissive="#d4af37" emissiveIntensity={0.22} />
+            <meshStandardMaterial color="#e3b08a" metalness={0.6} roughness={0.35} emissive="#c98a5a" emissiveIntensity={0.22} />
           </mesh>
         ))}
       </group>
@@ -290,21 +277,26 @@ export function Bottle() {
         </mesh>
       </group>
 
-      {/* ═══ brushed gold cap ═══ */}
+      {/* ═══ brushed chrome cap (like the real bottle) ═══ */}
       <group ref={capRef} position={[0, 1.41, 0]}>
         <mesh>
           <cylinderGeometry args={[0.262, 0.256, 0.37, 84]} />
-          <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.27} envMapIntensity={1.35} />
+          <meshStandardMaterial color="#d9dcdf" metalness={1} roughness={0.22} envMapIntensity={1.5} />
         </mesh>
         {/* top disc */}
         <mesh position={[0, 0.187, 0]}>
           <cylinderGeometry args={[0.262, 0.262, 0.012, 84]} />
-          <meshStandardMaterial color="#e3c25f" metalness={1} roughness={0.16} envMapIntensity={1.6} />
+          <meshStandardMaterial color="#e8ebee" metalness={1} roughness={0.14} envMapIntensity={1.7} />
         </mesh>
         {/* engraving groove near top */}
         <mesh position={[0, 0.115, 0]} rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.264, 0.0075, 12, 84]} />
-          <meshStandardMaterial color="#a8842a" metalness={1} roughness={0.42} />
+          <meshStandardMaterial color="#9aa0a6" metalness={1} roughness={0.4} />
+        </mesh>
+        {/* disc-top slot line */}
+        <mesh position={[0, 0.194, 0]}>
+          <boxGeometry args={[0.3, 0.006, 0.05]} />
+          <meshStandardMaterial color="#8f959b" metalness={1} roughness={0.5} />
         </mesh>
       </group>
     </group>

@@ -2,9 +2,10 @@ import { motion } from "framer-motion";
 
 /**
  * FrameRails — Mantis-style fixed editorial chrome:
- * vertical mono rails on both edges, corner micro-copy, a mono "weather"
- * line under the nav and a small tilted gold shard (brand accent) floating
- * at the bottom-left. Pure decoration: pointer-events-none everywhere.
+ * vertical mono rails on both edges, corner micro-copy and a mono "weather"
+ * line under the nav. Pure decoration: pointer-events-none everywhere.
+ * (The tilted gold shard was removed — user request: no triangle floating
+ * under the hero CTAs.)
  */
 
 const RAIL =
@@ -44,21 +45,6 @@ export function FrameRails() {
       <div className={`${RAIL} bottom-5 right-5 hidden lg:block`}>
         © 2025 — Cosalka®
       </div>
-
-      {/* tilted gold shard — brand accent behind the 3D layer */}
-      <div
-        className="pointer-events-none fixed bottom-[15%] left-[3.5%] z-[15] hidden lg:block"
-        style={{
-          width: 132,
-          height: 56,
-          transform: "rotate(-9deg)",
-          clipPath: "polygon(0 42%, 100% 0, 52% 100%, 10% 80%)",
-          background:
-            "linear-gradient(135deg, #f0dfa8 0%, #d4af37 55%, #8a6d1f 100%)",
-          filter: "drop-shadow(0 10px 24px rgba(212,175,55,.35))",
-          opacity: 0.92,
-        }}
-      />
     </motion.div>
   );
 }

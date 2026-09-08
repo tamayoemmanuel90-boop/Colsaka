@@ -1,11 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useRef } from "react";
 
 /**
- * GlowTitle — premium letter-by-letter reveal with breathing glow.
+ * GlowTitle — premium letter-by-letter reveal.
  * Splits each piece into words (kept unbreakable) and chars; every
  * char fades in from a blurred, lifted state with a tight stagger.
+ *
+ * Crispness guarantee (user request: gold text must not look blurry):
+ * the reveal animates a blur filter, but any retained filter — even
+ * blur(0px) — keeps each char pinned to a grayscale-antialiased
+ * composited layer, so the settled glyphs render soft. As soon as a
+ * char finishes animating we strip its inline filter and will-change,
+ * returning it to normal crisp text rendering.
  */
 
 export interface TitlePiece {
@@ -63,6 +71,16 @@ export function GlowTitle({
         };
 
   let charIndex = 0;
+  const charEls = useRef(new Map<number, HTMLElement>());
+
+  /** Settle a char: drop filter + will-change so it renders razor-sharp. */
+  const settleChar = (d: number) => () => {
+    const el = charEls.current.get(d);
+    if (el) {
+      el.style.filter = "";
+      el.style.willChange = "auto";
+    }
+  };
 
   return (
     <Tag className={className} aria-label={label} role="text">
@@ -103,12 +121,17 @@ export function GlowTitle({
                       return (
                         <motion.span
                           key={`${pi}-${ti}-${d}`}
+                          ref={(el) => {
+                            if (el) charEls.current.set(d, el);
+                            else charEls.current.delete(d);
+                          }}
+                          onAnimationComplete={settleChar(d)}
                           variants={{
                             hidden: CHAR_HIDDEN,
                             show: CHAR_SHOW,
                           }}
                           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                          className={`inline-block will-change-transform ${charClassName} ${piece.c ?? ""}`}
+                          className={`inline-block ${charClassName} ${piece.c ?? ""}`}
                         >
                           {ch}
                         </motion.span>

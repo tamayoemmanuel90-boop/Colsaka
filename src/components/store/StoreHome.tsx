@@ -8,13 +8,16 @@ import {
   Check,
   Leaf,
   Lock,
+  Medal,
+  PackageCheck,
   ShieldCheck,
   ShoppingBag,
   Truck,
+  UserCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { GlowTitle } from "@/components/cosalka/GlowTitle";
-import { FAQ_ITEMS, RUTINA, VOCES } from "@/lib/cosalka/content";
+import { ENVIOS, FAQ_ITEMS, GARANTIA, RUTINA, VOCES } from "@/lib/cosalka/content";
 import { formatPrice, type ProductDTO } from "@/lib/products-client";
 import { useProducts } from "@/hooks/use-products";
 import { useCart } from "@/store/cart";
@@ -271,6 +274,64 @@ export function StoreHome() {
         )}
       </section>
 
+      {/* ── los más vendidos (ranking estilo marketplace) ────── */}
+      <section className="mx-auto w-full max-w-6xl px-5 pb-20 sm:px-10" aria-label="Los más vendidos">
+        <motion.p {...fadeUp} transition={{ duration: 0.7 }} className="font-mono text-[9px] uppercase tracking-[0.34em] text-black/45">
+          Ranking de la casa
+        </motion.p>
+        <h2 className="mt-4 text-[clamp(1.6rem,3vw,2.4rem)] font-medium tracking-[-0.03em] text-ink">
+          los <span className="gold-text glow-soft">más vendidos.</span>
+        </h2>
+
+        <ol className="mt-10 space-y-3">
+          {(products.length ? products : []).slice(0, 3).map((p, i) => (
+            <motion.li
+              key={p.slug}
+              {...fadeUp}
+              transition={{ duration: 0.65, delay: i * 0.09 }}
+              className="group flex items-center gap-4 rounded-2xl border border-black/[0.08] bg-white/80 p-4 backdrop-blur-md transition-all duration-300 hover:border-gold/50 sm:gap-6 sm:p-5"
+            >
+              <span className="gold-text glow-soft w-10 shrink-0 text-center text-3xl font-semibold tracking-tight">
+                {i + 1}
+              </span>
+              <Link
+                href={`/producto/${p.slug}`}
+                className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-black/10 bg-carbon sm:h-[72px] sm:w-[72px]"
+                aria-label={`Ver ${p.name}`}
+              >
+                <img
+                  src={p.image}
+                  alt={`Nutragen ${p.name} de 500 ml`}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+                />
+              </Link>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[14px] font-medium tracking-tight text-ink transition-colors group-hover:text-gold-deep">
+                  {p.name}
+                </p>
+                <p className="mt-0.5 truncate text-[11.5px] tracking-wide text-black/45">
+                  {p.tagline}
+                </p>
+              </div>
+              {i === 0 && (
+                <span className="hidden shrink-0 items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 font-mono text-[8.5px] uppercase tracking-[0.18em] text-gold-deep sm:inline-flex">
+                  <Medal size={11} /> Top ventas
+                </span>
+              )}
+              <Link
+                href={`/producto/${p.slug}`}
+                data-testid={`best-${p.slug}`}
+                className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border border-gold/60 px-5 text-[9px] font-semibold uppercase tracking-[0.18em] text-gold-deep outline-none transition-all duration-300 hover:bg-gold hover:text-graphite focus-visible:ring-2 focus-visible:ring-gold"
+              >
+                Ver
+                <ArrowRight size={11} />
+              </Link>
+            </motion.li>
+          ))}
+        </ol>
+      </section>
+
       {/* ── bundle banner ──────────────────────────────────────── */}
       {bundle && (
         <section className="mx-auto w-full max-w-6xl px-5 pb-20 sm:px-10" aria-label="Paquete Doble Acción">
@@ -379,6 +440,138 @@ export function StoreHome() {
               </div>
             </motion.article>
           ))}
+        </div>
+      </section>
+
+      {/* ── cómo funciona (marketplace confianza) ───────────── */}
+      <section className="mx-auto w-full max-w-6xl px-5 pb-20 sm:px-10" aria-label="Cómo funciona">
+        <motion.p {...fadeUp} transition={{ duration: 0.7 }} className="font-mono text-[9px] uppercase tracking-[0.34em] text-black/45">
+          Cómo funciona
+        </motion.p>
+        <h2 className="mt-4 text-[clamp(1.6rem,3vw,2.4rem)] font-medium tracking-[-0.03em] text-ink">
+          pedir es <span className="gold-text glow-soft">así de simple.</span>
+        </h2>
+
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
+          {[
+            {
+              icon: PackageCheck,
+              n: "01",
+              title: "Eliges tu protocolo",
+              body: "Paso 1, Paso 2 o el Paquete Doble Acción completo — 500 ml cada frasco, sellado y estéril.",
+            },
+            {
+              icon: Truck,
+              n: "02",
+              title: "Llega a tu puerta",
+              body: `${ENVIOS.stats[0].value} con seguimiento en todo México. Gratis desde $1,500 MXN — también hacia ${ENVIOS.regiones}.`,
+            },
+            {
+              icon: UserCheck,
+              n: "03",
+              title: "Te acompañamos 30 días",
+              body: "Asesoría por correo durante todo el protocolo. Si no ves resultados, devolución del 100%.",
+            },
+          ].map(({ icon: Icon, n, title, body }, i) => (
+            <motion.article
+              key={n}
+              {...fadeUp}
+              transition={{ duration: 0.7, delay: i * 0.11 }}
+              className="group rounded-2xl border border-black/10 bg-white/70 p-7 backdrop-blur-md transition-all duration-300 hover:border-gold/50"
+            >
+              <div className="flex items-center justify-between">
+                <span className="grid h-11 w-11 place-items-center rounded-full border border-gold/40 bg-gold/10">
+                  <Icon size={17} className="text-gold-deep" strokeWidth={1.75} />
+                </span>
+                <span className="font-mono text-[10px] tracking-[0.3em] text-gold-deep">{n}</span>
+              </div>
+              <h3 className="mt-5 text-lg font-medium tracking-[-0.01em] text-ink transition-colors group-hover:text-gold-deep sm:text-xl">
+                {title}
+              </h3>
+              <p className="mt-3 text-[12.5px] leading-relaxed text-black/55">{body}</p>
+            </motion.article>
+          ))}
+        </div>
+      </section>
+
+      {/* ── sobre Cosalka (teaser a /nosotros) ─────────────── */}
+      <section className="mx-auto w-full max-w-6xl px-5 pb-20 sm:px-10" aria-label="Sobre Cosalka">
+        <motion.div
+          {...fadeUp}
+          transition={{ duration: 0.75 }}
+          className="grid overflow-hidden rounded-3xl border border-black/[0.08] bg-white/70 backdrop-blur-md sm:grid-cols-2"
+        >
+          <div className="relative min-h-[260px]">
+            <img
+              src="/images/client/produccion-real.jpg"
+              alt="Producción real de Nutragen — Cosalka México"
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </div>
+          <div className="flex flex-col justify-center p-8 sm:p-12">
+            <p className="font-mono text-[9px] uppercase tracking-[0.34em] text-gold-deep">
+              Sobre nosotros · en su propia ruta
+            </p>
+            <h2 className="mt-4 text-3xl font-medium tracking-[-0.03em] text-ink sm:text-4xl">
+              padre e hijo. <span className="gold-text glow-gold">doce años</span> de investigación.
+            </h2>
+            <p className="mt-4 max-w-sm text-[13px] leading-relaxed text-black/55">
+              Cosalka International S. de R.L. de C.V. — nutrición aplicada a
+              la piel, desarrollada y producida en México. Conoce la historia
+              completa, la ciencia y nuestra honestidad clínica.
+            </p>
+            <Link
+              href="/nosotros"
+              data-testid="tienda-about-cta"
+              className="group mt-7 inline-flex h-12 w-fit items-center gap-2.5 rounded-full border border-gold/60 px-8 text-[10px] font-semibold uppercase tracking-[0.24em] text-gold-deep outline-none transition-all duration-300 hover:bg-gold hover:text-graphite focus-visible:ring-2 focus-visible:ring-gold"
+            >
+              Conocer Cosalka
+              <ArrowRight size={13} className="transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ── envíos + garantía band ───────────────────────────── */}
+      <section className="mx-auto w-full max-w-6xl px-5 pb-20 sm:px-10" aria-label="Envíos y garantía">
+        <div className="grid gap-5 md:grid-cols-2">
+          <motion.div
+            {...fadeUp}
+            transition={{ duration: 0.7 }}
+            className="rounded-3xl bg-carbon p-8 text-white sm:p-10"
+          >
+            <Truck size={20} className="text-gold-soft" />
+            <h3 className="mt-5 text-2xl font-medium tracking-tight">Envíos 24/72 h</h3>
+            <p className="mt-3 text-[13px] leading-relaxed text-white/60">
+              {ENVIOS.regiones}. Gratis desde $1,500 MXN, con seguimiento GPS
+              en tiempo real y embalaje térmico asegurado.
+            </p>
+            <ul className="mt-6 space-y-2">
+              {ENVIOS.stats.map((s) => (
+                <li key={s.label} className="flex items-baseline justify-between border-t border-white/10 pt-2.5">
+                  <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/40">{s.label}</span>
+                  <span className="gold-text text-sm font-semibold">{s.value}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          <motion.div
+            {...fadeUp}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="rounded-3xl border border-gold/25 bg-white/70 p-8 backdrop-blur-md sm:p-10"
+          >
+            <ShieldCheck size={20} className="text-gold-deep" />
+            <h3 className="mt-5 text-2xl font-medium tracking-tight text-ink">Garantía 30 días</h3>
+            <p className="mt-3 text-[13px] leading-relaxed text-black/55">{GARANTIA.line}</p>
+            <a
+              href={`mailto:${GARANTIA.email}`}
+              className="mt-6 inline-flex items-center gap-2 font-mono text-[9.5px] uppercase tracking-[0.24em] text-gold-deep outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-gold/60"
+            >
+              {GARANTIA.email} · respuesta el mismo día
+            </a>
+          </motion.div>
         </div>
       </section>
 

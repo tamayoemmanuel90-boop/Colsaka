@@ -29,7 +29,7 @@ export function Hero() {
       data-stage="hero"
       className="relative flex min-h-[104svh] w-full items-center overflow-hidden px-5 pb-16 pt-28 sm:px-10"
     >
-      <div className="mx-auto grid w-full max-w-[1700px] grid-cols-1 items-center gap-6 lg:grid-cols-2 lg:gap-4">
+      <div className="mx-auto grid w-full max-w-[1700px] grid-cols-1 items-center gap-6 lg:grid-cols-[1.08fr_0.92fr] lg:gap-4">
         {/* LEFT — the words (title never touched by the 3D) */}
         <div className="relative z-10 flex flex-col items-start">
           <motion.p
@@ -47,7 +47,7 @@ export function Hero() {
             delay={0.4}
             stagger={0.024}
             charClassName=""
-            className="text-left text-[clamp(2.5rem,6.2vw,6.2rem)] font-medium leading-[0.99] tracking-[-0.045em] text-ink"
+            className="text-left text-[clamp(2.5rem,5.65vw,6.2rem)] font-medium leading-[0.99] tracking-[-0.045em] text-ink"
             lines={[
               [
                 { t: "¿te " },

@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, ShoppingBag, X } from "lucide-react";
 import { NAV_LINKS } from "@/lib/cosalka/content";
 import { cartCount, useCart } from "@/store/cart";
-import { scrollToSection } from "@/hooks/use-smooth-scroll";
 
 /** Cosalka golden monogram — pure SVG, no assets. */
 export function BrandMark({ size = 30 }: { size?: number }) {
@@ -39,14 +38,9 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const go = (target: string) => {
+  const go = (href: string) => {
     setMenuOpen(false);
-    // "tienda" is a real route — the full store lives at /tienda
-    if (target === "tienda") {
-      router.push("/tienda");
-      return;
-    }
-    scrollToSection(target);
+    router.push(href);
   };
 
   return (
@@ -80,9 +74,9 @@ export function Navbar() {
         {/* desktop links */}
         <ul className="hidden items-center gap-8 lg:flex">
           {NAV_LINKS.map((l) => (
-            <li key={l.target}>
+            <li key={l.href}>
               <button
-                onClick={() => go(l.target)}
+                onClick={() => go(l.href)}
                 className="group relative cursor-pointer py-1 text-[10.5px] font-medium uppercase tracking-[0.24em] text-black/55 transition-colors hover:text-ink outline-none focus-visible:text-gold-deep"
               >
                 {l.label}
@@ -136,9 +130,9 @@ export function Navbar() {
               className="absolute inset-x-0 top-full mt-2 rounded-2xl border border-black/10 bg-white/95 p-2 shadow-2xl backdrop-blur-xl lg:hidden"
             >
               {NAV_LINKS.map((l) => (
-                <li key={l.target}>
+                <li key={l.href}>
                   <button
-                    onClick={() => go(l.target)}
+                    onClick={() => go(l.href)}
                     className="w-full cursor-pointer rounded-xl px-4 py-3 text-left text-[11px] uppercase tracking-[0.22em] text-black/65 transition-colors hover:bg-gold/[0.08] hover:text-gold-deep"
                   >
                     {l.label}

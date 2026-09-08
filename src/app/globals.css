@@ -149,50 +149,30 @@ html.lenis body {
 }
 
 /* ── Brand utilities ────────────────────────────────────────────────── */
+/* Crisp gold type — user request: the gold headings looked blurry.
+   The old recipe (animated background shimmer + stacked text-shadow
+   glow up to 120px) haloed the glyphs through background-clip:text and
+   forced a permanently repainting, softly rendered layer. The gradient
+   is now static with a deeper mid-stop so it reads sharp on paper. */
 .gold-text {
   background: linear-gradient(
     115deg,
-    #a8842a 0%,
-    #d4af37 26%,
-    #f0dfa8 50%,
-    #d4af37 74%,
-    #8f7020 100%
+    #9a7924 0%,
+    #c9a23a 28%,
+    #e9d387 50%,
+    #c9a23a 72%,
+    #7f621a 100%
   );
-  background-size: 220% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: goldShimmer 7s linear infinite;
 }
 
-@keyframes goldShimmer {
-  to {
-    background-position: 220% center;
-  }
-}
-
-/* ── Premium glow typography (tuned for the light clinical page) ────── */
-.glow-soft {
-  text-shadow: 0 0 26px rgba(212, 175, 55, 0.28);
-}
-
+/* Glow hooks kept as no-ops: dozens of headings use these class names,
+   but the hazy text-shadow is gone so every gold word stays clean. */
+.glow-soft,
 .glow-gold {
-  animation: glowBreatheGold 4.6s ease-in-out infinite;
-}
-@keyframes glowBreatheGold {
-  0%,
-  100% {
-    text-shadow:
-      0 0 10px rgba(212, 175, 55, 0.34),
-      0 0 34px rgba(212, 175, 55, 0.2),
-      0 0 80px rgba(212, 175, 55, 0.12);
-  }
-  50% {
-    text-shadow:
-      0 0 16px rgba(200, 160, 50, 0.55),
-      0 0 52px rgba(212, 175, 55, 0.32),
-      0 0 120px rgba(212, 175, 55, 0.18);
-  }
+  text-shadow: none;
 }
 
 /* hollow editorial type — secondary giant headlines */
@@ -265,9 +245,6 @@ html.lenis body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gold-text,
-  .glow-gold,
-  .glow-soft,
   .cue-float,
   .ring-pulse,
   .seal-spin {
