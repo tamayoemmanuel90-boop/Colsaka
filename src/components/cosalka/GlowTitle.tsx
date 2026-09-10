@@ -103,6 +103,7 @@ export function GlowTitle({
             {line.map((piece, pi) =>
               piece.t.split(/(\s+)/).map((token, ti) => {
                 if (token.trim() === "") {
+                  if (token === "") return null; // empty split artifact — skip
                   // word spacer — inline-block collapses real spaces
                   return (
                     <span

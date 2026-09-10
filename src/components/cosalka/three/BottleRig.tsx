@@ -12,7 +12,6 @@ import {
 import { frameState } from "./frame-state";
 import { Bottle } from "./Bottle";
 import { MolecularField } from "./MolecularField";
-import { ScribbleShells } from "./ScribbleShells";
 import { HotspotNodes } from "./HotspotNodes";
 import { useStageStore } from "@/store/stage";
 
@@ -79,7 +78,8 @@ export function BottleRig({
 
   return (
     <group ref={root}>
-      <ScribbleShells />
+      {/* ScribbleShells removed — user request: no black wireframe lines,
+          the clean 3D bottle is the only object on stage. */}
       <Bottle />
       <HotspotNodes activeId={hotspotId} onSelect={onHotspotSelect} />
       <MolecularField />

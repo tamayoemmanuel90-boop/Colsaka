@@ -187,3 +187,21 @@ Stage Summary:
 - "/" is now a strict preview: no prices, 3D only in the hero (then gone), real-photo gallery at the bottom, everything routes into the store.
 - The store is a real multi-route Amazon-style experience: /tienda (13 sections), /producto/[slug], /carrito, /checkout (3 steps, server-computed orders), /confirmacion, /nosotros, /faq, /contacto — all with aurora background, fluid animations and the MacBook-style cursor; zero WebGL outside "/".
 - The 3D bottle now replicates the physical Nutragen product (white satin body, chrome cap, copper COSALKA/NUTRAGEN label, 500 ML) and never covers a single word on any stage.
+
+---
+Task ID: 16
+Agent: orchestrator (Z.ai Code main)
+Task: "Quitar el triángulo + texto dorado borroso → limpio" + "revisa qué más hay en la carpeta y qué más puedo agregar" + "a los objetos 3D quíteles las líneas negras, solo quede el objeto 3D"
+
+Work Log:
+- Removed the tilted gold shard (clip-path triangle) from FrameRails.tsx — it floated at bottom-left under the hero CTAs (user's green circle #2).
+- Crisp gold type (user: "el texto se ve borroso en ese color"): globals.css .gold-text is now a STATIC gradient (deeper mid-stops, no shimmer loop) and .glow-soft/.glow-gold are no-op hooks (text-shadow: none) — the 3-layer gold text-shadow halo (up to 120px) that blurred background-clip:text glyphs is gone app-wide (~30 headings). GlowTitle now strips each char's inline filter/will-change on onAnimationComplete (retained blur(0px) pins chars to grayscale-AA composited layers = soft text).
+- Removed ALL black lines from the 3D scene (user: "solo quede el objeto 3d"): deleted ScribbleShells.tsx (12 black wireframe lathe shells #101013 + 2 dark torus orbit rings) and its mount in BottleRig. MolecularField metallic beads/triads/Sparkles kept (3D objects, not lines). Verified visually: bottle now stands completely clean.
+- Folder audit (public/images/client/): found 2 unmounted real records → added VOCES.registros (content.ts): antes-despues-piernas.jpg (combined antes|después single photo, Semana 3) + antes-espalda.jpg (honest ongoing case, Semana 2, gold "EN TRATAMIENTO" badge + note "el después se publica al cerrar el registro"). GaleriaReal renders them as a new 2-col row between the pair grid and the videos, with Antes/Después chips on the combined photo.
+- BUG FIX in GlowTitle: "¿te " split produced ["¿te"," ",""] → TWO 0.24em spacers per written space (words 50% too far apart, hero line 38px wider than designed). Empty split artifacts are now skipped.
+- Hero title fit re-engineered with real measurements: the line wrapper is a flex item (align-items:start → fit-content), so previous "column vs text" numbers were self-referential; real constraint = grid column. Grid set to lg:grid-cols-[1.08fr_0.92fr] + clamp(2.5rem,6.1vw,6.2rem). Measured margins vs grid column: 1440→7.9%, 1240→6.9%, 1024→5.2%, zero wrap anywhere; fs 88px @1440 ≈ the original look.
+- E2E: hero desktop+mobile (390×844) clean bottle/crisp gold/2-line title/no shard; gallery shows 2 pairs + production + piernas + espalda-en-curso + 2 videos; tsc src clean; eslint clean; HTTP 200.
+
+Stage Summary:
+- "/" hero: only the clean satin-chrome 3D bottle (no scribbles, no rings, no triangle), crisp static-gold typography, guaranteed 2-line title at every desktop width.
+- The client archive folder is now fully mounted: every usable real asset (2 pairs, combined piernas, espalda-in-progress, production photo, 2 videos) is live in the gallery; nothing invented.

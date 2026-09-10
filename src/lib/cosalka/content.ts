@@ -192,6 +192,25 @@ export const VOCES = {
       when: "Día 30",
     },
   ],
+  /**
+   * Real archive records that don't follow the pair format:
+   * "combined" = single photo with both moments side by side;
+   * "ongoing" = honest before-only record still under treatment.
+   */
+  registros: [
+    {
+      src: "/images/client/antes-despues-piernas.jpg",
+      ctx: "Piernas",
+      when: "Semana 3",
+      kind: "combined" as const,
+    },
+    {
+      src: "/images/client/antes-espalda.jpg",
+      ctx: "Espalda",
+      when: "Semana 2",
+      kind: "ongoing" as const,
+    },
+  ],
   /** Real unscripted video testimonials from the client archive. */
   videos: [
     { src: "/video/testimonio-1.mp4", ctx: "Testimonio real · sin guion" },

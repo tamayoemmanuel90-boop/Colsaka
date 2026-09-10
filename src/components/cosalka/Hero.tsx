@@ -47,7 +47,7 @@ export function Hero() {
             delay={0.4}
             stagger={0.024}
             charClassName=""
-            className="text-left text-[clamp(2.5rem,5.65vw,6.2rem)] font-medium leading-[0.99] tracking-[-0.045em] text-ink"
+            className="text-left text-[clamp(2.5rem,6.1vw,6.2rem)] font-medium leading-[0.99] tracking-[-0.045em] text-ink"
             lines={[
               [
                 { t: "¿te " },
