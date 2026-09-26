@@ -3,9 +3,15 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, ShoppingBag, X } from "lucide-react";
+import { Menu, ShoppingBag, Truck, X } from "lucide-react";
 import { NAV_LINKS } from "@/lib/cosalka/content";
 import { cartCount, useCart } from "@/store/cart";
+
+const ANNOUNCEMENTS = [
+  "Envío GRATIS en pedidos desde $1,500 MXN · 24–72 h",
+  "Garantía de resultados: 30 días o 100% de vuelta",
+  "Paga con Google Pay · Apple Pay · Tarjeta — 100% seguro",
+];
 
 /** Cosalka golden monogram — pure SVG, no assets. */
 export function BrandMark({ size = 30 }: { size?: number }) {
@@ -26,6 +32,7 @@ export function BrandMark({ size = 30 }: { size?: number }) {
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [msg, setMsg] = useState(0);
   const items = useCart((s) => s.items);
   const setOpen = useCart((s) => s.setOpen);
   const router = useRouter();
@@ -38,6 +45,15 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // rotate the announcements — Amazon-style value strip
+  useEffect(() => {
+    const id = window.setInterval(
+      () => setMsg((m) => (m + 1) % ANNOUNCEMENTS.length),
+      4200
+    );
+    return () => window.clearInterval(id);
+  }, []);
+
   const go = (href: string) => {
     setMenuOpen(false);
     router.push(href);
@@ -45,6 +61,32 @@ export function Navbar() {
 
   return (
     <header className="pointer-events-auto fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 sm:pt-5">
+      {/* announcement strip — collapses on scroll */}
+      <motion.div
+        initial={false}
+        animate={{ height: scrolled ? 0 : 34, opacity: scrolled ? 0 : 1, marginBottom: scrolled ? 0 : 10 }}
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        className="mx-auto max-w-6xl overflow-hidden"
+        aria-hidden={scrolled}
+      >
+        <div className="flex h-[34px] items-center justify-center gap-2.5 rounded-full bg-graphite px-5 shadow-[0_10px_30px_rgba(13,13,13,0.25)]">
+          <Truck size={12} className="shrink-0 text-gold" />
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={msg}
+              initial={{ y: 12, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -12, opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="truncate font-mono text-[8.5px] uppercase tracking-[0.22em] text-gold/95"
+              data-testid="announcement"
+            >
+              {ANNOUNCEMENTS[msg]}
+            </motion.p>
+          </AnimatePresence>
+        </div>
+      </motion.div>
+
       <motion.nav
         initial={{ y: -70, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -58,7 +100,7 @@ export function Navbar() {
       >
         {/* brand */}
         <button
-          onClick={() => go("inicio")}
+          onClick={() => go("/")}
           className="group flex cursor-pointer items-center gap-2.5 rounded-full pr-2 outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
           aria-label="Cosalka — ir al inicio"
         >

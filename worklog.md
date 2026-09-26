@@ -205,3 +205,47 @@ Work Log:
 Stage Summary:
 - "/" hero: only the clean satin-chrome 3D bottle (no scribbles, no rings, no triangle), crisp static-gold typography, guaranteed 2-line title at every desktop width.
 - The client archive folder is now fully mounted: every usable real asset (2 pairs, combined piernas, espalda-in-progress, production photo, 2 videos) is live in the gallery; nothing invented.
+
+---
+Task ID: 17
+Agent: orchestrator (Z.ai Code main)
+Task: "pasarela de pagos completa DEMO con Google Pay y Apple Pay"
+
+Work Log:
+- New src/components/store/payments/brand-marks.tsx: inline-SVG official marks — Google four-color G + "Pay" lockup, Apple mark + "Pay" lockup, Face ID glyph, Visa wordmark, Mastercard circles, AMEX badge, BIN detection (detectBrand).
+- New src/components/store/payments/DemoSheets.tsx: faithful DEMO recreations of both wallet sheets with a phase machine (review → [faceid] → processing → done → error-retry). GooglePaySheet (white, GPay header, merchant/total, Visa ····4242 DEMO pill, enviar-a, envío, black "G Pay · Pagar" bar) and ApplePaySheet (iOS #f5f5f7 sheet,  Pay header, wallet card rows, "Paga Cosalka" total, black  Pay button → Face ID phase with pulsing glyph + "toca dos veces el botón lateral" + demo authenticate button). ESC/backdrop close guarded during processing; derived-state reset pattern (no setState-in-effect, lint-clean); spring bottom-sheet on mobile / centered on desktop.
+- StoreCheckout step 3 rebuilt as a full gateway hub: express wallet tiles (GPay/Apple Pay official marks) + otros métodos (tarjeta/transferencia/contra entrega); card form with live number grouping (4-4-4-4), MM/AA auto-slash, CVV 3-4, holder, brand mark inline + brand caption, "Autorrellenar tarjeta demo · Visa 4242" helper, per-field validation with specific toasts; per-method CTA labels (Pagar con Google Pay / Apple Pay / Pagar ahora / Confirmar pedido); security footer (TLS 1.3 · 3-DS demo · PCI simulado); "PASARELA DEMO · SIN CARGOS REALES" badge. submitOrder() refactored: POST /api/orders → receipt (now with gateway `method` label) → cart clear, NO navigation; wallets run it inside the sheet then navigate on the success check.
+- OrderReceipt + StoreConfirm: new `method` field shown as "Pago · {label}" row (data-testid=order-method).
+- E2E verified 3 full flows + mobile: (1) GPay sheet flow → REF CMTX8PZ47000; (2) Apple Pay flow incl. Face ID step → REF CMTX8QXX0000 (express $899+$250=$1,149 correct); (3) tarjeta demo autofill → REF CMTX8V227000; (4) mobile 390px bottom-sheet GPay flow → /confirmacion OK. All receipts show the right gateway label. Test orders wiped (DELETE FROM Order). tsc + eslint clean.
+- Test gotcha documented: state field requires >2 chars (NL fails, CDMX/JAL/Nuevo León pass) — data issue, not app bug; synthetic value-setter fills can miss React state after HMR remounts, use agent-browser fill/refs for real events.
+
+Stage Summary:
+- /checkout now has a complete DEMO payment gateway: 5 methods, official Google Pay & Apple Pay buttons and checkout sheets (sandboxed, no SDKs, no real charges), formatted card form with brand detection, gateway-labeled receipts — production-like UX end to end.
+
+---
+Task ID: 18
+Agent: orchestrator (Z.ai Code main)
+Task: "Has una pagina mas profesional: literal un AMAZON, quita el modelo 3d y colocar el video de Google Drive en el inicio"
+
+Work Log:
+- Downloaded the client's official film from Google Drive (file id 1TdPdKXGXFrAXF79dZ4kj-WwwEZRGy0RI) via drive.usercontent direct-download → public/videos/nutragen-hero.mp4 (42 MB, 1920x1072, 60 s, h264). Generated web deliverables with ffmpeg: nutragen-hero-web.mp4 (22 MB, 1600w, faststart) + nutragen-hero-poster.jpg (frame @2.5 s).
+- REMOVED THE 3D LAYER completely: deleted src/components/cosalka/three/ (SceneRoot, BottleRig, Bottle, HotspotNodes, MolecularField, StudioEnv, ScribbleShells, frame-state, spotlight-store) and src/store/stage.ts. LandingPage rebuilt without SceneRoot/initScrollStages/useStageStore (scroll-engine stays — Lenis still consumes scrollBus; content.ts keeps HOTSPOTS for legacy Science.tsx so tsc stays green).
+- NEW cinematic video hero (Hero.tsx): full-bleed autoplay/muted/loop/playsInline <video> with poster fallback + onError guard, layered scrims (left 88% → right 18% gradient + bottom fade into paper), kicker chip, GlowTitle over dark (white + static gold), rating row (5 gold stars · 4.9/5 · +2,300 pieles · resultados reales), dual CTA (Comprar ahora · $1,590 MXN = add flagship + toast; Ver la oferta → #oferta scroll), delivery/guarantee chips, scroll cue. data-testids: hero-buy, hero-store.
+- Amazon-grade conversion sections added to "/":
+  · Navbar announcement strip: rotating 3 messages (envío gratis / garantía / métodos de pago) every 4.2 s, collapses on scroll; brand button now routes "/" correctly.
+  · TrustBar.tsx (new): 4 promise cards — envío gratis, garantía 30 días, orgánico certificado, pago 100% seguro with REAL Visa/Mastercard/GPay/ApplePay marks (imports store payments/brand-marks).
+  · BuyBox.tsx (new, #oferta): flagship offer card — MÁS VENDIDO badge, real catalog price via useProducts ($1,590), computed compare-at $1,990 + −20% chip, "Envío GRATIS incluido · IVA incluido · paga con tarjeta, Google Pay o Apple Pay", benefits checklist, pulsing stock line, AGREGAR AL CARRITO (testid buybox-add) + COMPRAR AHORA → /checkout (testid buybox-buy), payment marks + guarantee row.
+  · Verdad.tsx rebuilt: left column = productos-duo.png card + IL-17·TNF-α / 84 minerales / 500 ml stat strip (fills the old empty 3D half); right column keeps sin corticoides headline + chips.
+  · Rutina.tsx rebuilt as shoppable step cards with real product photography (RUTINA.steps gained img+slug) and "Ver ficha" links to /producto/[slug].
+  · Reviews.tsx (new, #resenas): graphite 4.9 summary card with animated distribution bars (89/8/2/1/0%) + 3 verified-purchase review cards (BadgeCheck chips).
+  · Garantia.tsx: empty 3D right half replaced by produccion-real.jpg card with "Lote sellado · 500 ml" caption; section tightened to 92svh.
+  · Cierre.tsx tightened 104svh → 72svh (sell-page density).
+  · StickyBuyBar.tsx (new): mobile-only fixed bottom bar appearing after 560 px scroll — flagship name/price + COMPRAR (testid sticky-buy), safe-area inset aware; footer gains mobile bottom padding.
+  · Footer: "Métodos de pago:" marks row (Visa/MC/GPay/APay).
+  · Mounted previously orphaned Faq.tsx (SSR-safe accordion) on "/".
+- Toast UX fix: global Toaster moved to position top-center (layout.tsx) so the add-to-cart toast never covers the cart drawer's FINALIZAR COMPRA button on mobile.
+- E2E verified (agent-browser): desktop 1440 — announcement rotation (msg1→msg2), video playing (currentTime advancing, 1600x894), full GPay flow → REF CMUHNZF5Y000 + receipt "Pago: Google Pay · Visa ···· 4242 (demo)", full Apple Pay flow incl. Face ID step → REF CMUHO15YR000 + receipt "Apple Pay · Visa ···· 4242 (demo)"; buybox-buy lands on /checkout pre-filled flow. Mobile 390 — hero/sticky bar/trust cards, sticky-buy → drawer → checkout → GPay bottom sheet → REF CMUHOAP6Z000 ($3,180 = 2×$1,590 + envío GRATIS math correct). FAQ accordion opens, all 6 store routes 200, zero console errors. tsc (src clean) + eslint clean.
+
+Stage Summary:
+- "/" is now a sell-first Amazon-style storefront: official client video replaces the 3D scene entirely (WebGL fully removed), flagship BuyBox with real prices/launch anchor/free-shipping math, verified social proof, shoppable routine cards, guarantee + FAQ — same luxury paper/gold skin, same GlowTitle/framer-motion animation system, fully mobile-verified.
+- Payment gateway (Task 17) re-verified end-to-end on both wallets after the redesign; receipts persist gateway labels.

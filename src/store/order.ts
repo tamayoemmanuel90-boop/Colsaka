@@ -13,6 +13,8 @@ export interface OrderReceipt {
   /** product subtotal (server recomputes item totals) */
   subtotal: number;
   customer: { name: string; city: string };
+  /** display label of the payment gateway used (e.g. "Google Pay · Visa ••42") */
+  method?: string;
 }
 
 interface OrderState {

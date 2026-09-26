@@ -7,6 +7,12 @@ import { toast } from "sonner";
 import { BrandMark } from "./Navbar";
 import { NAV_LINKS } from "@/lib/cosalka/content";
 import { GlowTitle } from "./GlowTitle";
+import {
+  ApplePayMark,
+  GooglePayMark,
+  MastercardMark,
+  VisaMark,
+} from "@/components/store/payments/brand-marks";
 
 /**
  * Footer — clinical paper, colossal gold wordmark, hairline legal bar.
@@ -19,7 +25,7 @@ export function Footer() {
   return (
     <footer
       id="pie"
-      className="pointer-events-none relative z-30 mt-auto w-full border-t border-black/[0.08] bg-[#eaeaec]/90 px-5 pb-8 pt-24 backdrop-blur-sm sm:px-10"
+      className="pointer-events-none relative z-30 mt-auto w-full border-t border-black/[0.08] bg-[#eaeaec]/90 px-5 pb-24 pt-24 backdrop-blur-sm sm:px-10 sm:pb-8"
     >
       <div className="pointer-events-auto mx-auto flex max-w-4xl flex-col items-center text-center">
         {/* brand */}
@@ -94,6 +100,32 @@ export function Footer() {
             </li>
           ))}
         </motion.ul>
+
+        {/* payment methods — Amazon-grade reassurance in the legal area */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, delay: 0.5 }}
+          className="mt-9 flex flex-wrap items-center justify-center gap-2.5"
+          aria-label="Métodos de pago aceptados"
+        >
+          <span className="mr-1.5 font-mono text-[8px] uppercase tracking-[0.2em] text-black/35">
+          Métodos de pago:
+          </span>
+          <span className="rounded-md border border-black/10 bg-white px-2.5 py-1.5 shadow-sm">
+            <VisaMark size={30} />
+          </span>
+          <span className="rounded-md border border-black/10 bg-white px-2 py-1.5 shadow-sm">
+            <MastercardMark size={27} />
+          </span>
+          <span className="rounded-md border border-black/10 bg-white px-2.5 py-2 shadow-sm">
+            <GooglePayMark size={15} />
+          </span>
+          <span className="rounded-md border border-black/10 bg-white px-2.5 py-1.5 shadow-sm">
+            <ApplePayMark size={14} />
+          </span>
+        </motion.div>
 
         <div className="mt-7 flex flex-col items-center gap-2 sm:flex-row">
           <a

@@ -8,10 +8,13 @@ import {
   ArrowRight,
   Banknote,
   CreditCard,
+  Landmark,
   Loader2,
   Lock,
-  Landmark,
+  ShieldCheck,
+  Sparkles,
   Truck,
+  Wallet,
 } from "lucide-react";
 import { toast } from "sonner";
 import { StoreCrumb } from "./StoreNav";
@@ -20,9 +23,17 @@ import { useProducts } from "@/hooks/use-products";
 import { formatPrice, type ProductDTO } from "@/lib/products-client";
 import { SHIPPING_OPTIONS } from "@/lib/cosalka/store";
 import { useOrderStore, type OrderReceipt } from "@/store/order";
+import { GooglePaySheet, ApplePaySheet } from "./payments/DemoSheets";
+import {
+  ApplePayMark,
+  BrandMark,
+  detectBrand,
+  GooglePayMark,
+  type CardBrand,
+} from "./payments/brand-marks";
 
 type Step = 1 | 2 | 3;
-type PayMethod = "tarjeta" | "transferencia" | "contraentrega";
+type PayMethod = "tarjeta" | "googlepay" | "applepay" | "transferencia" | "contraentrega";
 
 interface CustomerForm {
   name: string;
@@ -34,6 +45,13 @@ interface CustomerForm {
   zip: string;
 }
 
+interface CardForm {
+  number: string;
+  expiry: string;
+  cvv: string;
+  holder: string;
+}
+
 const EMPTY: CustomerForm = {
   name: "",
   email: "",
@@ -43,6 +61,8 @@ const EMPTY: CustomerForm = {
   state: "",
   zip: "",
 };
+
+const EMPTY_CARD: CardForm = { number: "", expiry: "", cvv: "", holder: "" };
 
 const STEP_LABELS = ["Datos de envío", "Método de envío", "Pago seguro"];
 
@@ -96,6 +116,31 @@ function StepDots({ step }: { step: Step }) {
 const inputCls =
   "h-11 w-full rounded-xl border border-black/12 bg-white/80 px-4 text-[13px] tracking-wide text-ink outline-none transition-all placeholder:text-black/30 focus:border-gold/70 focus:ring-2 focus:ring-gold/25";
 
+/* ── demo card formatting ───────────────────────────────────────────── */
+
+const digitsOnly = (v: string) => v.replace(/\D/g, "");
+
+const formatCardNumber = (v: string) =>
+  digitsOnly(v)
+    .slice(0, 16)
+    .replace(/(\d{4})(?=\d)/g, "$1 ");
+
+const formatExpiry = (v: string) => {
+  const d = digitsOnly(v).slice(0, 4);
+  return d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d;
+};
+
+function cardError(card: CardForm): string | null {
+  const digits = digitsOnly(card.number);
+  if (digits.length < 15) return "Ingresa un número de tarjeta válido (demo: 4242…).";
+  const [mm, yy] = card.expiry.split("/");
+  if (!mm || !yy || Number(mm) < 1 || Number(mm) > 12 || yy.length !== 2)
+    return "Vencimiento inválido — usa el formato MM/AA.";
+  if (digitsOnly(card.cvv).length < 3) return "CVV inválido.";
+  if (card.holder.trim().length < 3) return "Ingresa el nombre del titular.";
+  return null;
+}
+
 export function StoreCheckout() {
   const { items, clear } = useCart();
   const { products, loading } = useProducts();
@@ -107,6 +152,10 @@ export function StoreCheckout() {
   const [shipId, setShipId] = useState<"estandar" | "express">("estandar");
   const [pay, setPay] = useState<PayMethod>("tarjeta");
   const [processing, setProcessing] = useState(false);
+
+  const [card, setCard] = useState<CardForm>(EMPTY_CARD);
+  const [gpayOpen, setGpayOpen] = useState(false);
+  const [apayOpen, setApayOpen] = useState(false);
 
   const bySlug = useMemo(() => {
     const m = new Map<string, ProductDTO>();
@@ -123,8 +172,38 @@ export function StoreCheckout() {
   const shipCost = ship.price(subtotal);
   const total = subtotal + shipCost;
 
+  const itemsLabel =
+    lines.map((l) => `${l.product.name} ×${l.qty}`).join(" + ") || "Protocolo Nutragen";
+  const cardBrand: CardBrand = detectBrand(digitsOnly(card.number));
+  const cardLast4 = digitsOnly(card.number).slice(-4);
+
   const set = (k: keyof CustomerForm) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const setCardField = (k: keyof CardForm) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value;
+    setCard((c) => ({
+      ...c,
+      [k]:
+        k === "number"
+          ? formatCardNumber(v)
+          : k === "expiry"
+            ? formatExpiry(v)
+            : k === "cvv"
+              ? digitsOnly(v).slice(0, 4)
+              : v,
+    }));
+  };
+
+  const fillDemoCard = () => {
+    setCard({
+      number: "4242 4242 4242 4242",
+      expiry: "12/29",
+      cvv: "123",
+      holder: form.name.trim() || "María Escalona",
+    });
+    toast.success("Tarjeta demo cargada — Visa ···· 4242");
+  };
 
   const validStep1 =
     form.name.trim().length > 2 &&
@@ -140,34 +219,63 @@ export function StoreCheckout() {
     else setStep((s) => (s - 1) as Step);
   };
 
-  const placeOrder = async () => {
+  const methodLabel = (): string => {
+    switch (pay) {
+      case "tarjeta":
+        return `Tarjeta ${cardBrand === "unknown" ? "" : cardBrand + " "}···· ${cardLast4 || "····"}`;
+      case "googlepay":
+        return "Google Pay · Visa ···· 4242 (demo)";
+      case "applepay":
+        return "Apple Pay · Visa ···· 4242 (demo)";
+      case "transferencia":
+        return "Transferencia CLABE";
+      case "contraentrega":
+        return "Pago contra entrega";
+    }
+  };
+
+  /** POSTs the order, stores the receipt (with gateway label) and clears the cart. */
+  const submitOrder = async (): Promise<void> => {
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: lines.map((l) => ({ slug: l.product.slug, qty: l.qty })),
+      }),
+    });
+    if (!res.ok) throw new Error(String(res.status));
+    const json = (await res.json()) as {
+      ok: boolean;
+      orderId: string;
+      total: number;
+      currency: string;
+    };
+    const receipt: OrderReceipt = {
+      ok: json.ok,
+      orderId: json.orderId,
+      total: json.total,
+      currency: json.currency,
+      shipping: { label: ship.label, price: shipCost },
+      subtotal,
+      customer: { name: form.name.trim(), city: form.city.trim() },
+      method: methodLabel(),
+    };
+    setReceipt(receipt);
+    clear();
+  };
+
+  /** Direct methods (tarjeta / transferencia / contraentrega). */
+  const payDirect = async () => {
+    if (pay === "tarjeta") {
+      const err = cardError(card);
+      if (err) {
+        toast.error(err);
+        return;
+      }
+    }
     setProcessing(true);
     try {
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: lines.map((l) => ({ slug: l.product.slug, qty: l.qty })),
-        }),
-      });
-      if (!res.ok) throw new Error(String(res.status));
-      const json = (await res.json()) as {
-        ok: boolean;
-        orderId: string;
-        total: number;
-        currency: string;
-      };
-      const receipt: OrderReceipt = {
-        ok: json.ok,
-        orderId: json.orderId,
-        total: json.total,
-        currency: json.currency,
-        shipping: { label: ship.label, price: shipCost },
-        subtotal,
-        customer: { name: form.name.trim(), city: form.city.trim() },
-      };
-      setReceipt(receipt);
-      clear();
+      await submitOrder();
       router.replace("/confirmacion");
     } catch {
       toast.error(
@@ -175,6 +283,23 @@ export function StoreCheckout() {
       );
       setProcessing(false);
     }
+  };
+
+  const openWalletSheet = () => {
+    if (pay === "googlepay") setGpayOpen(true);
+    if (pay === "applepay") setApayOpen(true);
+  };
+
+  const onWalletPay = async () => {
+    // simulated gateway latency before the real (demo) order POST
+    await new Promise((r) => setTimeout(r, 650));
+    await submitOrder();
+  };
+
+  const onWalletDone = () => {
+    setGpayOpen(false);
+    setApayOpen(false);
+    router.replace("/confirmacion");
   };
 
   if (!loading && lines.length === 0) {
@@ -196,6 +321,16 @@ export function StoreCheckout() {
       </div>
     );
   }
+
+  const walletSelected = pay === "googlepay" || pay === "applepay";
+
+  const confirmLabel = () => {
+    if (processing) return null;
+    if (pay === "googlepay") return "Pagar con Google Pay";
+    if (pay === "applepay") return "Pagar con Apple Pay";
+    if (pay === "tarjeta") return "Pagar ahora";
+    return "Confirmar pedido";
+  };
 
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-5 pb-24 pt-32 sm:px-10 sm:pt-36">
@@ -377,11 +512,52 @@ export function StoreCheckout() {
               className="rounded-2xl border border-black/[0.08] bg-white/80 p-6 shadow-[0_10px_40px_rgba(13,13,13,0.05)] backdrop-blur-md sm:p-8"
               aria-label="Pago"
             >
-              <h2 className="font-mono text-[9.5px] uppercase tracking-[0.3em] text-gold-deep">
-                03 · Método de pago
-              </h2>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h2 className="font-mono text-[9.5px] uppercase tracking-[0.3em] text-gold-deep">
+                  03 · Método de pago
+                </h2>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/[0.08] px-3 py-1 font-mono text-[8px] uppercase tracking-[0.2em] text-gold-deep">
+                  <ShieldCheck size={10} /> Pasarela demo · sin cargos reales
+                </span>
+              </div>
 
-              <div className="mt-6 grid gap-3 sm:grid-cols-3" role="radiogroup" aria-label="Métodos de pago">
+              {/* express wallets */}
+              <p className="mt-6 flex items-center gap-2 font-mono text-[8.5px] uppercase tracking-[0.24em] text-black/40">
+                <Sparkles size={10} className="text-gold-deep" /> Pago express
+              </p>
+              <div className="mt-3 grid grid-cols-2 gap-3" role="radiogroup" aria-label="Billeteras digitales">
+                {(
+                  [
+                    { id: "googlepay", mark: <GooglePayMark size={19} />, hint: "G Pay" },
+                    { id: "applepay", mark: <ApplePayMark size={17} />, hint: " Pay" },
+                  ] as const
+                ).map(({ id, mark, hint }) => {
+                  const selected = pay === id;
+                  return (
+                    <button
+                      key={id}
+                      role="radio"
+                      aria-checked={selected}
+                      aria-label={`Pagar con ${hint}`}
+                      onClick={() => setPay(id)}
+                      data-testid={`pay-${id}`}
+                      className={
+                        "flex cursor-pointer items-center justify-center gap-2 rounded-xl border bg-white/90 py-4 outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-gold/60 " +
+                        (selected
+                          ? "border-gold/70 shadow-[0_8px_30px_rgba(212,175,55,.18)] ring-1 ring-gold/50"
+                          : "border-black/10 hover:border-gold/40")
+                      }
+                    >
+                      {mark}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <p className="mt-6 flex items-center gap-2 font-mono text-[8.5px] uppercase tracking-[0.24em] text-black/40">
+                <Wallet size={10} className="text-gold-deep" /> Otros métodos
+              </p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-3" role="radiogroup" aria-label="Métodos de pago">
                 {(
                   [
                     { id: "tarjeta", label: "Tarjeta", icon: CreditCard },
@@ -412,6 +588,52 @@ export function StoreCheckout() {
                 })}
               </div>
 
+              {/* ── selected method panels ── */}
+              {pay === "googlepay" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  transition={{ duration: 0.4 }}
+                  className="overflow-hidden pt-6"
+                >
+                  <p className="rounded-xl border border-black/[0.07] bg-paper/70 p-4 text-[12px] leading-relaxed tracking-wide text-black/55">
+                    Se abrirá la hoja de <strong className="text-ink">Google Pay</strong> con tu
+                    tarjeta Visa de demostración ···· 4242. Autoriza el pago y el pedido se
+                    tramita al instante.
+                  </p>
+                  <button
+                    onClick={openWalletSheet}
+                    data-testid="gpay-open"
+                    className="mt-4 flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#202124] text-white shadow-[0_10px_30px_rgba(32,33,36,.3)] outline-none transition-all hover:bg-black focus-visible:ring-2 focus-visible:ring-[#1a73e8]/50"
+                  >
+                    <GooglePayMark size={18} color="#ffffff" />
+                    <span className="text-[13.5px] font-medium">· Pagar</span>
+                  </button>
+                </motion.div>
+              )}
+
+              {pay === "applepay" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  transition={{ duration: 0.4 }}
+                  className="overflow-hidden pt-6"
+                >
+                  <p className="rounded-xl border border-black/[0.07] bg-paper/70 p-4 text-[12px] leading-relaxed tracking-wide text-black/55">
+                    Se abrirá la hoja de <strong className="text-ink">Apple Pay</strong> con la
+                    Visa de demostración ···· 4242. Confirma con Face ID (simulado) y listo.
+                  </p>
+                  <button
+                    onClick={openWalletSheet}
+                    data-testid="apay-open"
+                    className="mt-4 flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-black text-white shadow-[0_10px_30px_rgba(0,0,0,.3)] outline-none transition-all hover:bg-[#111] focus-visible:ring-2 focus-visible:ring-black/40"
+                    aria-label="Abrir Apple Pay"
+                  >
+                    <ApplePayMark size={17} color="#ffffff" />
+                  </button>
+                </motion.div>
+              )}
+
               {pay === "tarjeta" && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
@@ -420,23 +642,75 @@ export function StoreCheckout() {
                   className="grid gap-4 overflow-hidden pt-6 sm:grid-cols-2"
                 >
                   <label className="contents sm:col-span-2">
-                    <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
+                    <span className="mb-1.5 flex items-center justify-between text-[11px] uppercase tracking-[0.14em] text-black/45">
                       Número de tarjeta
+                      <span className="font-mono text-[8px] normal-case tracking-[0.18em] text-black/30">
+                        {cardBrand !== "unknown" ? cardBrand : ""}
+                      </span>
                     </span>
-                    <input className={inputCls} inputMode="numeric" placeholder="4242 4242 4242 4242" autoComplete="cc-number" />
+                    <span className="relative block">
+                      <input
+                        className={inputCls + " pr-16 font-mono tracking-[0.08em]"}
+                        inputMode="numeric"
+                        value={card.number}
+                        onChange={setCardField("number")}
+                        placeholder="4242 4242 4242 4242"
+                        autoComplete="cc-number"
+                        data-testid="card-number"
+                      />
+                      <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2">
+                        <BrandMark brand={cardBrand} size={30} />
+                      </span>
+                    </span>
                   </label>
                   <label className="contents">
                     <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
                       Vencimiento
                     </span>
-                    <input className={inputCls} placeholder="MM / AA" autoComplete="cc-exp" />
+                    <input
+                      className={inputCls + " font-mono"}
+                      inputMode="numeric"
+                      value={card.expiry}
+                      onChange={setCardField("expiry")}
+                      placeholder="MM/AA"
+                      autoComplete="cc-exp"
+                      data-testid="card-expiry"
+                    />
                   </label>
                   <label className="contents">
                     <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
                       CVV
                     </span>
-                    <input className={inputCls} inputMode="numeric" placeholder="•••" autoComplete="cc-csc" />
+                    <input
+                      className={inputCls + " font-mono"}
+                      inputMode="numeric"
+                      value={card.cvv}
+                      onChange={setCardField("cvv")}
+                      placeholder="123"
+                      autoComplete="cc-csc"
+                      data-testid="card-cvv"
+                    />
                   </label>
+                  <label className="contents sm:col-span-2">
+                    <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
+                      Titular de la tarjeta
+                    </span>
+                    <input
+                      className={inputCls}
+                      value={card.holder}
+                      onChange={setCardField("holder")}
+                      placeholder="Como aparece en la tarjeta"
+                      autoComplete="cc-name"
+                      data-testid="card-holder"
+                    />
+                  </label>
+                  <button
+                    onClick={fillDemoCard}
+                    data-testid="card-demo-fill"
+                    className="flex h-9 w-fit cursor-pointer items-center gap-1.5 rounded-full border border-dashed border-gold/60 bg-gold/[0.06] px-4 font-mono text-[8.5px] uppercase tracking-[0.2em] text-gold-deep outline-none transition-all hover:bg-gold/[0.12] focus-visible:ring-2 focus-visible:ring-gold/50 sm:col-span-2"
+                  >
+                    <Sparkles size={10} /> Autorrellenar tarjeta demo · Visa 4242
+                  </button>
                   <p className="font-mono text-[8.5px] uppercase tracking-[0.18em] text-black/30 sm:col-span-2">
                     Demostración — ningún cargo real se procesa en esta vista.
                   </p>
@@ -467,7 +741,7 @@ export function StoreCheckout() {
                   <ArrowLeft size={13} /> Volver
                 </button>
                 <button
-                  onClick={placeOrder}
+                  onClick={walletSelected ? openWalletSheet : payDirect}
                   disabled={processing}
                   data-testid="ck-place-order"
                   className="flex h-12 flex-1 cursor-pointer items-center justify-center gap-2.5 rounded-full bg-gold text-[10.5px] font-semibold uppercase tracking-[0.26em] text-graphite shadow-[0_10px_36px_rgba(212,175,55,.3)] outline-none transition-all duration-300 hover:shadow-[0_14px_46px_rgba(212,175,55,.5)] focus-visible:ring-2 focus-visible:ring-gold-soft disabled:opacity-70"
@@ -478,11 +752,19 @@ export function StoreCheckout() {
                     </>
                   ) : (
                     <>
-                      Confirmar pedido · {formatPrice(total)} <Lock size={11} strokeWidth={2.2} />
+                      {confirmLabel()} · {formatPrice(total)} <Lock size={11} strokeWidth={2.2} />
                     </>
                   )}
                 </button>
               </div>
+
+              <p className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 font-mono text-[8px] uppercase tracking-[0.2em] text-black/30">
+                <span className="inline-flex items-center gap-1.5">
+                  <Lock size={9} /> Cifrado TLS 1.3
+                </span>
+                <span>3-D Secure demo</span>
+                <span>PCI-DSS simulado</span>
+              </p>
             </motion.section>
           )}
         </div>
@@ -544,6 +826,30 @@ export function StoreCheckout() {
           )}
         </aside>
       </div>
+
+      {/* ── DEMO wallet sheets ── */}
+      <GooglePaySheet
+        open={gpayOpen}
+        onClose={() => setGpayOpen(false)}
+        onPay={onWalletPay}
+        onDone={onWalletDone}
+        total={total}
+        itemsLabel={itemsLabel}
+        customer={form}
+        shippingLabel={ship.label}
+        email={form.email}
+      />
+      <ApplePaySheet
+        open={apayOpen}
+        onClose={() => setApayOpen(false)}
+        onPay={onWalletPay}
+        onDone={onWalletDone}
+        total={total}
+        itemsLabel={itemsLabel}
+        customer={form}
+        shippingLabel={ship.label}
+        email={form.email}
+      />
     </div>
   );
 }

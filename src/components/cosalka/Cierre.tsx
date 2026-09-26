@@ -17,7 +17,7 @@ export function Cierre() {
     <section
       id="contacto"
       data-stage="contacto"
-      className="relative flex min-h-[104svh] w-full flex-col items-center justify-center px-5 py-[14svh] sm:px-10"
+      className="relative flex min-h-[72svh] w-full flex-col items-center justify-center px-5 py-[10svh] sm:px-10"
     >
       <div className="relative z-10 w-full max-w-5xl text-center">
         <GlowTitle

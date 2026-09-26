@@ -1,0 +1,856 @@
+     1→"use client";
+     2→
+     3→import { useMemo, useState } from "react";
+     4→import { useRouter } from "next/navigation";
+     5→import { motion } from "framer-motion";
+     6→import {
+     7→  ArrowLeft,
+     8→  ArrowRight,
+     9→  Banknote,
+    10→  CreditCard,
+    11→  Landmark,
+    12→  Loader2,
+    13→  Lock,
+    14→  ShieldCheck,
+    15→  Sparkles,
+    16→  Truck,
+    17→  Wallet,
+    18→} from "lucide-react";
+    19→import { toast } from "sonner";
+    20→import { StoreCrumb } from "./StoreNav";
+    21→import { useCart } from "@/store/cart";
+    22→import { useProducts } from "@/hooks/use-products";
+    23→import { formatPrice, type ProductDTO } from "@/lib/products-client";
+    24→import { SHIPPING_OPTIONS } from "@/lib/cosalka/store";
+    25→import { useOrderStore, type OrderReceipt } from "@/store/order";
+    26→import { GooglePaySheet, ApplePaySheet } from "./payments/DemoSheets";
+    27→import {
+    28→  ApplePayMark,
+    29→  BrandMark,
+    30→  detectBrand,
+    31→  GooglePayMark,
+    32→  type CardBrand,
+    33→} from "./payments/brand-marks";
+    34→
+    35→type Step = 1 | 2 | 3;
+    36→type PayMethod = "tarjeta" | "googlepay" | "applepay" | "transferencia" | "contraentrega";
+    37→
+    38→interface CustomerForm {
+    39→  name: string;
+    40→  email: string;
+    41→  phone: string;
+    42→  address: string;
+    43→  city: string;
+    44→  state: string;
+    45→  zip: string;
+    46→}
+    47→
+    48→interface CardForm {
+    49→  number: string;
+    50→  expiry: string;
+    51→  cvv: string;
+    52→  holder: string;
+    53→}
+    54→
+    55→const EMPTY: CustomerForm = {
+    56→  name: "",
+    57→  email: "",
+    58→  phone: "",
+    59→  address: "",
+    60→  city: "",
+    61→  state: "",
+    62→  zip: "",
+    63→};
+    64→
+    65→const EMPTY_CARD: CardForm = { number: "", expiry: "", cvv: "", holder: "" };
+    66→
+    67→const STEP_LABELS = ["Datos de envío", "Método de envío", "Pago seguro"];
+    68→
+    69→function StepDots({ step }: { step: Step }) {
+    70→  return (
+    71→    <ol className="flex items-center gap-0" aria-label={`Paso ${step} de 3`}>
+    72→      {STEP_LABELS.map((label, i) => {
+    73→        const n = (i + 1) as Step;
+    74→        const done = n < step;
+    75→        const active = n === step;
+    76→        return (
+    77→          <li key={label} className="flex items-center">
+    78→            <div className="flex flex-col items-center gap-1.5">
+    79→              <span
+    80→                className={
+    81→                  "grid h-7 w-7 place-items-center rounded-full border font-mono text-[10px] transition-all duration-300 " +
+    82→                  (active
+    83→                    ? "border-gold bg-gold font-bold text-graphite shadow-[0_0_14px_rgba(212,175,55,.45)]"
+    84→                    : done
+    85→                      ? "border-gold/60 bg-gold/15 text-gold-deep"
+    86→                      : "border-black/15 bg-white/70 text-black/35")
+    87→                }
+    88→              >
+    89→                {n}
+    90→              </span>
+    91→              <span
+    92→                className={
+    93→                  "font-mono text-[8px] uppercase tracking-[0.18em] " +
+    94→                  (active ? "text-ink" : "text-black/35")
+    95→                }
+    96→              >
+    97→                {label}
+    98→              </span>
+    99→            </div>
+   100→            {i < STEP_LABELS.length - 1 && (
+   101→              <span
+   102→                className={
+   103→                  "mx-3 mb-5 h-px w-8 sm:w-14 " +
+   104→                  (n < step ? "bg-gold/70" : "bg-black/10")
+   105→                }
+   106→                aria-hidden
+   107→              />
+   108→            )}
+   109→          </li>
+   110→        );
+   111→      })}
+   112→    </ol>
+   113→  );
+   114→}
+   115→
+   116→const inputCls =
+   117→  "h-11 w-full rounded-xl border border-black/12 bg-white/80 px-4 text-[13px] tracking-wide text-ink outline-none transition-all placeholder:text-black/30 focus:border-gold/70 focus:ring-2 focus:ring-gold/25";
+   118→
+   119→/* ── demo card formatting ───────────────────────────────────────────── */
+   120→
+   121→const digitsOnly = (v: string) => v.replace(/\D/g, "");
+   122→
+   123→const formatCardNumber = (v: string) =>
+   124→  digitsOnly(v)
+   125→    .slice(0, 16)
+   126→    .replace(/(\d{4})(?=\d)/g, "$1 ");
+   127→
+   128→const formatExpiry = (v: string) => {
+   129→  const d = digitsOnly(v).slice(0, 4);
+   130→  return d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d;
+   131→};
+   132→
+   133→function cardError(card: CardForm): string | null {
+   134→  const digits = digitsOnly(card.number);
+   135→  if (digits.length < 15) return "Ingresa un número de tarjeta válido (demo: 4242…).";
+   136→  const [mm, yy] = card.expiry.split("/");
+   137→  if (!mm || !yy || Number(mm) < 1 || Number(mm) > 12 || yy.length !== 2)
+   138→    return "Vencimiento inválido — usa el formato MM/AA.";
+   139→  if (digitsOnly(card.cvv).length < 3) return "CVV inválido.";
+   140→  if (card.holder.trim().length < 3) return "Ingresa el nombre del titular.";
+   141→  return null;
+   142→}
+   143→
+   144→export function StoreCheckout() {
+   145→  const { items, clear } = useCart();
+   146→  const { products, loading } = useProducts();
+   147→  const router = useRouter();
+   148→  const setReceipt = useOrderStore((s) => s.setReceipt);
+   149→
+   150→  const [step, setStep] = useState<Step>(1);
+   151→  const [form, setForm] = useState<CustomerForm>(EMPTY);
+   152→  const [shipId, setShipId] = useState<"estandar" | "express">("estandar");
+   153→  const [pay, setPay] = useState<PayMethod>("tarjeta");
+   154→  const [processing, setProcessing] = useState(false);
+   155→
+   156→  const [card, setCard] = useState<CardForm>(EMPTY_CARD);
+   157→  const [gpayOpen, setGpayOpen] = useState(false);
+   158→  const [apayOpen, setApayOpen] = useState(false);
+   159→
+   160→  const bySlug = useMemo(() => {
+   161→    const m = new Map<string, ProductDTO>();
+   162→    products.forEach((p) => m.set(p.slug, p));
+   163→    return m;
+   164→  }, [products]);
+   165→
+   166→  const lines = items
+   167→    .map((i) => ({ ...i, product: bySlug.get(i.slug) }))
+   168→    .filter((l): l is typeof l & { product: ProductDTO } => !!l.product);
+   169→
+   170→  const subtotal = lines.reduce((n, l) => n + l.product.price * l.qty, 0);
+   171→  const ship = SHIPPING_OPTIONS.find((o) => o.id === shipId) ?? SHIPPING_OPTIONS[0];
+   172→  const shipCost = ship.price(subtotal);
+   173→  const total = subtotal + shipCost;
+   174→
+   175→  const itemsLabel =
+   176→    lines.map((l) => `${l.product.name} ×${l.qty}`).join(" + ") || "Protocolo Nutragen";
+   177→  const cardBrand: CardBrand = detectBrand(digitsOnly(card.number));
+   178→  const cardLast4 = digitsOnly(card.number).slice(-4);
+   179→
+   180→  const set = (k: keyof CustomerForm) => (e: React.ChangeEvent<HTMLInputElement>) =>
+   181→    setForm((f) => ({ ...f, [k]: e.target.value }));
+   182→
+   183→  const setCardField = (k: keyof CardForm) => (e: React.ChangeEvent<HTMLInputElement>) => {
+   184→    const v = e.target.value;
+   185→    setCard((c) => ({
+   186→      ...c,
+   187→      [k]:
+   188→        k === "number"
+   189→          ? formatCardNumber(v)
+   190→          : k === "expiry"
+   191→            ? formatExpiry(v)
+   192→            : k === "cvv"
+   193→              ? digitsOnly(v).slice(0, 4)
+   194→              : v,
+   195→    }));
+   196→  };
+   197→
+   198→  const fillDemoCard = () => {
+   199→    setCard({
+   200→      number: "4242 4242 4242 4242",
+   201→      expiry: "12/29",
+   202→      cvv: "123",
+   203→      holder: form.name.trim() || "María Escalona",
+   204→    });
+   205→    toast.success("Tarjeta demo cargada — Visa ···· 4242");
+   206→  };
+   207→
+   208→  const validStep1 =
+   209→    form.name.trim().length > 2 &&
+   210→    /.+@.+\..+/.test(form.email.trim()) &&
+   211→    form.phone.trim().length > 6 &&
+   212→    form.address.trim().length > 4 &&
+   213→    form.city.trim().length > 2 &&
+   214→    form.state.trim().length > 2 &&
+   215→    form.zip.trim().length > 3;
+   216→
+   217→  const back = () => {
+   218→    if (step === 1) router.push("/carrito");
+   219→    else setStep((s) => (s - 1) as Step);
+   220→  };
+   221→
+   222→  const methodLabel = (): string => {
+   223→    switch (pay) {
+   224→      case "tarjeta":
+   225→        return `Tarjeta ${cardBrand === "unknown" ? "" : cardBrand + " "}···· ${cardLast4 || "····"}`;
+   226→      case "googlepay":
+   227→        return "Google Pay · Visa ···· 4242 (demo)";
+   228→      case "applepay":
+   229→        return "Apple Pay · Visa ···· 4242 (demo)";
+   230→      case "transferencia":
+   231→        return "Transferencia CLABE";
+   232→      case "contraentrega":
+   233→        return "Pago contra entrega";
+   234→    }
+   235→  };
+   236→
+   237→  /** POSTs the order, stores the receipt (with gateway label) and clears the cart. */
+   238→  const submitOrder = async (): Promise<void> => {
+   239→    const res = await fetch("/api/orders", {
+   240→      method: "POST",
+   241→      headers: { "Content-Type": "application/json" },
+   242→      body: JSON.stringify({
+   243→        items: lines.map((l) => ({ slug: l.product.slug, qty: l.qty })),
+   244→      }),
+   245→    });
+   246→    if (!res.ok) throw new Error(String(res.status));
+   247→    const json = (await res.json()) as {
+   248→      ok: boolean;
+   249→      orderId: string;
+   250→      total: number;
+   251→      currency: string;
+   252→    };
+   253→    const receipt: OrderReceipt = {
+   254→      ok: json.ok,
+   255→      orderId: json.orderId,
+   256→      total: json.total,
+   257→      currency: json.currency,
+   258→      shipping: { label: ship.label, price: shipCost },
+   259→      subtotal,
+   260→      customer: { name: form.name.trim(), city: form.city.trim() },
+   261→      method: methodLabel(),
+   262→    };
+   263→    setReceipt(receipt);
+   264→    clear();
+   265→  };
+   266→
+   267→  /** Direct methods (tarjeta / transferencia / contraentrega). */
+   268→  const payDirect = async () => {
+   269→    if (pay === "tarjeta") {
+   270→      const err = cardError(card);
+   271→      if (err) {
+   272→        toast.error(err);
+   273→        return;
+   274→      }
+   275→    }
+   276→    setProcessing(true);
+   277→    try {
+   278→      await submitOrder();
+   279→      router.replace("/confirmacion");
+   280→    } catch {
+   281→      toast.error(
+   282→        "No se pudo tramitar el pedido. Verifica tu conexión e intenta de nuevo."
+   283→      );
+   284→      setProcessing(false);
+   285→    }
+   286→  };
+   287→
+   288→  const openWalletSheet = () => {
+   289→    if (pay === "googlepay") setGpayOpen(true);
+   290→    if (pay === "applepay") setApayOpen(true);
+   291→  };
+   292→
+   293→  const onWalletPay = async () => {
+   294→    // simulated gateway latency before the real (demo) order POST
+   295→    await new Promise((r) => setTimeout(r, 650));
+   296→    await submitOrder();
+   297→  };
+   298→
+   299→  const onWalletDone = () => {
+   300→    setGpayOpen(false);
+   301→    setApayOpen(false);
+   302→    router.replace("/confirmacion");
+   303→  };
+   304→
+   305→  if (!loading && lines.length === 0) {
+   306→    return (
+   307→      <div className="flex flex-1 flex-col items-center justify-center px-6 pb-24 pt-40 text-center">
+   308→        <Truck size={44} strokeWidth={1} className="text-black/20" />
+   309→        <h1 className="mt-6 text-2xl font-medium tracking-tight text-ink">
+   310→          No hay nada que pagar todavía
+   311→        </h1>
+   312→        <p className="mt-3 max-w-sm text-[13px] leading-relaxed text-black/50">
+   313→          Añade tu protocolo Doble Acción a la cesta y vuelve al checkout.
+   314→        </p>
+   315→        <button
+   316→          onClick={() => router.push("/tienda")}
+   317→          className="mt-8 h-12 cursor-pointer rounded-full bg-gold px-9 text-[10.5px] font-semibold uppercase tracking-[0.26em] text-graphite shadow-[0_14px_44px_rgba(212,175,55,.35)] outline-none transition-all hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-gold-soft"
+   318→        >
+   319→          Ir a la tienda
+   320→        </button>
+   321→      </div>
+   322→    );
+   323→  }
+   324→
+   325→  const walletSelected = pay === "googlepay" || pay === "applepay";
+   326→
+   327→  const confirmLabel = () => {
+   328→    if (processing) return null;
+   329→    if (pay === "googlepay") return "Pagar con Google Pay";
+   330→    if (pay === "applepay") return "Pagar con Apple Pay";
+   331→    if (pay === "tarjeta") return "Pagar ahora";
+   332→    return "Confirmar pedido";
+   333→  };
+   334→
+   335→  return (
+   336→    <div className="mx-auto w-full max-w-5xl flex-1 px-5 pb-24 pt-32 sm:px-10 sm:pt-36">
+   337→      <StoreCrumb label="Checkout" />
+   338→
+   339→      <div className="mt-8 flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
+   340→        <motion.h1
+   341→          initial={{ opacity: 0, y: 18 }}
+   342→          animate={{ opacity: 1, y: 0 }}
+   343→          transition={{ duration: 0.6 }}
+   344→          className="text-[clamp(2rem,4.4vw,3.4rem)] font-medium leading-[1.02] tracking-[-0.04em] text-ink"
+   345→        >
+   346→          pago <span className="gold-text glow-gold">seguro.</span>
+   347→        </motion.h1>
+   348→        <StepDots step={step} />
+   349→      </div>
+   350→
+   351→      <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_360px]">
+   352→        {/* left — steps */}
+   353→        <div>
+   354→          {step === 1 && (
+   355→            <motion.section
+   356→              initial={{ opacity: 0, y: 16 }}
+   357→              animate={{ opacity: 1, y: 0 }}
+   358→              transition={{ duration: 0.45 }}
+   359→              className="rounded-2xl border border-black/[0.08] bg-white/80 p-6 shadow-[0_10px_40px_rgba(13,13,13,0.05)] backdrop-blur-md sm:p-8"
+   360→              aria-label="Datos de envío"
+   361→            >
+   362→              <h2 className="font-mono text-[9.5px] uppercase tracking-[0.3em] text-gold-deep">
+   363→                01 · ¿Dónde enviamos tu protocolo?
+   364→              </h2>
+   365→              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+   366→                <label className="contents">
+   367→                  <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
+   368→                    Nombre completo *
+   369→                  </span>
+   370→                  <input className={inputCls} value={form.name} onChange={set("name")} placeholder="María Escalona" autoComplete="name" data-testid="ck-name" />
+   371→                </label>
+   372→                <label className="contents">
+   373→                  <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
+   374→                    Correo *
+   375→                  </span>
+   376→                  <input className={inputCls} type="email" value={form.email} onChange={set("email")} placeholder="maria@correo.com" autoComplete="email" data-testid="ck-email" />
+   377→                </label>
+   378→                <label className="contents">
+   379→                  <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
+   380→                    Teléfono *
+   381→                  </span>
+   382→                  <input className={inputCls} type="tel" value={form.phone} onChange={set("phone")} placeholder="+52 55 1234 5678" autoComplete="tel" />
+   383→                </label>
+   384→                <label className="contents">
+   385→                  <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
+   386→                    Calle y número *
+   387→                  </span>
+   388→                  <input className={inputCls} value={form.address} onChange={set("address")} placeholder="Av. Reforma 123, Depto 4" autoComplete="street-address" />
+   389→                </label>
+   390→                <label className="contents">
+   391→                  <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
+   392→                    Ciudad *
+   393→                  </span>
+   394→                  <input className={inputCls} value={form.city} onChange={set("city")} placeholder="Ciudad de México" autoComplete="address-level2" data-testid="ck-city" />
+   395→                </label>
+   396→                <div className="grid grid-cols-2 gap-4">
+   397→                  <label className="contents">
+   398→                    <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
+   399→                      Estado *
+   400→                    </span>
+   401→                    <input className={inputCls} value={form.state} onChange={set("state")} placeholder="CDMX" autoComplete="address-level1" />
+   402→                  </label>
+   403→                  <label className="contents">
+   404→                    <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
+   405→                      C.P. *
+   406→                    </span>
+   407→                    <input className={inputCls} value={form.zip} onChange={set("zip")} placeholder="06600" inputMode="numeric" autoComplete="postal-code" />
+   408→                  </label>
+   409→                </div>
+   410→              </div>
+   411→
+   412→              <button
+   413→                onClick={() => {
+   414→                  if (!validStep1) {
+   415→                    toast.error("Completa los campos obligatorios para continuar.");
+   416→                    return;
+   417→                  }
+   418→                  setStep(2);
+   419→                }}
+   420→                data-testid="ck-to-shipping"
+   421→                className="group mt-8 flex h-12 w-full cursor-pointer items-center justify-center gap-2.5 rounded-full bg-gold text-[10.5px] font-semibold uppercase tracking-[0.26em] text-graphite shadow-[0_10px_36px_rgba(212,175,55,.3)] outline-none transition-all duration-300 hover:shadow-[0_14px_46px_rgba(212,175,55,.5)] focus-visible:ring-2 focus-visible:ring-gold-soft sm:w-auto sm:px-10"
+   422→              >
+   423→                Continuar al envío
+   424→                <ArrowRight size={13} className="transition-transform duration-300 group-hover:translate-x-1" />
+   425→              </button>
+   426→            </motion.section>
+   427→          )}
+   428→
+   429→          {step === 2 && (
+   430→            <motion.section
+   431→              initial={{ opacity: 0, y: 16 }}
+   432→              animate={{ opacity: 1, y: 0 }}
+   433→              transition={{ duration: 0.45 }}
+   434→              className="rounded-2xl border border-black/[0.08] bg-white/80 p-6 shadow-[0_10px_40px_rgba(13,13,13,0.05)] backdrop-blur-md sm:p-8"
+   435→              aria-label="Método de envío"
+   436→            >
+   437→              <h2 className="font-mono text-[9.5px] uppercase tracking-[0.3em] text-gold-deep">
+   438→                02 · Velocidad de entrega
+   439→              </h2>
+   440→              <div className="mt-6 space-y-3" role="radiogroup" aria-label="Opciones de envío">
+   441→                {SHIPPING_OPTIONS.map((o) => {
+   442→                  const cost = o.price(subtotal);
+   443→                  const selected = shipId === o.id;
+   444→                  return (
+   445→                    <button
+   446→                      key={o.id}
+   447→                      role="radio"
+   448→                      aria-checked={selected}
+   449→                      onClick={() => setShipId(o.id)}
+   450→                      data-testid={`ship-${o.id}`}
+   451→                      className={
+   452→                        "flex w-full cursor-pointer items-center justify-between gap-4 rounded-xl border p-4 text-left outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-gold/60 " +
+   453→                        (selected
+   454→                          ? "border-gold/70 bg-gold/[0.07] shadow-[0_8px_30px_rgba(212,175,55,.15)]"
+   455→                          : "border-black/10 bg-white/70 hover:border-gold/40")
+   456→                      }
+   457→                    >
+   458→                      <span className="flex items-center gap-3.5">
+   459→                        <span
+   460→                          className={
+   461→                            "grid h-9 w-9 shrink-0 place-items-center rounded-full border " +
+   462→                            (selected ? "border-gold bg-gold/15 text-gold-deep" : "border-black/10 text-black/40")
+   463→                          }
+   464→                        >
+   465→                          <Truck size={15} />
+   466→                        </span>
+   467→                        <span>
+   468→                          <span className="block text-[13.5px] font-medium tracking-tight text-ink">
+   469→                            {o.label}
+   470→                          </span>
+   471→                          <span className="mt-0.5 block text-[11px] tracking-wide text-black/45">
+   472→                            {o.detail}
+   473→                          </span>
+   474→                        </span>
+   475→                      </span>
+   476→                      <span className="shrink-0 font-mono text-[12.5px] font-semibold text-ink">
+   477→                        {cost === 0 ? (
+   478→                          <span className="text-gold-deep">GRATIS</span>
+   479→                        ) : (
+   480→                          formatPrice(cost)
+   481→                        )}
+   482→                      </span>
+   483→                    </button>
+   484→                  );
+   485→                })}
+   486→              </div>
+   487→
+   488→              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+   489→                <button
+   490→                  onClick={back}
+   491→                  className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-full border border-black/15 bg-transparent px-8 text-[10px] font-medium uppercase tracking-[0.24em] text-black/60 outline-none transition-all hover:border-gold-deep hover:text-gold-deep focus-visible:ring-2 focus-visible:ring-gold/60"
+   492→                >
+   493→                  <ArrowLeft size={13} /> Volver
+   494→                </button>
+   495→                <button
+   496→                  onClick={() => setStep(3)}
+   497→                  data-testid="ck-to-payment"
+   498→                  className="group flex h-12 flex-1 cursor-pointer items-center justify-center gap-2.5 rounded-full bg-gold text-[10.5px] font-semibold uppercase tracking-[0.26em] text-graphite shadow-[0_10px_36px_rgba(212,175,55,.3)] outline-none transition-all duration-300 hover:shadow-[0_14px_46px_rgba(212,175,55,.5)] focus-visible:ring-2 focus-visible:ring-gold-soft"
+   499→                >
+   500→                  Ir al pago seguro
+   501→                  <ArrowRight size={13} className="transition-transform duration-300 group-hover:translate-x-1" />
+   502→                </button>
+   503→              </div>
+   504→            </motion.section>
+   505→          )}
+   506→
+   507→          {step === 3 && (
+   508→            <motion.section
+   509→              initial={{ opacity: 0, y: 16 }}
+   510→              animate={{ opacity: 1, y: 0 }}
+   511→              transition={{ duration: 0.45 }}
+   512→              className="rounded-2xl border border-black/[0.08] bg-white/80 p-6 shadow-[0_10px_40px_rgba(13,13,13,0.05)] backdrop-blur-md sm:p-8"
+   513→              aria-label="Pago"
+   514→            >
+   515→              <div className="flex flex-wrap items-center justify-between gap-3">
+   516→                <h2 className="font-mono text-[9.5px] uppercase tracking-[0.3em] text-gold-deep">
+   517→                  03 · Método de pago
+   518→                </h2>
+   519→                <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/[0.08] px-3 py-1 font-mono text-[8px] uppercase tracking-[0.2em] text-gold-deep">
+   520→                  <ShieldCheck size={10} /> Pasarela demo · sin cargos reales
+   521→                </span>
+   522→              </div>
+   523→
+   524→              {/* express wallets */}
+   525→              <p className="mt-6 flex items-center gap-2 font-mono text-[8.5px] uppercase tracking-[0.24em] text-black/40">
+   526→                <Sparkles size={10} className="text-gold-deep" /> Pago express
+   527→              </p>
+   528→              <div className="mt-3 grid grid-cols-2 gap-3" role="radiogroup" aria-label="Billeteras digitales">
+   529→                {(
+   530→                  [
+   531→                    { id: "googlepay", mark: <GooglePayMark size={19} />, hint: "G Pay" },
+   532→                    { id: "applepay", mark: <ApplePayMark size={17} />, hint: " Pay" },
+   533→                  ] as const
+   534→                ).map(({ id, mark, hint }) => {
+   535→                  const selected = pay === id;
+   536→                  return (
+   537→                    <button
+   538→                      key={id}
+   539→                      role="radio"
+   540→                      aria-checked={selected}
+   541→                      aria-label={`Pagar con ${hint}`}
+   542→                      onClick={() => setPay(id)}
+   543→                      data-testid={`pay-${id}`}
+   544→                      className={
+   545→                        "flex cursor-pointer items-center justify-center gap-2 rounded-xl border bg-white/90 py-4 outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-gold/60 " +
+   546→                        (selected
+   547→                          ? "border-gold/70 shadow-[0_8px_30px_rgba(212,175,55,.18)] ring-1 ring-gold/50"
+   548→                          : "border-black/10 hover:border-gold/40")
+   549→                      }
+   550→                    >
+   551→                      {mark}
+   552→                    </button>
+   553→                  );
+   554→                })}
+   555→              </div>
+   556→
+   557→              <p className="mt-6 flex items-center gap-2 font-mono text-[8.5px] uppercase tracking-[0.24em] text-black/40">
+   558→                <Wallet size={10} className="text-gold-deep" /> Otros métodos
+   559→              </p>
+   560→              <div className="mt-3 grid gap-3 sm:grid-cols-3" role="radiogroup" aria-label="Métodos de pago">
+   561→                {(
+   562→                  [
+   563→                    { id: "tarjeta", label: "Tarjeta", icon: CreditCard },
+   564→                    { id: "transferencia", label: "Transferencia", icon: Landmark },
+   565→                    { id: "contraentrega", label: "Contra entrega", icon: Banknote },
+   566→                  ] as const
+   567→                ).map(({ id, label, icon: Icon }) => {
+   568→                  const selected = pay === id;
+   569→                  return (
+   570→                    <button
+   571→                      key={id}
+   572→                      role="radio"
+   573→                      aria-checked={selected}
+   574→                      onClick={() => setPay(id)}
+   575→                      className={
+   576→                        "flex cursor-pointer flex-col items-center gap-2 rounded-xl border p-4 outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-gold/60 " +
+   577→                        (selected
+   578→                          ? "border-gold/70 bg-gold/[0.07] text-gold-deep"
+   579→                          : "border-black/10 bg-white/70 text-black/45 hover:border-gold/40")
+   580→                      }
+   581→                    >
+   582→                      <Icon size={17} strokeWidth={1.75} />
+   583→                      <span className="text-[10px] font-semibold uppercase tracking-[0.16em]">
+   584→                        {label}
+   585→                      </span>
+   586→                    </button>
+   587→                  );
+   588→                })}
+   589→              </div>
+   590→
+   591→              {/* ── selected method panels ── */}
+   592→              {pay === "googlepay" && (
+   593→                <motion.div
+   594→                  initial={{ opacity: 0, height: 0 }}
+   595→                  animate={{ opacity: 1, height: "auto" }}
+   596→                  transition={{ duration: 0.4 }}
+   597→                  className="overflow-hidden pt-6"
+   598→                >
+   599→                  <p className="rounded-xl border border-black/[0.07] bg-paper/70 p-4 text-[12px] leading-relaxed tracking-wide text-black/55">
+   600→                    Se abrirá la hoja de <strong className="text-ink">Google Pay</strong> con tu
+   601→                    tarjeta Visa de demostración ···· 4242. Autoriza el pago y el pedido se
+   602→                    tramita al instante.
+   603→                  </p>
+   604→                  <button
+   605→                    onClick={openWalletSheet}
+   606→                    data-testid="gpay-open"
+   607→                    className="mt-4 flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#202124] text-white shadow-[0_10px_30px_rgba(32,33,36,.3)] outline-none transition-all hover:bg-black focus-visible:ring-2 focus-visible:ring-[#1a73e8]/50"
+   608→                  >
+   609→                    <GooglePayMark size={18} color="#ffffff" />
+   610→                    <span className="text-[13.5px] font-medium">· Pagar</span>
+   611→                  </button>
+   612→                </motion.div>
+   613→              )}
+   614→
+   615→              {pay === "applepay" && (
+   616→                <motion.div
+   617→                  initial={{ opacity: 0, height: 0 }}
+   618→                  animate={{ opacity: 1, height: "auto" }}
+   619→                  transition={{ duration: 0.4 }}
+   620→                  className="overflow-hidden pt-6"
+   621→                >
+   622→                  <p className="rounded-xl border border-black/[0.07] bg-paper/70 p-4 text-[12px] leading-relaxed tracking-wide text-black/55">
+   623→                    Se abrirá la hoja de <strong className="text-ink">Apple Pay</strong> con la
+   624→                    Visa de demostración ···· 4242. Confirma con Face ID (simulado) y listo.
+   625→                  </p>
+   626→                  <button
+   627→                    onClick={openWalletSheet}
+   628→                    data-testid="apay-open"
+   629→                    className="mt-4 flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-black text-white shadow-[0_10px_30px_rgba(0,0,0,.3)] outline-none transition-all hover:bg-[#111] focus-visible:ring-2 focus-visible:ring-black/40"
+   630→                    aria-label="Abrir Apple Pay"
+   631→                  >
+   632→                    <ApplePayMark size={17} color="#ffffff" />
+   633→                  </button>
+   634→                </motion.div>
+   635→              )}
+   636→
+   637→              {pay === "tarjeta" && (
+   638→                <motion.div
+   639→                  initial={{ opacity: 0, height: 0 }}
+   640→                  animate={{ opacity: 1, height: "auto" }}
+   641→                  transition={{ duration: 0.4 }}
+   642→                  className="grid gap-4 overflow-hidden pt-6 sm:grid-cols-2"
+   643→                >
+   644→                  <label className="contents sm:col-span-2">
+   645→                    <span className="mb-1.5 flex items-center justify-between text-[11px] uppercase tracking-[0.14em] text-black/45">
+   646→                      Número de tarjeta
+   647→                      <span className="font-mono text-[8px] normal-case tracking-[0.18em] text-black/30">
+   648→                        {cardBrand !== "unknown" ? cardBrand : ""}
+   649→                      </span>
+   650→                    </span>
+   651→                    <span className="relative block">
+   652→                      <input
+   653→                        className={inputCls + " pr-16 font-mono tracking-[0.08em]"}
+   654→                        inputMode="numeric"
+   655→                        value={card.number}
+   656→                        onChange={setCardField("number")}
+   657→                        placeholder="4242 4242 4242 4242"
+   658→                        autoComplete="cc-number"
+   659→                        data-testid="card-number"
+   660→                      />
+   661→                      <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2">
+   662→                        <BrandMark brand={cardBrand} size={30} />
+   663→                      </span>
+   664→                    </span>
+   665→                  </label>
+   666→                  <label className="contents">
+   667→                    <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
+   668→                      Vencimiento
+   669→                    </span>
+   670→                    <input
+   671→                      className={inputCls + " font-mono"}
+   672→                      inputMode="numeric"
+   673→                      value={card.expiry}
+   674→                      onChange={setCardField("expiry")}
+   675→                      placeholder="MM/AA"
+   676→                      autoComplete="cc-exp"
+   677→                      data-testid="card-expiry"
+   678→                    />
+   679→                  </label>
+   680→                  <label className="contents">
+   681→                    <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
+   682→                      CVV
+   683→                    </span>
+   684→                    <input
+   685→                      className={inputCls + " font-mono"}
+   686→                      inputMode="numeric"
+   687→                      value={card.cvv}
+   688→                      onChange={setCardField("cvv")}
+   689→                      placeholder="123"
+   690→                      autoComplete="cc-csc"
+   691→                      data-testid="card-cvv"
+   692→                    />
+   693→                  </label>
+   694→                  <label className="contents sm:col-span-2">
+   695→                    <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-black/45">
+   696→                      Titular de la tarjeta
+   697→                    </span>
+   698→                    <input
+   699→                      className={inputCls}
+   700→                      value={card.holder}
+   701→                      onChange={setCardField("holder")}
+   702→                      placeholder="Como aparece en la tarjeta"
+   703→                      autoComplete="cc-name"
+   704→                      data-testid="card-holder"
+   705→                    />
+   706→                  </label>
+   707→                  <button
+   708→                    onClick={fillDemoCard}
+   709→                    data-testid="card-demo-fill"
+   710→                    className="flex h-9 w-fit cursor-pointer items-center gap-1.5 rounded-full border border-dashed border-gold/60 bg-gold/[0.06] px-4 font-mono text-[8.5px] uppercase tracking-[0.2em] text-gold-deep outline-none transition-all hover:bg-gold/[0.12] focus-visible:ring-2 focus-visible:ring-gold/50 sm:col-span-2"
+   711→                  >
+   712→                    <Sparkles size={10} /> Autorrellenar tarjeta demo · Visa 4242
+   713→                  </button>
+   714→                  <p className="font-mono text-[8.5px] uppercase tracking-[0.18em] text-black/30 sm:col-span-2">
+   715→                    Demostración — ningún cargo real se procesa en esta vista.
+   716→                  </p>
+   717→                </motion.div>
+   718→              )}
+   719→
+   720→              {pay === "transferencia" && (
+   721→                <p className="mt-6 rounded-xl border border-black/[0.07] bg-paper/70 p-4 text-[12px] leading-relaxed tracking-wide text-black/55">
+   722→                  Al confirmar recibirás los datos CLABE de Cosalka
+   723→                  International S. de R.L. de C.V. por correo para completar la
+   724→                  transferencia. El pedido se reserva 24 h.
+   725→                </p>
+   726→              )}
+   727→
+   728→              {pay === "contraentrega" && (
+   729→                <p className="mt-6 rounded-xl border border-black/[0.07] bg-paper/70 p-4 text-[12px] leading-relaxed tracking-wide text-black/55">
+   730→                  Pagas en efectivo al recibir tu paquete. Disponible solo para
+   731→                  envíos nacionales estándar; el mensajero lleva tu precinto
+   732→                  estéril sellado.
+   733→                </p>
+   734→              )}
+   735→
+   736→              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+   737→                <button
+   738→                  onClick={back}
+   739→                  className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-full border border-black/15 bg-transparent px-8 text-[10px] font-medium uppercase tracking-[0.24em] text-black/60 outline-none transition-all hover:border-gold-deep hover:text-gold-deep focus-visible:ring-2 focus-visible:ring-gold/60"
+   740→                >
+   741→                  <ArrowLeft size={13} /> Volver
+   742→                </button>
+   743→                <button
+   744→                  onClick={walletSelected ? openWalletSheet : payDirect}
+   745→                  disabled={processing}
+   746→                  data-testid="ck-place-order"
+   747→                  className="flex h-12 flex-1 cursor-pointer items-center justify-center gap-2.5 rounded-full bg-gold text-[10.5px] font-semibold uppercase tracking-[0.26em] text-graphite shadow-[0_10px_36px_rgba(212,175,55,.3)] outline-none transition-all duration-300 hover:shadow-[0_14px_46px_rgba(212,175,55,.5)] focus-visible:ring-2 focus-visible:ring-gold-soft disabled:opacity-70"
+   748→                >
+   749→                  {processing ? (
+   750→                    <>
+   751→                      <Loader2 size={14} className="animate-spin" /> Procesando…
+   752→                    </>
+   753→                  ) : (
+   754→                    <>
+   755→                      {confirmLabel()} · {formatPrice(total)} <Lock size={11} strokeWidth={2.2} />
+   756→                    </>
+   757→                  )}
+   758→                </button>
+   759→              </div>
+   760→
+   761→              <p className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 font-mono text-[8px] uppercase tracking-[0.2em] text-black/30">
+   762→                <span className="inline-flex items-center gap-1.5">
+   763→                  <Lock size={9} /> Cifrado TLS 1.3
+   764→                </span>
+   765→                <span>3-D Secure demo</span>
+   766→                <span>PCI-DSS simulado</span>
+   767→              </p>
+   768→            </motion.section>
+   769→          )}
+   770→        </div>
+   771→
+   772→        {/* right — order summary */}
+   773→        <aside className="h-fit rounded-2xl border border-black/[0.08] bg-white/80 p-6 shadow-[0_10px_40px_rgba(13,13,13,0.05)] backdrop-blur-md lg:sticky lg:top-28">
+   774→          <h2 className="font-mono text-[9.5px] uppercase tracking-[0.3em] text-gold-deep">
+   775→            Tu pedido
+   776→          </h2>
+   777→          <ul className="mt-5 space-y-3.5">
+   778→            {lines.map((l) => (
+   779→              <li key={l.product.slug} className="flex items-center gap-3.5">
+   780→                <img
+   781→                  src={l.product.image}
+   782→                  alt=""
+   783→                  className="h-12 w-12 shrink-0 rounded-lg border border-black/10 object-cover"
+   784→                />
+   785→                <div className="min-w-0 flex-1">
+   786→                  <p className="truncate text-[12.5px] font-medium tracking-tight text-ink">
+   787→                    {l.product.name}
+   788→                  </p>
+   789→                  <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-black/35">
+   790→                    ×{l.qty} · {l.product.volumeMl} ml
+   791→                  </p>
+   792→                </div>
+   793→                <p className="font-mono text-[12px] text-ink">
+   794→                  {formatPrice(l.product.price * l.qty)}
+   795→                </p>
+   796→              </li>
+   797→            ))}
+   798→          </ul>
+   799→
+   800→          <dl className="mt-6 space-y-2.5 border-t border-black/[0.08] pt-5 text-[12.5px] tracking-wide">
+   801→            <div className="flex justify-between text-black/55">
+   802→              <dt>Subtotal</dt>
+   803→              <dd className="font-mono">{formatPrice(subtotal)}</dd>
+   804→            </div>
+   805→            <div className="flex justify-between text-black/55">
+   806→              <dt>Envío ({ship.label.split("·")[0].trim()})</dt>
+   807→              <dd className="font-mono">
+   808→                {shipCost === 0 ? (
+   809→                  <span className="font-semibold uppercase tracking-widest text-gold-deep">Gratis</span>
+   810→                ) : (
+   811→                  formatPrice(shipCost)
+   812→                )}
+   813→              </dd>
+   814→            </div>
+   815→            <div className="flex justify-between border-t border-black/[0.08] pt-3.5 text-[16px] text-ink">
+   816→              <dt className="font-medium">Total</dt>
+   817→              <dd className="gold-text glow-soft font-semibold">{formatPrice(total)}</dd>
+   818→            </div>
+   819→          </dl>
+   820→
+   821→          {form.name && (
+   822→            <p className="mt-5 rounded-xl border border-black/[0.07] bg-paper/70 p-3.5 text-[11px] leading-relaxed tracking-wide text-black/50">
+   823→              Enviando a <span className="font-semibold text-ink">{form.name}</span>
+   824→              {form.city && <> · {form.city}</>}
+   825→            </p>
+   826→          )}
+   827→        </aside>
+   828→      </div>
+   829→
+   830→      {/* ── DEMO wallet sheets ── */}
+   831→      <GooglePaySheet
+   832→        open={gpayOpen}
+   833→        onClose={() => setGpayOpen(false)}
+   834→        onPay={onWalletPay}
+   835→        onDone={onWalletDone}
+   836→        total={total}
+   837→        itemsLabel={itemsLabel}
+   838→        customer={form}
+   839→        shippingLabel={ship.label}
+   840→        email={form.email}
+   841→      />
+   842→      <ApplePaySheet
+   843→        open={apayOpen}
+   844→        onClose={() => setApayOpen(false)}
+   845→        onPay={onWalletPay}
+   846→        onDone={onWalletDone}
+   847→        total={total}
+   848→        itemsLabel={itemsLabel}
+   849→        customer={form}
+   850→        shippingLabel={ship.label}
+   851→        email={form.email}
+   852→      />
+   853→    </div>
+   854→  );
+   855→}
+   856→

@@ -102,6 +102,15 @@ export function StoreConfirm() {
             {formatMXN(totalWithShipping)}
           </dd>
         </div>
+        {receipt.method && (
+          <div
+            className="flex justify-between border-t border-black/[0.08] pt-3 text-[12px] text-black/50"
+            data-testid="order-method"
+          >
+            <dt>Pago</dt>
+            <dd className="font-mono">{receipt.method}</dd>
+          </div>
+        )}
       </motion.dl>
 
       <motion.div

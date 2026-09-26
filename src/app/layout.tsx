@@ -59,7 +59,7 @@ export default function RootLayout({
         {/* MacBook-style custom pointer — global, every route */}
         <LuxCursor />
 
-        <Toaster position="bottom-left" toastOptions={{
+        <Toaster position="top-center" toastOptions={{
           style: {
             background: "#ffffff",
             border: "1px solid rgba(13,13,13,0.12)",
