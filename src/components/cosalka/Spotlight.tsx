@@ -47,7 +47,7 @@ export function Spotlight() {
             charClassName=""
             className="relative z-10 mt-7 text-[clamp(2.6rem,6.2vw,5.8rem)] font-medium leading-[1.02] tracking-[-0.04em] text-ink"
             lines={[
-              [{ t: "el estándar" }],
+              [{ t: "El estándar" }],
               [{ t: "clínico en " }, { t: "500 ml.", c: "gold-text glow-gold" }],
             ]}
           />

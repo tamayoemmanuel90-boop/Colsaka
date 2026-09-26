@@ -52,7 +52,7 @@ export function Faq() {
           className="relative z-10 mt-7 text-[clamp(2.2rem,4.6vw,4.2rem)] font-medium leading-[1.05] tracking-[-0.04em] text-ink"
           lines={[
             [
-              { t: "las dudas que más " },
+              { t: "Las dudas que más " },
               { t: "nos escriben.", c: "gold-text glow-gold" },
             ],
           ]}

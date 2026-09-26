@@ -378,7 +378,7 @@ export function StoreProduct({ slug }: { slug: string | null }) {
       {related.length > 0 && (
         <section className="mt-20" aria-label="Completa tu protocolo">
           <h2 className="text-[clamp(1.4rem,2.6vw,2rem)] font-medium tracking-[-0.03em] text-ink">
-            completa tu <span className="gold-text glow-soft">protocolo.</span>
+            Completa tu <span className="gold-text glow-soft">protocolo.</span>
           </h2>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((p) => (

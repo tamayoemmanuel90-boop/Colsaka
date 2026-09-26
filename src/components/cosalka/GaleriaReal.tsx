@@ -39,7 +39,7 @@ export function GaleriaReal() {
           className="relative z-10 mt-6 text-[clamp(2.2rem,4.8vw,4.4rem)] font-medium leading-[1.03] tracking-[-0.04em] text-ink"
           lines={[
             [
-              { t: "la " },
+              { t: "La " },
               { t: "galería", c: "gold-text glow-gold" },
               { t: " real." },
             ],

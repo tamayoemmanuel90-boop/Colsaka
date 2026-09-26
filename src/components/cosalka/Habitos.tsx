@@ -20,7 +20,7 @@ export function Habitos() {
         className="max-w-xl"
         lines={[
           [
-            { t: "cuatro " },
+            { t: "Cuatro " },
             { t: "hábitos.", c: "gold-text glow-gold" },
             { t: " más resultados." },
           ],

@@ -26,7 +26,7 @@ export const NAV_LINKS: Array<{ label: string; href: string }> = [
 /* ── Hero hook (mirror of nutragen.mx's opening question) ───────────── */
 export const HERO = {
   kicker: "Tecnología Nutragenética · Hecho en México",
-  sub: "parches temporales, no — barrera y fortaleza. nutragenética de vanguardia.",
+  sub: "Parches temporales, no — barrera y fortaleza. Nutragenética de vanguardia.",
 };
 
 /* ── Preview value strip — the essence, zero prices ─────────────────── */
@@ -42,14 +42,14 @@ export const RUTINA = {
   steps: [
     {
       n: "Paso 1",
-      title: "Treatment · anti-picor",
+      title: "Treatment · Anti-picor",
       body: "Crema orgánica que ayuda a eliminar escamas y reducir rojeces.",
       img: "/images/client/producto-paso1.jpg",
       slug: "paso-1-treatment",
     },
     {
       n: "Paso 2",
-      title: "Moisturizer · calma",
+      title: "Moisturizer · Calma",
       body: "Hidratación profunda que alivia la comezón y la tirantez.",
       img: "/images/client/producto-paso2.jpg",
       slug: "paso-2-moisturizer",
@@ -230,7 +230,7 @@ export const ENVIOS = {
     { value: "$1,500", label: "Envío gratis desde" },
     { value: "GPS", label: "Seguimiento en tiempo real" },
   ],
-  regiones: "México · Estados Unidos · toda Latinoamérica",
+  regiones: "México · Estados Unidos · Toda Latinoamérica",
 };
 
 /* ── 10 · Garantía (nutragen.mx: "Te acompañamos 30 días") ──────────── */
@@ -277,7 +277,7 @@ export const FAQ_ITEMS = [
 
 /* ── Cierre ─────────────────────────────────────────────────────────── */
 export const CIERRE = {
-  line: "bienestar, atención y confianza — empieza hoy tu protocolo.",
+  line: "Bienestar, atención y confianza — empieza hoy tu protocolo.",
   cta: "Empezar mi protocolo",
 };
 

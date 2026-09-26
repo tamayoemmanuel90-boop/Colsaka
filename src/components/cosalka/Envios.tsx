@@ -21,7 +21,7 @@ export function Envios() {
         align="center"
         lines={[
           [
-            { t: "llegamos a " },
+            { t: "Llegamos a " },
             { t: "tu puerta.", c: "gold-text glow-gold" },
           ],
         ]}

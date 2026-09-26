@@ -34,8 +34,8 @@ export function StoreAbout() {
           delay={0.1}
           className="mt-6 text-[clamp(2.2rem,5.2vw,4.4rem)] font-medium leading-[1.03] tracking-[-0.04em] text-ink"
           lines={[
-            [{ t: "padre e hijo." }],
-            [{ t: "doce años", c: "gold-text glow-gold" }, { t: " de investigación." }],
+            [{ t: "Padre e hijo." }],
+            [{ t: "Doce años", c: "gold-text glow-gold" }, { t: " de investigación." }],
           ]}
         />
 
@@ -119,7 +119,7 @@ export function StoreAbout() {
           {ESNO.kicker}
         </motion.p>
         <h2 className="mt-4 text-[clamp(1.6rem,3vw,2.4rem)] font-medium tracking-[-0.03em] text-ink">
-          qué <span className="gold-text glow-soft">es.</span> qué no es.
+          Qué <span className="gold-text glow-soft">es.</span> Qué no es.
         </h2>
 
         <div className="mt-10 grid gap-9 sm:grid-cols-2">

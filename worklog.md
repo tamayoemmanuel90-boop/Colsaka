@@ -249,3 +249,28 @@ Work Log:
 Stage Summary:
 - "/" is now a sell-first Amazon-style storefront: official client video replaces the 3D scene entirely (WebGL fully removed), flagship BuyBox with real prices/launch anchor/free-shipping math, verified social proof, shoppable routine cards, guarantee + FAQ — same luxury paper/gold skin, same GlowTitle/framer-motion animation system, fully mobile-verified.
 - Payment gateway (Task 17) re-verified end-to-end on both wallets after the redesign; receipts persist gateway labels.
+
+---
+Task ID: 19
+Agent: orchestrator (Z.ai Code main)
+Task: "Organicemos ortografía: las primeras letras siempre en mayúscula, y que las letras no se corten por la mitad — se vea la letra completa"
+
+Work Log:
+- ORTOGRAFÍA (mayúscula inicial) — 30+ titulares corregidos en toda la web:
+  · Home: "¿Te engañan con tu propia piel?" (mayúscula tras ¿), "El protocolo completo." (BuyBox), "Sin corticoides. Sin rebote." (Verdad), "Dos pasos. Una rutina." (Rutina), "Quienes ya lo viven." (Reviews), "La galería real." (GaleríaReal), "No vendemos un frasco. Te acompañamos 30 días." (Garantía), "Las dudas que más nos escriben." (FAQ), "No necesitas una piel perfecta." (Cierre).
+  · Secciones legacy/otras: Spotlight ("El estándar"), Envíos ("Llegamos a tu puerta."), Gallery ("Tu paquete, de un vistazo."), Voces ("Personas reales. Resultados reales."), Hábitos ("Cuatro hábitos."), Origen ("Empezó con un diagnóstico."), Science ("La ciencia que se ve."), EsNoEs ("Qué es. Qué no es.").
+  · Tienda: StoreHome ×7 ("El catálogo.", "Los más vendidos.", "Dos pasos. Una rutina.", "Pedir es así de simple.", "Padre e hijo. Doce años de investigación.", "Personas reales. Resultados reales.", "Lo que más nos escriben." + kicker "En su propia ruta"), StoreAbout ("Padre e hijo…", "Qué es. Qué no es."), StoreFaq ("Respuestas medidas."), StoreContact ("Hablemos de tu piel."), StoreProduct ("Completa tu protocolo."), placeholder "Tu correo electrónico".
+  · content.ts: HERO.sub ("Parches temporales… Nutragenética de vanguardia."), RUTINA step titles ("Treatment · Anti-picor", "Moisturizer · Calma"), ENVIOS.regiones ("Toda Latinoamérica"), CIERRE.line ("Bienestar, atención y confianza…").
+  · Verificación runtime: TreeWalker scanner en las 7 rutas → 0 arranques en minúscula (solo falsos positivos: colas doradas de titulares ya correctos y el email).
+- LETRAS CORTADAS (root cause real, reproducido y fijado):
+  · Reproducción: el wordmark dorado "COSALKA" del footer (120px, leading-none, background-clip:text) tenía TODOS los glifos cortados por la mitad en su base — visible a zoom 2.2×; persistía con overflow:visible → el recortador era la caja de pintura del background-clip, no la máscara.
+  · Fix en globals.css .gold-text: la caja de pintura ahora se extiende verticalmente (padding: .12em 0 / margin: -.12em 0, neto cero) para que el degradado siempre cubra la tinta completa (acentos, descendentes, overshoot de redondas) incluso en zoom fraccional / DPI 125–150% de laptops Windows. Vertical-only a propósito: el horizontal había desplazado 5px el ancho de palabra y re-envuelto el hero.
+  · GlowTitle: máscara de línea pb-[0.08em] → pb-[0.14em] — aire garantizado para descendentes (¿ g p q y) en cualquier OS.
+  · Re-verify: zoom 2.2× → "COSALKA" con curvas y patas completas ✓.
+- Hero fit re-tuneado (la "T" mayúscula de "¿Te" engrosó la línea 1 y la envolvía a 3 filas): clamp(2.6rem,6vw,6rem)/tracking-0.045em → clamp(2.6rem,5.85vw,5.35rem)/tracking-0.049em. Medido: 2 líneas exactas en 1440 (margen 134px en línea 2), 1600 y 1024 ✓.
+- GOTCHA documentado: Turbopack cachea el chunk CSS raíz hasta reiniciar el server — dos reinicios de `bun run dev` para servir los cambios de globals.css (chunk estable "[root-of-the-server]__*.css").
+- E2E: 7 rutas HTTP 200, zero overflow horizontal en 390px, hero/checkout/tienda/galería/footer screenshot-verified desktop+mobile, tsc (src limpio) + eslint limpios.
+
+Stage Summary:
+- La web entera ahora escribe con mayúscula inicial en titulares, CTAs, labels y frases clave — regla "¿+Mayúscula" incluida.
+- Ninguna letra se corta: el bug de glifos dorados partidos por la mitad (background-clip:text en pantallas de escalado fraccional) está fixeado en la raíz con caja de pintura extendida, y las máscaras de GlowTitle tienen aire de descendentes; verificado a zoom 2.2× y en 1440/1024/390.

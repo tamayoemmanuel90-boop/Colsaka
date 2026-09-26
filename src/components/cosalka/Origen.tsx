@@ -25,7 +25,7 @@ export function Origen() {
             kicker={ORIGEN.kicker}
             className="self-end text-right"
             lines={[
-              [{ t: "empezó con un" }],
+              [{ t: "Empezó con un" }],
               [
                 { t: "diagnóstico.", c: "gold-text glow-gold" },
               ],

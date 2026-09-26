@@ -166,6 +166,15 @@ html.lenis body {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  /* Anti-slicing guarantee: the glyph ink must ALWAYS sit inside the
+     background paint box. At fractional device zooms (Windows 125–150%
+     scaling) the paint box can round down and shave whole rows off the
+     glyph bottoms/tops — letters look "cut in half". Vertical-only
+     extension (mirrored by negative margins) enlarges the paint box
+     over accents/descenders/overshoots with ZERO impact on text width
+     or line layout, so every tuned headline fit stays pixel-identical. */
+  padding: 0.12em 0;
+  margin: -0.12em 0;
 }
 
 /* Glow hooks kept as no-ops: dozens of headings use these class names,

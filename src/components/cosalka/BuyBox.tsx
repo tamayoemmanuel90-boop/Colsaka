@@ -47,7 +47,7 @@ export function BuyBox() {
           align="left"
           lines={[
             [
-              { t: "el " },
+              { t: "El " },
               { t: "protocolo", c: "gold-text glow-gold" },
               { t: " completo." },
             ],

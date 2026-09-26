@@ -109,7 +109,7 @@ export function Gallery() {
             className="mt-7 text-[clamp(2.5rem,5.8vw,5.4rem)] font-medium leading-[1.03] tracking-[-0.04em] text-ink"
             lines={[
               [
-                { t: "tu paquete, " },
+                { t: "Tu paquete, " },
                 { t: "de un vistazo.", c: "gold-text glow-gold" },
               ],
             ]}

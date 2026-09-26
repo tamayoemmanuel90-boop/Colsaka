@@ -41,7 +41,7 @@ export function Reviews() {
           className="relative z-10 mt-6 text-[clamp(2.1rem,4.6vw,4.3rem)] font-medium leading-[1.03] tracking-[-0.04em] text-ink"
           lines={[
             [
-              { t: "quienes ya " },
+              { t: "Quienes ya " },
               { t: "lo viven.", c: "gold-text glow-gold" },
             ],
           ]}

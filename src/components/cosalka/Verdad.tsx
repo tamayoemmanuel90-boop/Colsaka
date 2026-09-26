@@ -62,10 +62,10 @@ export function Verdad() {
             className="self-auto text-left lg:self-end lg:text-right"
             lines={[
               [
-                { t: "sin " },
+                { t: "Sin " },
                 { t: "corticoides.", c: "gold-text glow-gold" },
               ],
-              [{ t: "sin rebote." }],
+              [{ t: "Sin rebote." }],
             ]}
           />
 

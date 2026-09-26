@@ -167,7 +167,7 @@ export function StoreHome() {
           className="mt-6 text-[clamp(2.4rem,5.6vw,4.8rem)] font-medium leading-[1.02] tracking-[-0.04em] text-ink"
           lines={[
             [
-              { t: "la " },
+              { t: "La " },
               { t: "colección", c: "gold-text glow-gold" },
               { t: " completa." },
             ],
@@ -231,7 +231,7 @@ export function StoreHome() {
       <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-10" aria-label="Catálogo">
         <div className="flex flex-col gap-7 sm:flex-row sm:items-end sm:justify-between">
           <h2 className="text-[clamp(1.6rem,3vw,2.4rem)] font-medium tracking-[-0.03em] text-ink">
-            el <span className="gold-text glow-soft">catálogo.</span>
+            El <span className="gold-text glow-soft">catálogo.</span>
           </h2>
 
           {/* category chips */}
@@ -280,7 +280,7 @@ export function StoreHome() {
           Ranking de la casa
         </motion.p>
         <h2 className="mt-4 text-[clamp(1.6rem,3vw,2.4rem)] font-medium tracking-[-0.03em] text-ink">
-          los <span className="gold-text glow-soft">más vendidos.</span>
+          Los <span className="gold-text glow-soft">más vendidos.</span>
         </h2>
 
         <ol className="mt-10 space-y-3">
@@ -404,7 +404,7 @@ export function StoreHome() {
           Doble acción
         </motion.p>
         <h2 className="mt-4 text-[clamp(1.6rem,3vw,2.4rem)] font-medium tracking-[-0.03em] text-ink">
-          dos pasos. <span className="gold-text glow-soft">una rutina.</span>
+          Dos pasos. <span className="gold-text glow-soft">Una rutina.</span>
         </h2>
 
         <div className="mt-10 grid gap-5 md:grid-cols-2">
@@ -449,7 +449,7 @@ export function StoreHome() {
           Cómo funciona
         </motion.p>
         <h2 className="mt-4 text-[clamp(1.6rem,3vw,2.4rem)] font-medium tracking-[-0.03em] text-ink">
-          pedir es <span className="gold-text glow-soft">así de simple.</span>
+          Pedir es <span className="gold-text glow-soft">así de simple.</span>
         </h2>
 
         <div className="mt-10 grid gap-5 md:grid-cols-3">
@@ -511,10 +511,10 @@ export function StoreHome() {
           </div>
           <div className="flex flex-col justify-center p-8 sm:p-12">
             <p className="font-mono text-[9px] uppercase tracking-[0.34em] text-gold-deep">
-              Sobre nosotros · en su propia ruta
+              Sobre nosotros · En su propia ruta
             </p>
             <h2 className="mt-4 text-3xl font-medium tracking-[-0.03em] text-ink sm:text-4xl">
-              padre e hijo. <span className="gold-text glow-gold">doce años</span> de investigación.
+              Padre e hijo. <span className="gold-text glow-gold">Doce años</span> de investigación.
             </h2>
             <p className="mt-4 max-w-sm text-[13px] leading-relaxed text-black/55">
               Cosalka International S. de R.L. de C.V. — nutrición aplicada a
@@ -581,7 +581,7 @@ export function StoreHome() {
           {VOCES.kicker}
         </motion.p>
         <h2 className="mt-4 text-[clamp(1.6rem,3vw,2.4rem)] font-medium tracking-[-0.03em] text-ink">
-          personas reales. <span className="gold-text glow-soft">resultados reales.</span>
+          Personas reales. <span className="gold-text glow-soft">Resultados reales.</span>
         </h2>
 
         <div className="mt-10 grid gap-5 md:grid-cols-3">
@@ -615,7 +615,7 @@ export function StoreHome() {
           Dudas medidas
         </motion.p>
         <h2 className="mt-4 text-[clamp(1.6rem,3vw,2.4rem)] font-medium tracking-[-0.03em] text-ink">
-          lo que más <span className="gold-text glow-soft">nos escriben.</span>
+          Lo que más <span className="gold-text glow-soft">nos escriben.</span>
         </h2>
 
         <ul className="mt-9">
@@ -696,7 +696,7 @@ function NewsletterBand() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="tu correo electrónico"
+            placeholder="Tu correo electrónico"
             className="h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-[12.5px] tracking-wide text-ink placeholder:text-black/35 focus:outline-none"
           />
           <button

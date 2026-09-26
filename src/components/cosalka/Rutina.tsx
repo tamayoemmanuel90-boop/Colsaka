@@ -23,7 +23,7 @@ export function Rutina() {
           align="center"
           titleClassName="mt-6 text-[clamp(2rem,4.4vw,4rem)] font-medium leading-[1.02] tracking-[-0.04em] text-ink"
           lines={[
-            [{ t: "dos pasos." }, { t: " una rutina.", c: "gold-text glow-gold" }],
+            [{ t: "Dos pasos." }, { t: " Una rutina.", c: "gold-text glow-gold" }],
           ]}
         />
 

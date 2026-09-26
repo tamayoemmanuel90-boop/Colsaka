@@ -23,7 +23,7 @@ export function Science() {
         className="max-w-xl"
         lines={[
           [
-            { t: "la ciencia " },
+            { t: "La ciencia " },
             { t: "que se ve.", c: "gold-text glow-gold" },
           ],
         ]}

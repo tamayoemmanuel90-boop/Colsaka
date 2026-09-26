@@ -60,7 +60,7 @@ export function StoreContact() {
         delay={0.1}
         className="mt-6 text-[clamp(2.2rem,5vw,4.2rem)] font-medium leading-[1.03] tracking-[-0.04em] text-ink"
         lines={[
-          [{ t: "hablemos " }],
+          [{ t: "Hablemos " }],
           [{ t: "de tu piel.", c: "gold-text glow-gold" }],
         ]}
       />

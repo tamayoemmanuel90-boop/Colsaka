@@ -26,7 +26,7 @@ export function Cierre() {
           charClassName=""
           className="text-[clamp(2.1rem,5.6vw,5.2rem)] font-medium leading-[1.04] tracking-[-0.04em] text-ink"
           lines={[
-            [{ t: "no necesitas una" }],
+            [{ t: "No necesitas una" }],
             [
               { t: "piel " },
               { t: "perfecta.", c: "gold-text glow-gold" },

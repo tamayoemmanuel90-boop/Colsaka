@@ -21,8 +21,8 @@ export function EsNoEs() {
           <SectionHead
             kicker={ESNO.kicker}
             lines={[
-              [{ t: "qué " }, { t: "es.", c: "gold-text glow-gold" }],
-              [{ t: "qué no es." }],
+              [{ t: "Qué " }, { t: "es.", c: "gold-text glow-gold" }],
+              [{ t: "Qué no es." }],
             ]}
           />
 

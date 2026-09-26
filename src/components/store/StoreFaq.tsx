@@ -64,7 +64,7 @@ export function StoreFaq() {
         className="mt-6 text-[clamp(2.2rem,5vw,4.2rem)] font-medium leading-[1.03] tracking-[-0.04em] text-ink"
         lines={[
           [
-            { t: "respuestas " },
+            { t: "Respuestas " },
             { t: "medidas.", c: "gold-text glow-gold" },
           ],
         ]}

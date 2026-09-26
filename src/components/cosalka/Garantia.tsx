@@ -23,9 +23,9 @@ export function Garantia() {
           className="max-w-xl"
           titleClassName="mt-6 text-[clamp(2rem,4.2vw,3.8rem)] font-medium leading-[1.04] tracking-[-0.04em] text-ink"
           lines={[
-            [{ t: "no vendemos un frasco." }],
+            [{ t: "No vendemos un frasco." }],
             [
-              { t: "te acompañamos " },
+              { t: "Te acompañamos " },
               { t: "30 días.", c: "gold-text glow-gold" },
             ],
           ]}

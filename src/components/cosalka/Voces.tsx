@@ -26,9 +26,9 @@ export function Voces() {
             kicker={VOCES.kicker}
             className="self-end text-right"
             lines={[
-              [{ t: "personas reales." }],
+              [{ t: "Personas reales." }],
               [
-                { t: "resultados " },
+                { t: "Resultados " },
                 { t: "reales.", c: "gold-text glow-gold" },
               ],
             ]}

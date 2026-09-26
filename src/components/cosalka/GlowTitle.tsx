@@ -85,7 +85,7 @@ export function GlowTitle({
   return (
     <Tag className={className} aria-label={label} role="text">
       {lines.map((line, li) => (
-        <span key={li} className="block overflow-hidden pb-[0.08em]">
+        <span key={li} className="block overflow-hidden pb-[0.14em]">
           <motion.span
             {...animationProps}
             variants={{

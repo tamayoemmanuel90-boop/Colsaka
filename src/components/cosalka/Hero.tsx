@@ -71,10 +71,10 @@ export function Hero() {
             delay={0.45}
             stagger={0.024}
             charClassName=""
-            className="text-left text-[clamp(2.6rem,6vw,6rem)] font-medium leading-[0.99] tracking-[-0.045em] text-white"
+            className="text-left text-[clamp(2.6rem,5.85vw,5.35rem)] font-medium leading-[0.99] tracking-[-0.049em] text-white"
             lines={[
               [
-                { t: "¿te " },
+                { t: "¿Te " },
                 { t: "engañan", c: "gold-text glow-gold" },
                 { t: " con" },
               ],
