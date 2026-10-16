@@ -274,3 +274,27 @@ Work Log:
 Stage Summary:
 - La web entera ahora escribe con mayúscula inicial en titulares, CTAs, labels y frases clave — regla "¿+Mayúscula" incluida.
 - Ninguna letra se corta: el bug de glifos dorados partidos por la mitad (background-clip:text en pantallas de escalado fraccional) está fixeado en la raíz con caja de pintura extendida, y las máscaras de GlowTitle tienen aire de descendentes; verificado a zoom 2.2× y en 1440/1024/390.
+
+---
+Task ID: 20
+Agent: orchestrator (Z.ai Code main)
+Task: "Agrega nuevos videos de la carpeta Drive (17a7BjLSy…) y en el inicio que reingrese el modelo 3d — te subí white_mesh.glb, solo mejóralo y agrégale el color"
+
+Work Log:
+- VIDEOS (7 nuevos desde la carpeta Drive del cliente, descargados con drive.usercontent.google.com + confirm=t, todos MP4 válidos verificados con file/ffprobe):
+  · video-141336798.mp4 (1080×1920, 8s, macro de la crema) · video-242763909.mp4 (1080×1920, 8s, dúo sobre mármol en laboratorio) · video-gemini-8fb6fd96.mp4 + video-gemini-dc0eb139.mp4 (720×1280, 20s, educación "La psoriasis por dentro I/II") · video-nutragen-ia.mp4 (478×850, 10s, "Revolución Natural · IA") · video-mauricio-1.mp4 (480×848, 21s, testimonio WhatsApp Lizeth) · video-mauricio-2.mp4 (720×1280, 90s, "Origen · En el laboratorio"; poster regenerado a t=8s porque el frame inicial es fundido en negro). Total 8 piezas incl. el spot oficial que ya estaba (nutragen-hero-web.mp4).
+  · Posters: ffmpeg -ss 0.6 -frames:v 1 scale=720 → public/videos/posters/*.jpg (8 archivos).
+  · Nueva sección Videos.tsx "La filmoteca Nutragen." (id=filmoteca) insertada entre GaleriaReal y Garantia: feature landscape (spot, 1:00) lg:col-span-7 + 2 retratos col-span-5 + grid de 5 retratos (lg:grid-cols-5); cards con poster, play dorado, chip de duración, título + caption en mayúscula inicial (regla ortográfica); Dialog shadcn como "cine en página" (retrato sm:max-w-[440px], landscape sm:max-w-4xl), DialogTitle/Description sr-only, autoplay+controls, cierre con Escape verificado.
+  · GOTCHA: main es pointer-events-none → el grid de la filmoteca necesita pointer-events-auto relative z-30 (como las demás secciones interactivas); sin eso el modal nunca abría.
+  · GOTCHA: data-testid duplicados (slice(3) reiniciaba index) → index={i + 3}.
+- MODELO 3D REAL (white_mesh.glb del cliente, 360KB, trimesh/PLY→GLB):
+  · Anatomía real descifrada parseando el GLB a mano (¡ojo: el chunk binario GLB tiene header de 8 bytes!): botella Y-up h≈1.96 r≈0.32, 10002 verts / 20000 tris, SIN normales, SIN UVs, SIN materiales — malla blanca tipo escaneo con ruido orgánico de superficie.
+  · GlbBottle.tsx nuevo (three/): (1) suavizado Taubin λ=0.52/μ=−0.53 ×24 pares construyendo adyacencia de vértices → elimina el ruido "papel arrugado" preservando volumen; luego computeVertexNormals. (2) split por triángulo según Y del centroide: tapa dorada cepillada #d4af37 (y>0.615), banda de etiqueta impresa (y∈[−0.42,0.02], arco ±0.975 rad frente y dorso con UVs cilíndricas generadas), cuerpo satinado #f6f4ef clearcoat+sheen. (3) collar toroide dorado #b8912e en y=0.615 que tapa la costura. (4) Animación: entrada rise+swing easeOutCubic 1.9s, flotación idle, parallax de puntero (listener de window, canvas pointer-events-none), dock a la derecha en desktop (x=vp.width*0.215) y lift +0.92/scale 0.74 en móvil. (5) StudioEnv + ContactShadows (posición/opacidad por breakpoint) + fallback GlowFallback si no hay WebGL + useGLTF.preload.
+  · BUG CRÍTICO encontrado y fixeado con textura de diagnóstico (TOP/BOT/L/R + stripes): las UVs se escribían indexadas por posición del array de índices en vez de POR VÉRTICE (uv[vi*2]) → textura codificada como ruido; fix = Float32Array(pos.count*2) indexado por vi, u/v funciones puras de la posición.
+  · GLB servido desde public/models/white_mesh.glb. make-label-texture.ts reutilizado sin cambios (etiqueta real: COSALKA, PASO 2, NUTRAGEN, miniaturas, ANTI-PICOR, CONT. NETO 500 ML); función de diagnóstico temporal eliminada tras calibrar.
+  · Hero.tsx: vuelve a ser escenario oscuro cinematográfico con el 3D protagonista (aura dorada radial, scrims de legibilidad, blend a papel) reemplazando el video full-bleed; el copy verificado en Task 19 se conservó íntegro (kicker, GlowTitle, social proof, CTAs testids hero-buy/hero-store, chips, cue).
+- E2E (agent-browser, reinciando sesión tras 3 "Not attached to an active page"): desktop 1440 — botella con etiqueta legible (zoom 2.2×), tapa dorada brillante, modal spot reproduciendo (playing=true, 0:13/1:00, readyState 4), modal retrato card-3 abre video-gemini-8fb6fd96 y cierra con Escape, CTA hero-buy → toast "Paquete Doble Acción añadido a la cesta" + drawer; móvil 390 — botella elevada tras el titular sin tapar CTAs, filmoteca en 1 col + grid 2 col, StickyBuyBar, footer sticky con letras doradas completas, scrollWidth=390 (0 overflow). bun run lint limpio; tsc: 0 errores en src/ (solo el scaffold preexistente de skills); dev.log sin errores runtime.
+Stage Summary:
+- El inicio vuelve a ser 3D con la malla REAL del cliente — no un maniquí blanco: superficie Taubin-suavizada, cuerpo satinado, tapa dorada de marca y la etiqueta Nutragen auténtica impresa sobre la propia malla (UVs cilíndricas corregidas por vértice).
+- La filmoteca reúne las 8 piezas reales del cliente con posters generados y cine modal en página; todo el copy nuevo en mayúscula inicial.
+- El video del hero anterior vive ahora dentro de la filmoteca como "Spot oficial · Nutragen" (nada se perdió).

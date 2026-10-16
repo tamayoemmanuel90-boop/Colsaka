@@ -8,6 +8,7 @@ import { Verdad } from "./Verdad";
 import { Rutina } from "./Rutina";
 import { Reviews } from "./Reviews";
 import { GaleriaReal } from "./GaleriaReal";
+import { Videos } from "./Videos";
 import { Garantia } from "./Garantia";
 import { Faq } from "./Faq";
 import { Cierre } from "./Cierre";
@@ -22,8 +23,8 @@ import { useProducts } from "@/hooks/use-products";
  * "/" — Cosalka · Nutragen flagship storefront landing.
  *
  * Sell-first architecture (Amazon-grade conversion flow):
- *   announcement → cinematic video hero → trust strip → BUY BOX
- *   → truth → routine → verified reviews → real archive
+ *   announcement → 3D REAL-BOTTLE hero → trust strip → BUY BOX
+ *   → truth → routine → verified reviews → real archive → filmoteca
  *   → guarantee → FAQ → close.
  *
  * Layer architecture:
@@ -55,6 +56,7 @@ export function LandingPage() {
         <Rutina />
         <Reviews />
         <GaleriaReal />
+        <Videos />
         <Garantia />
         <Faq />
         <Cierre />

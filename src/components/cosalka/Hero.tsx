@@ -1,23 +1,23 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Play, ShieldCheck, Star, Truck } from "lucide-react";
 import { scrollToSection } from "@/hooks/use-smooth-scroll";
 import { FLAGSHIP_SLUG, HERO } from "@/lib/cosalka/content";
 import { GlowTitle } from "./GlowTitle";
+import { GlbBottleStage } from "./three/GlbBottle";
 import { useCart } from "@/store/cart";
 import { toast } from "sonner";
 
 /**
- * Hero — cinematic full-bleed VIDEO stage (client's official film),
- * replacing the former 3D bottle scene. Copy owns the left column over
- * a graded scrim; the film stays untouched behind it. Sells from the
+ * Hero — cinematic dark stage where the CLIENT'S REAL 3D bottle
+ * (white_mesh.glb, upgraded with printed label + gold cap) returns as
+ * the protagonist. Copy owns the left column over a graded scrim;
+ * pointer parallax + idle float keep the product alive. Sells from the
  * very first viewport: rating row, dual CTA, delivery + guarantee chips.
  */
 export function Hero() {
   const add = useCart((s) => s.add);
-  const [videoOk, setVideoOk] = useState(true);
 
   const buyNow = () => {
     add(FLAGSHIP_SLUG);
@@ -29,25 +29,21 @@ export function Hero() {
       id="inicio"
       className="relative flex min-h-[100svh] w-full items-center overflow-hidden"
     >
-      {/* ── video stage ─────────────────────────────────────────── */}
-      <div className="absolute inset-0" aria-hidden={!videoOk}>
-        <motion.video
-          initial={{ opacity: 0, scale: 1.04 }}
-          animate={{ opacity: videoOk ? 1 : 0, scale: 1 }}
-          transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster="/videos/nutragen-hero-poster.jpg"
-          src="/videos/nutragen-hero-web.mp4"
-          onError={() => setVideoOk(false)}
-          className="h-full w-full object-cover"
+      {/* ── 3D stage — the real bottle, upgraded ─────────────────── */}
+      <div className="absolute inset-0" aria-hidden>
+        <div className="absolute inset-0 bg-[#0b0b0c]" />
+        {/* gold aura behind the product */}
+        <div
+          className="absolute right-[-8%] top-1/2 h-[76vh] w-[58vw] -translate-y-1/2"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(212,175,55,0.16), transparent 72%)",
+          }}
         />
+        <GlbBottleStage />
         {/* legibility scrim — left column stays readable, right edge stays cinematic */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0d0d0d]/88 via-[#0d0d0d]/55 to-[#0d0d0d]/18" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d]/70 via-transparent to-[#0d0d0d]/35" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0b0b0c]/90 via-[#0b0b0c]/42 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b0b0c]/72 via-transparent to-[#0b0b0c]/38" />
         {/* blend into the paper page */}
         <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#ececee] to-transparent sm:h-36" />
       </div>
