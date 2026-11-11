@@ -32,7 +32,7 @@ export function Verdad() {
               src="/images/client/productos-duo.png"
               alt="Protocolo Doble Acción de Nutragen — Paso 1 Treatment y Paso 2 Moisturizer, 500 ml cada uno"
               loading="lazy"
-              className="h-64 w-full object-cover sm:h-80"
+              className="h-64 w-full bg-white object-contain p-4 sm:h-80 sm:p-6"
             />
             {/* stat strip */}
             <ul className="grid grid-cols-3 divide-x divide-black/[0.07] border-t border-black/[0.07] bg-white/90">

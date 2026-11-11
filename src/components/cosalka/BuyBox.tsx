@@ -75,7 +75,7 @@ export function BuyBox() {
                 src={p.image}
                 alt={`${p.name} — ${p.tagline}`}
                 loading="lazy"
-                className="h-72 w-full object-cover transition-transform duration-700 hover:scale-[1.025] sm:h-96 lg:h-full"
+                className="aspect-[8/9] w-full object-cover transition-transform duration-700 hover:scale-[1.025] lg:aspect-auto lg:h-full lg:object-contain lg:p-4"
               />
             </div>
 

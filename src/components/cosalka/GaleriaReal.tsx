@@ -4,8 +4,33 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Camera, Clock } from "lucide-react";
 import { VOCES } from "@/lib/cosalka/content";
+import { useInViewVideo } from "@/hooks/use-in-view-video";
 import { GlowTitle } from "./GlowTitle";
 import { fade } from "./SectionHead";
+
+/**
+ * TestimonialVideo — real client video that starts playing by itself
+ * (muted + loop) as soon as it scrolls into view, and pauses when it
+ * leaves. Controls stay so the visitor can unmute or scrub.
+ */
+function TestimonialVideo({ src, ctx }: { src: string; ctx: string }) {
+  const videoRef = useInViewVideo<HTMLVideoElement>(0.4);
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      controls
+      playsInline
+      loop
+      muted
+      preload="metadata"
+      className="h-64 w-full bg-black/90 object-cover sm:h-72"
+      aria-label={ctx}
+      data-testid="galeria-video"
+    />
+  );
+}
 
 /**
  * Galería — the organized client archive at the BOTTOM of the preview:
@@ -174,14 +199,7 @@ export function GaleriaReal() {
               transition={{ duration: 0.75, delay: 0.3 + i * 0.12 }}
               className="overflow-hidden rounded-2xl border border-black/10 bg-white/70 backdrop-blur-md transition-all duration-300 hover:border-gold/50"
             >
-              <video
-                src={v.src}
-                controls
-                playsInline
-                preload="metadata"
-                className="h-64 w-full bg-black/90 object-cover sm:h-72"
-                aria-label={v.ctx}
-              />
+              <TestimonialVideo src={v.src} ctx={v.ctx} />
               <figcaption className="border-t border-black/10 px-4 py-3 font-mono text-[8.5px] uppercase tracking-[0.18em] text-black/40">
                 {v.ctx}
               </figcaption>

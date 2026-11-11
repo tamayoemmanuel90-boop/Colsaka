@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Play } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useInViewVideo } from "@/hooks/use-in-view-video";
 import { SectionHead, fade } from "./SectionHead";
 
 /**
@@ -88,38 +89,105 @@ const FILMOTECA: Film[] = [
   },
 ];
 
+/**
+ * FilmPreview — muted looping preview that plays itself while the card
+ * is on screen (IntersectionObserver) and pauses off-screen. The poster
+ * paints instantly; the film keeps rolling underneath — no play chrome.
+ * Hovering the card reveals a volume toggle: the click that unmutes is a
+ * real user activation, so browser autoplay policies stay satisfied.
+ */
+function FilmPreview({
+  film,
+  enabled,
+  audioOn,
+}: {
+  film: Film;
+  enabled: boolean;
+  audioOn: boolean;
+}) {
+  const videoRef = useInViewVideo<HTMLVideoElement>(0.3, enabled);
+
+  // Keep the element's muted state in sync with the hover audio toggle.
+  // Re-runs after the in-view hook re-silences on enabled flips (e.g. the
+  // theater dialog opening/closing) so the user's audio choice sticks.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = !audioOn;
+    if (audioOn && v.paused) void v.play().catch(() => {});
+  }, [audioOn, enabled, videoRef]);
+
+  return (
+    <video
+      ref={videoRef}
+      src={film.src}
+      poster={film.poster}
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      tabIndex={-1}
+      aria-hidden
+      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+    />
+  );
+}
+
 function FilmCard({
   film,
   index,
   className = "",
   onOpen,
+  theaterOpen,
 }: {
   film: Film;
   index: number;
   className?: string;
   onOpen: () => void;
+  theaterOpen: boolean;
 }) {
+  const [audioOn, setAudioOn] = useState(false);
+  const [hovered, setHovered] = useState(false);
+
   return (
     <motion.button
       {...fade}
       transition={{ duration: 0.7, delay: 0.05 * (index % 5) }}
       onClick={onOpen}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       data-testid={`film-card-${index}`}
       aria-label={`Reproducir video: ${film.title}`}
       className={`group relative block w-full cursor-pointer overflow-hidden rounded-3xl bg-white text-left shadow-[0_10px_34px_rgba(20,20,22,0.07)] ring-1 ring-black/5 outline-none transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_54px_rgba(20,20,22,0.14)] focus-visible:ring-2 focus-visible:ring-gold ${className}`}
     >
       <div className={`relative overflow-hidden ${film.wide ? "aspect-video" : "aspect-[9/16]"}`}>
-        <img
-          src={film.poster}
-          alt={`Miniatura del video ${film.title}`}
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
-        />
+        <FilmPreview film={film} enabled={!theaterOpen} audioOn={audioOn} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
-        <span className="absolute inset-0 m-auto grid h-14 w-14 place-items-center rounded-full bg-gold text-graphite shadow-[0_10px_30px_rgba(212,175,55,0.5)] transition-transform duration-300 group-hover:scale-110">
-          <Play size={20} className="ml-0.5 fill-current" aria-hidden />
+        <span
+          role="button"
+          tabIndex={0}
+          aria-pressed={audioOn}
+          aria-label={audioOn ? "Silenciar video" : "Activar audio del video"}
+          data-testid={`film-audio-${index}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            setAudioOn((a) => !a);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              e.stopPropagation();
+              setAudioOn((a) => !a);
+            }
+          }}
+          onFocus={() => setHovered(true)}
+          onBlur={() => setHovered(false)}
+          style={{ opacity: hovered || audioOn ? 1 : 0 }}
+          className="absolute bottom-3 left-3 z-10 grid h-10 w-10 cursor-pointer place-items-center rounded-full border border-white/20 bg-graphite/85 text-gold shadow-[0_8px_22px_rgba(20,20,22,0.28)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-graphite focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+        >
+          {audioOn ? <Volume2 size={16} aria-hidden /> : <VolumeX size={16} aria-hidden />}
         </span>
-        <span className="absolute bottom-3 right-3 rounded-full bg-black/60 px-2.5 py-1 font-mono text-[10px] tracking-wider text-white backdrop-blur-sm">
+        <span className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/60 px-2.5 py-1 font-mono text-[10px] tracking-wider text-white backdrop-blur-sm">
           {film.duration}
         </span>
       </div>
@@ -160,13 +228,13 @@ export function Videos() {
         <div className="pointer-events-auto relative z-30 mt-12 grid grid-cols-1 gap-5 lg:grid-cols-12">
           {/* feature piece — the landscape spot */}
           <div className="lg:col-span-7">
-            <FilmCard film={FILMOTECA[0]} index={0} onOpen={() => setActive(FILMOTECA[0])} />
+            <FilmCard film={FILMOTECA[0]} index={0} theaterOpen={!!active} onOpen={() => setActive(FILMOTECA[0])} />
           </div>
 
           {/* two portrait companions beside the spot */}
           <div className="grid grid-cols-2 gap-5 lg:col-span-5">
-            <FilmCard film={FILMOTECA[1]} index={1} onOpen={() => setActive(FILMOTECA[1])} />
-            <FilmCard film={FILMOTECA[2]} index={2} onOpen={() => setActive(FILMOTECA[2])} />
+            <FilmCard film={FILMOTECA[1]} index={1} theaterOpen={!!active} onOpen={() => setActive(FILMOTECA[1])} />
+            <FilmCard film={FILMOTECA[2]} index={2} theaterOpen={!!active} onOpen={() => setActive(FILMOTECA[2])} />
           </div>
 
           {/* the remaining five portrait pieces */}
@@ -176,6 +244,7 @@ export function Videos() {
                 key={film.src}
                 film={film}
                 index={i + 3}
+                theaterOpen={!!active}
                 onOpen={() => setActive(film)}
               />
             ))}
